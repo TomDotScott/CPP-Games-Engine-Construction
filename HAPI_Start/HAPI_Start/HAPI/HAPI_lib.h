@@ -5,7 +5,11 @@ All the includes required to use HAPI.
 
 For full details on using the library please see the reference documentation avaialble in the HAPI folder.
 
-Last modified by Keith Ditchburn: September 2020
+Last modified by Keith Ditchburn: October 2020
+
+Version 2.54 06/10/20
+=====================
+- Changes so if the initialisation of performance counters fails HAPI can still be used (minus the ram reporting etc.)
 
 Version 2.53 16/09/20
 =====================

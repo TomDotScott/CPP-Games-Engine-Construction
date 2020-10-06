@@ -18,5 +18,29 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HAPI\HAPI_InputCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HAPI\HAPI_lib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HAPI\HAPI_Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="HAPI\HAPI_Debug64.lib" />
+    <Library Include="HAPI\HAPI64.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HAPI\Reference\index.html" />
   </ItemGroup>
 </Project>

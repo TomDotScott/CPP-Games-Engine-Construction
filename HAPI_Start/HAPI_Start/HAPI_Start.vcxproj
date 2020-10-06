@@ -19,12 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="HAPI\HAPI_InputCodes.h" />
+    <ClInclude Include="HAPI\HAPI_lib.h" />
+    <ClInclude Include="HAPI\HAPI_Types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="HAPI\HAPI64.lib" />
+    <Library Include="HAPI\HAPI_Debug64.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HAPI\Reference\index.html" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
