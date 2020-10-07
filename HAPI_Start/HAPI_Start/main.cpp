@@ -10,14 +10,13 @@ void HAPI_Main() {
 	if (HAPI.Initialise(width, height, "Colour Changing Window!")) {
 		BYTE* screen = HAPI.GetScreenPointer();
 		HAPI.SetShowFPS(true);
-		const Game game{ screen, width, height };
+		Game game{ screen, width, height };
 		while (HAPI.Update()) {
 			// HAPI.UserMessage("Window Has Initialised", ":)");
-			game.HandleInput();
+			game.Update();
+			game.Render();
 		}
 	} else {
 		std::cout << "ERROR HAS OCCURED" << std::endl;
 	}
 }
-
-

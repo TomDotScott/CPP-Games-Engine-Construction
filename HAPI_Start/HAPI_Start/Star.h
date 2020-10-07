@@ -1,4 +1,5 @@
 #pragma once
+#include "HAPI_Types.h"
 #include "Vector3.h"
 class Star {
 public:
@@ -7,11 +8,11 @@ public:
 		m_position(_pos),
 		m_velocity(_vel) {
 	};
-
+	
+	void Render(HAPISPACE::BYTE* _screen);
 	void Move();
 	void Reset();
 	void Grow();
-	void Render();
 
 private:
 	int m_size{};
