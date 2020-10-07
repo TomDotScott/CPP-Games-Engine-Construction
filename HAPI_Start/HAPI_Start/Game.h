@@ -18,21 +18,15 @@ public:
 		m_screen(_screen),
 		m_screenWidth(_width),
 		m_screenHeight(_height) {
-		const Star star{ 10, {20, 30, 10}, {0, 0, 10} };
-		m_stars.push_back(star);
-
-		const Star star2{ 50, {200, 300, 10}, {0, 0, 10} };
-		m_stars.push_back(star2);
-
-
-		const Star star3{ 2, {1, 1, 10}, {0, 0, 10} };
-		m_stars.push_back(star3);
-
-
-		const Star star4{ 200, {750, 750, 10}, {0, 0, 10} };
-		m_stars.push_back(star4);
+		m_runStars = false;
+		// Create 5 random stars to test
+		m_stars.reserve(5);
+		for (int i = 0; i < 5; ++i) {
+			const Star star{ RandRange(0, 50), {RandRange(0, m_screenWidth), RandRange(0, m_screenHeight), 100}, {RandRange(0, 20), RandRange(0, 20), RandRange(0, 20)} };
+			m_stars.push_back(star);
+		}
 	};
-	
+
 	void Update();
 	void Render();
 
@@ -45,13 +39,13 @@ private:
 	static int RandRange(const int _min, const int _max) {
 		return _min + (rand() % (_max - _min + 1));
 	}
-	
+
 	HAPISPACE::BYTE* m_screen{ nullptr };
 	int m_screenWidth;
 	int m_screenHeight;
 
 	// Whether to run the star simulation or not
 	bool m_runStars = false;
-	
+
 	std::vector<Star> m_stars;
 };

@@ -8,8 +8,10 @@ public:
 		m_position(_pos),
 		m_velocity(_vel) {
 	};
+
+	void Update();
+	void Render(HAPISPACE::BYTE* _screen) const;
 	
-	void Render(HAPISPACE::BYTE* _screen);
 	void Move();
 	void Reset();
 	void Grow();

@@ -2,13 +2,17 @@
 
 void Game::Update() {
 	HandleInput();
+	if (m_runStars) {
+		for (auto& star : m_stars) {
+			star.Update();
+		}
+	}
 }
 
 void Game::Render() {
-	if(m_runStars)
-	{
-		for (auto& star : m_stars)
-		{
+	if (m_runStars) {
+		ClearScreen();
+		for (auto& star : m_stars) {
 			star.Render(m_screen);
 		}
 	}
@@ -22,35 +26,34 @@ void Game::HandleInput() {
 		ClearScreen({ 255, 0, 0, 255 });
 	}
 	// G = GREEN
-	else if (currentKeyData.scanCode[71]) {
+	if (currentKeyData.scanCode[71]) {
 		m_runStars = false;
 		ClearScreen({ 0, 255, 0, 255 });
 	}
 	// B = BLUE
-	else if (currentKeyData.scanCode[66]) {
+	if (currentKeyData.scanCode[66]) {
 		m_runStars = false;
 		ClearScreen({ 0, 0, 255, 255 });
 	}
 	// Y = YELLOW
-	else if (currentKeyData.scanCode[89]) {
+	if (currentKeyData.scanCode[89]) {
 		m_runStars = false;
 		ClearScreen({ 255, 255, 0, 255 });
 	}
 	// P = Random Pixel to Random Colour
-	else if (currentKeyData.scanCode[80]) {
+	if (currentKeyData.scanCode[80]) {
 		m_runStars = false;
 		SetPixel(RandRange(0, (m_screenWidth - 1) * 4),
 			RandRange(0, (m_screenHeight - 1) * 4),
 			{ RandRange(0, 255), RandRange(0, 255), RandRange(0, 255), RandRange(0, 255) });
 	}
 	// S = STARS SIMULATION
-	else if(currentKeyData.scanCode[83])
-	{
+	if (currentKeyData.scanCode[83]) {
 		ClearScreen();
 		m_runStars = true;
 	}
 	// C = CLEAR THE SCREEN
-	else if (currentKeyData.scanCode[67]) {
+	if (currentKeyData.scanCode[67]) {
 		ClearScreen();
 	}
 }
