@@ -19,33 +19,32 @@ void Game::SetPixel(const int _x, const int _y, const int _value) const {
 	m_screen[m_screenWidth * _x + _y] = _value;
 }
 
-void Game::HandleInput() const
-{
-	auto keyData = HAPI.GetKeyboardData();
+void Game::HandleInput() const {
+	auto currentKeyData = HAPI.GetKeyboardData();
 	// R = RED
-	if (keyData.scanCode[82]) {
+	if (currentKeyData.scanCode[82]) {
 		ClearScreen({ 255, 0, 0, 255 });
 	}
 	// G = GREEN
-	else if (keyData.scanCode[71]) {
+	else if (currentKeyData.scanCode[71]) {
 		ClearScreen({ 0, 255, 0, 255 });
 	}
 	// B = BLUE
-	else if (keyData.scanCode[66]) {
+	else if (currentKeyData.scanCode[66]) {
 		ClearScreen({ 0, 0, 255, 255 });
 	}
 	// Y = YELLOW
-	else if (keyData.scanCode[89]) {
+	else if (currentKeyData.scanCode[89]) {
 		ClearScreen({ 255, 255, 0, 255 });
 	}
 	// P = Random Pixel to Random Colour
-	else if (keyData.scanCode[80]) {
-		SetPixel(RandRange(0, (m_screenWidth - 1) * 4), 
-				RandRange(0, (m_screenHeight - 1) * 4), 
+	else if (currentKeyData.scanCode[80]) {
+		SetPixel(RandRange(0, (m_screenWidth - 1) * 4),
+			RandRange(0, (m_screenHeight - 1) * 4),
 			{ RandRange(0, 255), RandRange(0, 255), RandRange(0, 255), RandRange(0, 255) });
 	}
 	// C = CLEAR THE SCREEN
-	else if (keyData.scanCode[67]) {
+	else if (currentKeyData.scanCode[67]) {
 		ClearScreen();
 	}
 }

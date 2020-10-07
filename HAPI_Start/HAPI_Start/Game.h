@@ -13,27 +13,22 @@ public:
 	};
 
 	explicit Game(HAPISPACE::BYTE* _screen, const int _width = 1000, const int _height = 1000) :
+		m_screen(_screen),
 		m_screenWidth(_width),
-		m_screenHeight(_height),
-		m_screen(_screen) {
+		m_screenHeight(_height) {
 	};
 
 	void ClearScreen(Colour _colour = { 0, 0, 0, 0 }) const;
 	void SetPixel(int _x, int _y, Colour _colour) const;
 	void SetPixel(int _x, int _y, int _value) const;
-
+	
+	void HandleInput() const;
+private:
 	static int RandRange(const int _min, const int _max) {
 		return _min + (rand() % (_max - _min + 1));
 	}
 	
-	void HandleInput() const;
-private:
+	HAPISPACE::BYTE* m_screen{ nullptr };
 	int m_screenWidth;
 	int m_screenHeight;
-
-	HAPISPACE::BYTE* m_screen{ nullptr };
-
 };
-
-
-

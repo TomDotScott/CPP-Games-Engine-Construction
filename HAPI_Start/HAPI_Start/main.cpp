@@ -2,8 +2,6 @@
 
 using namespace HAPISPACE;
 
-
-
 // Every HAPI program has a HAPI_Main as an entry point
 // When this function exits the program will close down
 void HAPI_Main() {
