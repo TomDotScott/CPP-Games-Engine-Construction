@@ -1,7 +1,7 @@
 #pragma once
 #include "HAPI_Types.h"
-#include "Vector3.h"
-#include "Matrix.h"
+#include "Vector.h"
+#include <iostream>
 
 class Star {
 public:
@@ -19,10 +19,11 @@ public:
 	void Grow();
 
 private:
+
+	int m_eyeDist{ 50 };
+
 	int m_size{};
 	Vector3 m_position;
 	Vector3 m_velocity;
-
-	Matrix m_projectionMatrix{ 2, 3, { {1, 0, 0}, {0, 1, 0} } };
 };
 

@@ -26,7 +26,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Star.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -34,9 +33,8 @@
     <ClInclude Include="HAPI\HAPI_InputCodes.h" />
     <ClInclude Include="HAPI\HAPI_lib.h" />
     <ClInclude Include="HAPI\HAPI_Types.h" />
-    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Star.h" />
-    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="HAPI\HAPI64.lib" />

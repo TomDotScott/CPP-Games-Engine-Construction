@@ -50,6 +50,12 @@ void Game::HandleInput() {
 	// S = STARS SIMULATION
 	if (currentKeyData.scanCode[83]) {
 		ClearScreen();
+
+		for (auto& star : m_stars)
+		{
+			star.Reset();
+		}
+
 		m_runStars = true;
 	}
 	// C = CLEAR THE SCREEN

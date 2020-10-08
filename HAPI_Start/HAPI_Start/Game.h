@@ -19,10 +19,9 @@ public:
 		m_screenWidth(_width),
 		m_screenHeight(_height) {
 		m_runStars = false;
-		// Create 5 random stars to test
-		m_stars.reserve(5);
-		for (int i = 0; i < 5; ++i) {
-			const Star star{ RandRange(0, 50), {RandRange(0, m_screenWidth), RandRange(0, m_screenHeight), 100}, {RandRange(0, 20), RandRange(0, 20), RandRange(0, 20)} };
+		m_stars.reserve(50);
+		for (int i = 0; i < 50; ++i) {
+			const Star star{ RandRange(2, 5), {RandRange(0, m_screenWidth), RandRange(0, m_screenHeight), 100}, {0, 0, RandRange(2, 20)} };
 			m_stars.push_back(star);
 		}
 	};
