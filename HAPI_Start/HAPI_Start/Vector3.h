@@ -1,4 +1,12 @@
 ﻿#pragma once
+struct Vector2
+{
+	Vector2(const int _x = 0, const int _y = 0) :
+		x(_x),
+		y(_y){
+	};
+	int x, y;
+};
 
 struct Vector3
 {
@@ -9,3 +17,5 @@ struct Vector3
 	};
 	int x, y, z;
 };
+
+

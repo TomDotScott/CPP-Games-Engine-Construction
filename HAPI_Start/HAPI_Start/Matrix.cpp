@@ -1,6 +1,8 @@
 #include "Matrix.h"
 
-Matrix::Matrix(const int _rows, const int _cols, const std::vector<std::vector<float>>& _values) {
+Matrix::Matrix(const int _rows, const int _cols, const std::vector<std::vector<float>>& _values) :
+	m_rows(_rows),
+	m_columns(_cols) {
 	if (!_values.empty()) {
 		for (int i = 0; i < m_rows; ++i) {
 			std::vector<float> currentRow;
@@ -23,7 +25,7 @@ Matrix::Matrix(const int _rows, const int _cols, const std::vector<std::vector<f
 	}
 }
 
-Matrix Matrix::MatMul(Matrix& a, Matrix& b) {
+Matrix Matrix::MatMul(const Matrix& a, const Matrix& b) {
 	const int n = a.m_rows;
 	const int m = a.m_columns;
 	const int p = b.m_columns;

@@ -1,12 +1,8 @@
 #pragma once
 #include <vector>
-
 class Matrix {
 public:
-	explicit Matrix(const int _rows, const int _cols, const std::vector<std::vector<float>>& _values = std::vector<std::vector<float>>()) :
-		m_rows(_rows),
-		m_columns(_cols) {
-	}
+	explicit Matrix(const int _rows, const int _cols, const std::vector<std::vector<float>>& _values = std::vector<std::vector<float>>());
 
 	void SetValue(float _val, int i, int j)
 	{
@@ -18,7 +14,7 @@ public:
 		return m_values[i][j];
 	}
 
-	static Matrix MatMul(Matrix& a, Matrix& b);
+	static Matrix MatMul(const Matrix& a, const Matrix& b);
 
 
 	int m_rows;
