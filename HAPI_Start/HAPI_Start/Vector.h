@@ -46,7 +46,25 @@ struct Vector3 {
 			z = _max.z;
 		}
 	}
+
+	void GenNonZeroVector(const int _max) {
+		x = GenValue(_max);
+		y = GenValue(_max);
+		z = GenValue(_max);
+	}
+
+
 	int x, y, z;
+
+private:
+	static int GenValue(const int _max) {
+		const int coinFlip = 0 + (rand() % (1 - 0 + 1));
+		if (static_cast<bool>(coinFlip) == true) {
+			return 1 + (rand() % (_max - 1));
+		} else {
+			return -1 * (1 + (rand() % (_max - 1)));
+		}
+	}
 };
 
 

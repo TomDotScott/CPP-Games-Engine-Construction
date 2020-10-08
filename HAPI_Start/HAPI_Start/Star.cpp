@@ -1,15 +1,30 @@
 #include "Star.h"
 
+Star::Star() :
+	m_eyeDist(50),
+	m_size(0),
+	m_projectedPosition(),
+	m_position(),
+	m_currentVelocity(),
+	m_acceleration(),
+	m_maxVelocity(5, 5, 5) {
+	Reset();
+}
+
+Vector2 Star::ProjectedPoints(const Vector3& _currentPosition) const
+{
+	// Sx = ((eyeDist * (Px - Cx)) / (eyeDist + Pz)) + Cx
+	// Sy = ((eyeDist * (Py - Cy)) / (eyeDist + Pz)) + Cy
+	return {
+		((m_eyeDist * (_currentPosition.x - k_screenSize / 2)) / (m_eyeDist + _currentPosition.z)) + k_screenSize / 2,
+		((m_eyeDist * (_currentPosition.y - k_screenSize / 2)) / (m_eyeDist + _currentPosition.z)) + k_screenSize / 2
+	};
+}
+
+
 void Star::Update() {
-	// move
 	Move();
-	// reset position if off screen
-	if ((m_position.x < 0 || m_position.x > 999 - m_size || m_position.y < 0 || m_position.y > 999 - m_size) && (
-		m_projectedPosition.x < 0 || m_projectedPosition.x > 999 - m_size || m_projectedPosition.y < 0 ||
-		m_projectedPosition.y > 999 - m_size))
-	{
-		Reset();
-	}
+	Grow();
 }
 
 void Star::Render(HAPISPACE::BYTE* _screen) const {
@@ -24,27 +39,43 @@ void Star::Render(HAPISPACE::BYTE* _screen) const {
 	}
 }
 
-void Star::Move()
-{
+void Star::Move() {
 	m_currentVelocity.Add(m_acceleration);
 
 	m_currentVelocity.Limit(m_maxVelocity);
-	
+
 	m_position.Add(m_currentVelocity);
 
-	m_projectedPosition = ProjectedPoints(m_position);
+	if (std::abs(m_position.z) < 50) {
+		m_projectedPosition = ProjectedPoints(m_position);
+
+		if (m_position.x < 0 || m_projectedPosition.x < 0) {
+			Reset();
+		}
+
+		else if (m_position.x > k_screenSize - m_size || m_projectedPosition.x > k_screenSize - m_size) {
+			Reset();
+		}
+
+		else if (m_position.y < 0 || m_projectedPosition.y < 0) {
+			Reset();
+		}
+
+		else if (m_position.y > k_screenSize - m_size || m_projectedPosition.y > k_screenSize - m_size) {
+			Reset();
+		}
+	} else {
+		Reset();
+	}
 }
 
-void Star::Reset()
-{
-	// Hard coding is bad....
-	m_size = RandRange(1, 5);
-
-	m_position = { RandRange(0, k_screenSize), RandRange(0, k_screenSize), RandRange(0, 100) };
-
-	m_acceleration = { RandRange(0, 2), RandRange(0, 2), -RandRange(0, 2) };
+void Star::Reset() {
+	m_size = RandRange(1, 10);
+	m_position = { RandRange(0, k_screenSize), RandRange(0, k_screenSize), RandRange(1, 10) };
+	m_projectedPosition = {};
+	m_currentVelocity = {};
+	m_acceleration.GenNonZeroVector(2);
 }
 
-void Star::Grow()
-{
+void Star::Grow() {
 }

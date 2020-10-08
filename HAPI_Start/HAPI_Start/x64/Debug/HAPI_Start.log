@@ -1,9 +1,4 @@
-﻿  Game.cpp
-  main.cpp
-D:\Programming\C++\GEC\HAPI_Start\HAPI_Start\main.cpp(9,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Star.cpp
-  Generating Code...
-HAPI_Debug64.lib(Error.obj) : warning LNK4099: PDB 'HAPI_LIB.pdb' was not found with 'HAPI_Debug64.lib(Error.obj)' or at 'D:\Programming\C++\GEC\HAPI_Start\x64\Debug\HAPI_LIB.pdb'; linking object as if no debug info
+﻿HAPI_Debug64.lib(Error.obj) : warning LNK4099: PDB 'HAPI_LIB.pdb' was not found with 'HAPI_Debug64.lib(Error.obj)' or at 'D:\Programming\C++\GEC\HAPI_Start\x64\Debug\HAPI_LIB.pdb'; linking object as if no debug info
 HAPI_Debug64.lib(HapiCore.obj) : warning LNK4099: PDB 'HAPI_LIB.pdb' was not found with 'HAPI_Debug64.lib(HapiCore.obj)' or at 'D:\Programming\C++\GEC\HAPI_Start\x64\Debug\HAPI_LIB.pdb'; linking object as if no debug info
 HAPI_Debug64.lib(HapiMain.obj) : warning LNK4099: PDB 'HAPI_LIB.pdb' was not found with 'HAPI_Debug64.lib(HapiMain.obj)' or at 'D:\Programming\C++\GEC\HAPI_Start\x64\Debug\HAPI_LIB.pdb'; linking object as if no debug info
 HAPI_Debug64.lib(HapiOsSFML.obj) : warning LNK4099: PDB 'HAPI_LIB.pdb' was not found with 'HAPI_Debug64.lib(HapiOsSFML.obj)' or at 'D:\Programming\C++\GEC\HAPI_Start\x64\Debug\HAPI_LIB.pdb'; linking object as if no debug info
