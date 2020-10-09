@@ -1,5 +1,6 @@
 ﻿#pragma once
-struct Vector2 {
+class Vector2 {
+public:
 	Vector2(const int _x = 0, const int _y = 0) :
 		x(_x),
 		y(_y) {
@@ -22,17 +23,12 @@ struct Vector2 {
 	int x, y;
 };
 
-struct Vector3 {
-	Vector3(const int _x = 0, const int _y = 0, const int _z = 0) :
+class Vector3 {
+public:
+	Vector3(const float _x = 0, const float _y = 0, const float _z = 0) :
 		x(_x),
 		y(_y),
 		z(_z) {
-	};
-
-	void Add(Vector3 _other) {
-		x += _other.x;
-		y += _other.y;
-		z += _other.z;
 	}
 
 	void Limit(Vector3 _max) {
@@ -48,16 +44,25 @@ struct Vector3 {
 	}
 
 	void GenNonZeroVector(const int _max) {
-		x = GenValue(_max);
-		y = GenValue(_max);
-		z = GenValue(_max);
+		x = static_cast<float>(GenNonZeroInteger(_max));
+		y = static_cast<float>(GenNonZeroInteger(_max));
+		z = static_cast<float>(GenNonZeroInteger(_max));
 	}
 
+	Vector3 operator+(const Vector3& rhs) const;
+	Vector3 operator*(const float rhs) const;
+	Vector3 operator/(const float rhs) const;
+	Vector3 operator-(const Vector3& rhs) const;
 
-	int x, y, z;
+
+
+	float x, y, z;
 
 private:
-	static int GenValue(const int _max) {
+	/// <summary>
+	/// Generates a non-zero integer in the range -max < x < max
+	/// </summary>
+	static int GenNonZeroInteger(const int _max) {
 		const int coinFlip = 0 + (rand() % (1 - 0 + 1));
 		if (static_cast<bool>(coinFlip) == true) {
 			return 1 + (rand() % (_max - 1));
@@ -67,4 +72,19 @@ private:
 	}
 };
 
+inline Vector3 Vector3::operator +(const Vector3& rhs) const {
+	return{ this->x + rhs.x, this->y + rhs.y, this->z + rhs.z };
+}
+
+inline Vector3 Vector3::operator*(const float rhs) const {
+	return{ this->x * rhs, this->y * rhs, this->z * rhs };
+}
+
+inline Vector3 Vector3::operator/(const float rhs) const {
+	return{ this->x / rhs, this->y / rhs, this->z / rhs };
+}
+
+inline Vector3 Vector3::operator -(const Vector3& rhs) const {
+	return{ rhs.x - this->x, rhs.y - this->y, rhs.z - this->z };
+}
 
