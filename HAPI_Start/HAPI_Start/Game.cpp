@@ -1,16 +1,24 @@
 #include "Game.h"
 
+Game::Game(HAPISPACE::BYTE* _screen, const int _width, const int _height) :
+	m_screen(_screen),
+	m_screenWidth(_width),
+	m_screenHeight(_height),
+	m_starsAmount(500),
+	m_stars(){
+}
+
 void Game::Update() {
 	HandleInput();
-	if (m_runStars) {
-		for (auto& star : m_stars) {
-			star.Update();
-		}
+
+	for (auto& star : m_stars) {
+		star.Update();
 	}
+
 }
 
 void Game::Render() {
-	if (m_runStars) {
+	if (!m_stars.empty()) {
 		ClearScreen();
 		for (auto& star : m_stars) {
 			star.Render(m_screen);
@@ -20,56 +28,45 @@ void Game::Render() {
 
 void Game::HandleInput() {
 	auto currentKeyData = HAPI.GetKeyboardData();
-	// R = RED
-	if (currentKeyData.scanCode[82]) {
-		m_runStars = false;
+
+	if (currentKeyData.scanCode[static_cast<int>(EKeyCode::R)]) {
+		m_stars.clear();
 		ClearScreen({ 255, 0, 0, 255 });
-	}
-	// G = GREEN
-	if (currentKeyData.scanCode[71]) {
-		m_runStars = false;
+	} else if (currentKeyData.scanCode[static_cast<int>(EKeyCode::G)]) {
+		m_stars.clear();
 		ClearScreen({ 0, 255, 0, 255 });
-	}
-	// B = BLUE
-	if (currentKeyData.scanCode[66]) {
-		m_runStars = false;
+	} else if (currentKeyData.scanCode[static_cast<int>(EKeyCode::B)]) {
+		m_stars.clear();
 		ClearScreen({ 0, 0, 255, 255 });
-	}
-	// Y = YELLOW
-	if (currentKeyData.scanCode[89]) {
-		m_runStars = false;
+	} else if (currentKeyData.scanCode[static_cast<int>(EKeyCode::Y)]) {
+		m_stars.clear();
 		ClearScreen({ 255, 255, 0, 255 });
-	}
-	// P = Random Pixel to Random Colour
-	if (currentKeyData.scanCode[80]) {
-		m_runStars = false;
+	} else if (currentKeyData.scanCode[static_cast<int>(EKeyCode::P)]) {
+		m_stars.clear();
 		SetPixel(RandRange(0, (m_screenWidth - 1) * 4),
 			RandRange(0, (m_screenHeight - 1) * 4),
 			{ RandRange(0, 255), RandRange(0, 255), RandRange(0, 255), RandRange(0, 255) });
-	}
-	// S = STARS SIMULATION
-	if (currentKeyData.scanCode[83]) {
+	} else if (currentKeyData.scanCode[static_cast<int>(EKeyCode::S)]) {
 		ClearScreen();
-
-		for (auto& star : m_stars)
-		{
-			star.Reset();
-		}
-
-		m_runStars = true;
+		m_stars.clear();
+		m_stars.resize(m_starsAmount);
 	}
-	// C = CLEAR THE SCREEN
-	if (currentKeyData.scanCode[67]) {
+	if (currentKeyData.scanCode[static_cast<int>(EKeyCode::C)]) {
 		ClearScreen();
 	}
 }
 
 void Game::ClearScreen(const Colour _colour) const {
+
 	for (int i = 0; i < (m_screenWidth - 1) * 4; i += 4) {
 		for (int j = 0; j < (m_screenHeight - 1) * 4; j += 4) {
 			SetPixel(i, j, _colour);
 		}
 	}
+}
+
+void Game::ClearScreen() const {
+	memset(m_screen, 0, static_cast<size_t>(m_screenWidth * m_screenHeight * 4));
 }
 
 void Game::SetPixel(const int _x, const int _y, const Colour _colour) const {
