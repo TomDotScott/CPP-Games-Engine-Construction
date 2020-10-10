@@ -18,8 +18,10 @@ Vector2 Star::ProjectedPoints(const Vector3& _currentPosition) const {
 	// Sx = ((eyeDist * (Px - Cx)) / (eyeDist + Pz)) + Cx
 	// Sy = ((eyeDist * (Py - Cy)) / (eyeDist + Pz)) + Cy
 	return {
-		((m_eyeDist * (_currentPosition.x - k_screenSize / 2)) / (m_eyeDist + _currentPosition.z)) + k_screenSize / 2,
-		((m_eyeDist * (_currentPosition.y - k_screenSize / 2)) / (m_eyeDist + _currentPosition.z)) + k_screenSize / 2
+		((m_eyeDist * (_currentPosition.x - static_cast<float>(k_screenSize) / 2)) / (m_eyeDist + _currentPosition.z)) +
+		static_cast<float>(k_screenSize) / 2,
+		((m_eyeDist * (_currentPosition.y - static_cast<float>(k_screenSize) / 2)) / (m_eyeDist + _currentPosition.z)) +
+		static_cast<float>(k_screenSize) / 2
 	};
 }
 
@@ -27,12 +29,13 @@ Vector2 Star::ProjectedPoints(const Vector3& _currentPosition) const {
 void Star::Update() {
 	Move();
 	Grow();
+	CheckBounds();
 }
 
 void Star::Render(HAPISPACE::BYTE* _screen) const {
 	// Calculate the new X and Y
-	for (int x = static_cast<int>(m_projectedPosition.x); x < (static_cast<int>(m_projectedPosition.x) + m_size); x++) {
-		for (int y = static_cast<int>(m_projectedPosition.y); y < (static_cast<int>(m_projectedPosition.y) + m_size); y++) {
+	for (int x = static_cast<int>(m_projectedPosition.x); x < (static_cast<int>(m_projectedPosition.x + m_size)); x++) {
+		for (int y = static_cast<int>(m_projectedPosition.y); y < (static_cast<int>(m_projectedPosition.y + m_size)); y++) {
 			_screen[(1000 * x + y) * 4] = 255;
 			_screen[(1000 * x + y) * 4 + 1] = 219;
 			_screen[(1000 * x + y) * 4 + 2] = 38;
@@ -45,7 +48,7 @@ void Star::Move() {
 	//CPU "ticks" since the program started.
 	const clock_t programTickCount = clock() - m_physicsClock;
 
-	//Conversion rate between ticks and millaseconds.
+	//Conversion rate between ticks and milliseconds.
 	const float ticksToMilliseconds = 1000.0f / CLOCKS_PER_SEC;
 
 	//Convert from ticks to seconds.
@@ -56,31 +59,28 @@ void Star::Move() {
 	m_velocity.Limit(m_maxVelocity);
 
 	m_position = m_position + m_velocity;
+	
+	m_projectedPosition = ProjectedPoints(m_position);
 
 	// Reset the physics clock for the next loop
 	m_physicsClock = clock();
+}
 
-	m_projectedPosition = ProjectedPoints(m_position);
-
-	if (m_position.x < 0 || m_projectedPosition.x < 0) {
-		Reset();
-	}
-
-	else if (m_position.x > k_screenSize - m_size || m_projectedPosition.x > k_screenSize - m_size) {
-		Reset();
-	}
-
-	else if (m_position.y < 0 || m_projectedPosition.y < 0) {
-		Reset();
-	}
-
-	else if (m_position.y > k_screenSize - m_size || m_projectedPosition.y > k_screenSize - m_size) {
+void Star::CheckBounds() {
+	if (m_position.x < 0 ||
+		m_projectedPosition.x < 0 ||
+		m_position.x > k_screenSize - m_size ||
+		m_projectedPosition.x > k_screenSize - m_size ||
+		m_position.y < 0 ||
+		m_projectedPosition.y < 0 ||
+		m_position.y > k_screenSize - m_size ||
+		m_projectedPosition.y > k_screenSize - m_size) {
 		Reset();
 	}
 }
 
 void Star::Reset() {
-	m_size = RandRange(1, 10);
+	m_size = 0.f;
 	m_position = { static_cast<float>(RandRange(0, k_screenSize)),
 		static_cast<float>(RandRange(0, k_screenSize)),
 		static_cast<float>(RandRange(1, 10))
@@ -88,7 +88,9 @@ void Star::Reset() {
 	m_projectedPosition = {};
 	m_velocity = {};
 	m_acceleration.GenNonZeroVector(2);
+	m_acceleration.z = -abs(m_acceleration.z);
 }
 
 void Star::Grow() {
+	m_size += abs(m_position.z) / 100;
 }

@@ -16,7 +16,7 @@ public:
 
 private:
 	float m_eyeDist;
-	int m_size;
+	float m_size;
 	clock_t m_physicsClock;
 	Vector2 m_projectedPosition;
 	Vector3 m_position;
@@ -29,6 +29,7 @@ private:
 	}
 
 	void Move();
+	void CheckBounds();
 	void Reset();
 	void Grow();
 };
