@@ -1,5 +1,4 @@
 #include "Star.h"
-
 #include <iostream>
 
 Star::Star() :
@@ -10,7 +9,7 @@ Star::Star() :
 	m_position(),
 	m_velocity(),
 	m_acceleration(),
-	m_maxVelocity(5, 5, 5) {
+	m_maxVelocity(7.5, 7.5, 10) {
 	Reset();
 }
 
@@ -32,16 +31,24 @@ void Star::Update() {
 	CheckBounds();
 }
 
-void Star::Render(HAPISPACE::BYTE* _screen) const {
+void Star::Render(HAPISPACE::BYTE& _screen) const {
 	// Calculate the new X and Y
 	for (int x = static_cast<int>(m_projectedPosition.x); x < (static_cast<int>(m_projectedPosition.x + m_size)); x++) {
 		for (int y = static_cast<int>(m_projectedPosition.y); y < (static_cast<int>(m_projectedPosition.y + m_size)); y++) {
-			_screen[(1000 * x + y) * 4] = 255;
-			_screen[(1000 * x + y) * 4 + 1] = 219;
-			_screen[(1000 * x + y) * 4 + 2] = 38;
-			_screen[(1000 * x + y) * 4 + 3] = 255;
+			(&_screen)[(1000 * x + y) * 4] = 255;
+			(&_screen)[(1000 * x + y) * 4 + 1] = 219;
+			(&_screen)[(1000 * x + y) * 4 + 2] = 38;
+			(&_screen)[(1000 * x + y) * 4 + 3] = 255;
 		}
 	}
+}
+
+void Star::SetEyeDistance(const float _eyeDist) {
+	m_eyeDist = _eyeDist;
+}
+
+void Star::SetMaxVelocity(const Vector3 _newMax) {
+	m_maxVelocity = _newMax;
 }
 
 void Star::Move() {
@@ -59,7 +66,7 @@ void Star::Move() {
 	m_velocity.Limit(m_maxVelocity);
 
 	m_position = m_position + m_velocity;
-	
+
 	m_projectedPosition = ProjectedPoints(m_position);
 
 	// Reset the physics clock for the next loop

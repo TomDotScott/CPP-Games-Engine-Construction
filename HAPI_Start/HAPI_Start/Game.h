@@ -1,6 +1,7 @@
 #pragma once
 #include <HAPI_lib.h>
 #include "Star.h"
+#include <array>
 
 struct Colour {
 	Colour(const int _r, const int _g, const int _b, const int _a) :
@@ -13,12 +14,12 @@ struct Colour {
 };
 
 enum class EKeyCode {
-	R = 82, G = 71, B = 66, Y = 89, P = 80, S = 83, C = 67
+	None = 0, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, B = 66, C = 67, G = 71, P = 80, R = 82, S = 83, Y = 89
 };
 
 class Game {
 public:
-	explicit Game(HAPISPACE::BYTE* _screen, const int _width = 1000, const int _height = 1000);
+	explicit Game(HAPISPACE::BYTE& _screen, const int _width = 1000, const int _height = 1000);
 
 	void Update();
 	void Render();
@@ -29,16 +30,30 @@ public:
 
 	void SetPixel(int _x, int _y, Colour _colour) const;
 	void SetPixel(int _x, int _y, int _value) const;
-	
+
 private:
 	static int RandRange(const int _min, const int _max) {
 		return _min + (rand() % (_max - _min + 1));
 	}
 
-	HAPISPACE::BYTE* m_screen;
+	const std::array<int, 6> m_eyeDistances {
+		10,
+		20,
+		30,
+		50,
+		100,
+		200,
+	};
+
+	bool GetKey(EKeyCode _keyCode);
+	bool GetKeyDown(EKeyCode _keyCode);
+
+	HAPISPACE::BYTE& m_screen;
 	int m_screenWidth;
 	int m_screenHeight;
 
 	int m_starsAmount;
 	std::vector<Star> m_stars;
+	int m_eyeDistanceIndex;
+	EKeyCode m_lastKeyPressed;
 };

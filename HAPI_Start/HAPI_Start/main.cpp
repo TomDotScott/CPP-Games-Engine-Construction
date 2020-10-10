@@ -11,13 +11,16 @@ void HAPI_Main() {
 	int height{ 1000 };
 	if (HAPI.Initialise(width, height, "The Epilepsy Programme")) {
 		BYTE* screen = HAPI.GetScreenPointer();
-		HAPI.SetShowFPS(true);
-		Game game{ screen, width, height };
-		while (HAPI.Update()) {
-			// HAPI.UserMessage("Window Has Initialised", ":)");
-			game.Update();
-			game.Render();
+		if (screen) {
+			HAPI.SetShowFPS(true);
+			Game game{ *screen, width, height };
+			while (HAPI.Update()) {
+				// HAPI.UserMessage("Window Has Initialised", ":)");
+				game.Update();
+				game.Render();
+			}
 		}
+
 	} else {
 		std::cout << "ERROR HAS OCCURED" << std::endl;
 	}

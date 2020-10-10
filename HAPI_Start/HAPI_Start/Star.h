@@ -12,7 +12,10 @@ public:
 	Vector2 ProjectedPoints(const Vector3& _currentPosition) const;
 	
 	void Update();
-	void Render(HAPISPACE::BYTE* _screen) const;
+	void Render(HAPISPACE::BYTE& _screen) const;
+
+	void SetEyeDistance(float _eyeDist);
+	void SetMaxVelocity(Vector3 _newMax);
 
 private:
 	float m_eyeDist;
