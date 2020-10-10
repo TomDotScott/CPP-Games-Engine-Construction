@@ -1,7 +1,7 @@
 ﻿#pragma once
 class Vector2 {
 public:
-	Vector2(const int _x = 0, const int _y = 0) :
+	Vector2(const float _x = 0, const float _y = 0) :
 		x(_x),
 		y(_y) {
 	};
@@ -20,7 +20,7 @@ public:
 		}
 	}
 
-	int x, y;
+	float x, y;
 };
 
 class Vector3 {

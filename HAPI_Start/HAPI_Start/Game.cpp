@@ -4,7 +4,7 @@ Game::Game(HAPISPACE::BYTE* _screen, const int _width, const int _height) :
 	m_screen(_screen),
 	m_screenWidth(_width),
 	m_screenHeight(_height),
-	m_starsAmount(500),
+	m_starsAmount(50),
 	m_stars(){
 }
 
