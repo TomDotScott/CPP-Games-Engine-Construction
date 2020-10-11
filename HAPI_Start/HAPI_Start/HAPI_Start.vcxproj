@@ -29,6 +29,7 @@
     <ClCompile Include="Star.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="HAPI\HAPI_InputCodes.h" />
     <ClInclude Include="HAPI\HAPI_lib.h" />

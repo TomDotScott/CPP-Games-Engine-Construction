@@ -1,5 +1,6 @@
 #include "Star.h"
 #include <iostream>
+#include "Constants.h"
 
 Star::Star() :
 	m_eyeDist(50),
@@ -17,10 +18,10 @@ Vector2 Star::ProjectedPoints(const Vector3& _currentPosition) const {
 	// Sx = ((eyeDist * (Px - Cx)) / (eyeDist + Pz)) + Cx
 	// Sy = ((eyeDist * (Py - Cy)) / (eyeDist + Pz)) + Cy
 	return {
-		((m_eyeDist * (_currentPosition.x - static_cast<float>(k_screenSize) / 2)) / (m_eyeDist + _currentPosition.z)) +
-		static_cast<float>(k_screenSize) / 2,
-		((m_eyeDist * (_currentPosition.y - static_cast<float>(k_screenSize) / 2)) / (m_eyeDist + _currentPosition.z)) +
-		static_cast<float>(k_screenSize) / 2
+		((m_eyeDist * (_currentPosition.x - static_cast<float>(constants::k_screenWidth) / 2)) / (m_eyeDist + _currentPosition.z)) +
+		static_cast<float>(constants::k_screenWidth) / 2,
+		((m_eyeDist * (_currentPosition.y - static_cast<float>(constants::k_screenHeight) / 2)) / (m_eyeDist + _currentPosition.z)) +
+		static_cast<float>(constants::k_screenHeight) / 2
 	};
 }
 
@@ -31,14 +32,14 @@ void Star::Update() {
 	CheckBounds();
 }
 
-void Star::Render(HAPISPACE::BYTE& _screen) const {
+void Star::Render(HAPISPACE::BYTE* _screen) const {
 	// Calculate the new X and Y
 	for (int x = static_cast<int>(m_projectedPosition.x); x < (static_cast<int>(m_projectedPosition.x + m_size)); x++) {
 		for (int y = static_cast<int>(m_projectedPosition.y); y < (static_cast<int>(m_projectedPosition.y + m_size)); y++) {
-			(&_screen)[(1000 * x + y) * 4] = 255;
-			(&_screen)[(1000 * x + y) * 4 + 1] = 219;
-			(&_screen)[(1000 * x + y) * 4 + 2] = 38;
-			(&_screen)[(1000 * x + y) * 4 + 3] = 255;
+			_screen[(constants::k_screenWidth * x + y) * 4] = 255;
+			_screen[(constants::k_screenWidth * x + y) * 4 + 1] = 219;
+			_screen[(constants::k_screenWidth * x + y) * 4 + 2] = 38;
+			_screen[(constants::k_screenWidth * x + y) * 4 + 3] = 255;
 		}
 	}
 }
@@ -76,21 +77,21 @@ void Star::Move() {
 void Star::CheckBounds() {
 	if (m_position.x < 0 ||
 		m_projectedPosition.x < 0 ||
-		m_position.x > k_screenSize - m_size ||
-		m_projectedPosition.x > k_screenSize - m_size ||
+		m_position.x > constants::k_screenWidth - m_size ||
+		m_projectedPosition.x > constants::k_screenWidth - m_size ||
 		m_position.y < 0 ||
 		m_projectedPosition.y < 0 ||
-		m_position.y > k_screenSize - m_size ||
-		m_projectedPosition.y > k_screenSize - m_size) {
+		m_position.y > constants::k_screenHeight - m_size ||
+		m_projectedPosition.y > constants::k_screenHeight - m_size) {
 		Reset();
 	}
 }
 
 void Star::Reset() {
 	m_size = 0.f;
-	m_position = { static_cast<float>(RandRange(0, k_screenSize)),
-		static_cast<float>(RandRange(0, k_screenSize)),
-		static_cast<float>(RandRange(1, 10))
+	m_position = { static_cast<float>(constants::rand_range(0, constants::k_screenWidth)),
+		static_cast<float>(constants::rand_range(0, constants::k_screenHeight)),
+		static_cast<float>(constants::rand_range(1, 10))
 	};
 	m_projectedPosition = {};
 	m_velocity = {};

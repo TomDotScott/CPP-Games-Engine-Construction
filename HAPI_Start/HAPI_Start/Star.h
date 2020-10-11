@@ -3,8 +3,6 @@
 #include "HAPI_Types.h"
 #include "Vector.h"
 
-constexpr int k_screenSize = 1000;
-
 class Star {
 public:
 	Star();
@@ -12,7 +10,7 @@ public:
 	Vector2 ProjectedPoints(const Vector3& _currentPosition) const;
 	
 	void Update();
-	void Render(HAPISPACE::BYTE& _screen) const;
+	void Render(HAPISPACE::BYTE* _screen) const;
 
 	void SetEyeDistance(float _eyeDist);
 	void SetMaxVelocity(Vector3 _newMax);
@@ -26,10 +24,6 @@ private:
 	Vector3 m_velocity;
 	Vector3 m_acceleration;
 	Vector3 m_maxVelocity;
-
-	static int RandRange(const int _min, const int _max) {
-		return _min + (rand() % (_max - _min + 1));
-	}
 
 	void Move();
 	void CheckBounds();
