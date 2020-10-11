@@ -7,10 +7,11 @@ class Star {
 public:
 	Star();
 	
-	Vector2 ProjectedPoints(const Vector3& _currentPosition) const;
+	Vector2 ProjectedPoints(const Vector3& _position) const;
 	
 	void Update();
 	void Render(HAPISPACE::BYTE* _screen) const;
+	void Reset();
 
 	void SetEyeDistance(float _eyeDist);
 	void SetMaxVelocity(Vector3 _newMax);
@@ -27,7 +28,6 @@ private:
 
 	void Move();
 	void CheckBounds();
-	void Reset();
 	void Grow();
 };
 

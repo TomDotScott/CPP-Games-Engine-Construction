@@ -3,25 +3,25 @@
 #include "Constants.h"
 
 Star::Star() :
-	m_eyeDist(50),
+	m_eyeDist(1),
 	m_size(0),
 	m_physicsClock(),
 	m_projectedPosition(),
 	m_position(),
 	m_velocity(),
 	m_acceleration(),
-	m_maxVelocity(7.5, 7.5, 10) {
+	m_maxVelocity(1, 1, 0.5) {
 	Reset();
 }
 
-Vector2 Star::ProjectedPoints(const Vector3& _currentPosition) const {
+Vector2 Star::ProjectedPoints(const Vector3& _position) const {
 	// Sx = ((eyeDist * (Px - Cx)) / (eyeDist + Pz)) + Cx
 	// Sy = ((eyeDist * (Py - Cy)) / (eyeDist + Pz)) + Cy
 	return {
-		((m_eyeDist * (_currentPosition.x - static_cast<float>(constants::k_screenWidth) / 2)) / (m_eyeDist + _currentPosition.z)) +
-		static_cast<float>(constants::k_screenWidth) / 2,
-		((m_eyeDist * (_currentPosition.y - static_cast<float>(constants::k_screenHeight) / 2)) / (m_eyeDist + _currentPosition.z)) +
-		static_cast<float>(constants::k_screenHeight) / 2
+		 ((m_eyeDist * (m_position.x - static_cast<float>(constants::k_screenWidth) / 2)) / (m_eyeDist + _position.z)) +
+		 static_cast<float>(constants::k_screenWidth) / 2,
+		 ((m_eyeDist * (m_position.y - static_cast<float>(constants::k_screenHeight) / 2)) / (m_eyeDist + _position.z)) +
+		 static_cast<float>(constants::k_screenHeight) / 2
 	};
 }
 
@@ -95,10 +95,15 @@ void Star::Reset() {
 	};
 	m_projectedPosition = {};
 	m_velocity = {};
-	m_acceleration.GenNonZeroVector(2);
-	m_acceleration.z = -abs(m_acceleration.z);
+	m_acceleration = {
+		static_cast<float>(constants::rand_range(1, 10)) / 10.f,
+		static_cast<float>(constants::rand_range(1, 10)) / 10.f,
+		static_cast<float>(-constants::rand_range(1, 10)) / 10.f
+	};
 }
 
 void Star::Grow() {
-	m_size += abs(m_position.z) / 100;
+	if (m_size < 20) {
+		m_size += abs(m_position.z) / 1000;
+	}
 }

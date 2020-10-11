@@ -67,7 +67,7 @@ private:
 		if (static_cast<bool>(coinFlip) == true) {
 			return 1 + (rand() % (_max - 1));
 		} else {
-			return -1 * (1 + (rand() % (_max - 1)));
+			return -(1 * (1 + (rand() % (_max - 1))));
 		}
 	}
 };

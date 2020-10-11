@@ -22,22 +22,11 @@ public:
 	void SetPixel(int _x, int _y, int _value) const;
 
 private:
-	const std::array<int, 6> m_eyeDistances {
-		10,
-		20,
-		30,
-		50,
-		100,
-		200,
-	};
-
-	static bool GetKey(EKeyCode _keyCode);
-	bool GetKeyDown(EKeyCode _keyCode) const;
+	bool GetKey(EKeyCode _keyCode);
 
 	HAPISPACE::BYTE* m_screen;
 
 	int m_starsAmount;
 	std::vector<Star> m_stars;
-	int m_eyeDistanceIndex;
-	EKeyCode m_lastKeyPressed;
+	float m_currentEyeDistance;
 };
