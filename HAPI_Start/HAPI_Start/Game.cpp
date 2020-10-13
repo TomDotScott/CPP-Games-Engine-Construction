@@ -62,7 +62,7 @@ void Game::HandleInput() {
 
 	else if (GetKey(EKeyCode::UP)) {
 		if (m_stars.size() == static_cast<std::vector<Star>::size_type>(m_starsAmount)) {
-			m_currentEyeDistance++;
+			m_currentEyeDistance += 0.1f;
 			for (auto& star : m_stars) {
 				star.Reset();
 				star.SetEyeDistance(m_currentEyeDistance);
@@ -71,7 +71,7 @@ void Game::HandleInput() {
 	} else if (GetKey(EKeyCode::DOWN)) {
 		if (m_stars.size() == static_cast<std::vector<Star>::size_type>(m_starsAmount)) {
 			if (static_cast<unsigned long long>(m_currentEyeDistance) > 1) {
-				m_currentEyeDistance--;
+				m_currentEyeDistance -= 0.1f;
 			} 
 			for (auto& star : m_stars) {
 				star.Reset();
