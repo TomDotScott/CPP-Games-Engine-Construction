@@ -2,12 +2,11 @@
 #include <HAPI_lib.h>
 #include "Vector.h"
 
-class Texture
-{
+class Texture {
 public:
 	explicit Texture(const std::string& _fileName, Vector2 _position, bool _transparency = false);
 	void Render(HAPISPACE::BYTE* _screen) const;
-	
+
 private:
 	HAPISPACE::BYTE* m_textureData;
 	int m_width;

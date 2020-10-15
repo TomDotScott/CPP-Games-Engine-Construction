@@ -34,37 +34,25 @@ void Texture::AlphaBlit(HAPISPACE::BYTE* _screen) const {
 	};
 	HAPISPACE::BYTE* textureStart{ m_textureData };
 
-	const int endOfLineDestIncrement{ constants::k_screenWidth * 4 - m_width * 4 };
+	const int increment{ constants::k_screenWidth * 4 - m_width * 4 };
 
 	for (int y{ 0 }; y < m_height; y++) {
 		for (int x{ 0 }; x < m_width; x++) {
-			const HAPISPACE::BYTE r{ textureStart[0] };
-			const HAPISPACE::BYTE g{ textureStart[1] };
-			const HAPISPACE::BYTE b{ textureStart[2] };
 			const HAPISPACE::BYTE a{ textureStart[3] };
 
-
-
-			// Normalise alpha channel
-			const float alphaChannelModifier{ static_cast<float>(a) / 255.f };
-
-			// apply the modifier to the R, G and B channels
-			screenStart[0] = static_cast<unsigned char>(alphaChannelModifier * static_cast<float>(r) +
-				static_cast<float>(screenStart[0]) * (1.0f - alphaChannelModifier)
-				);
-
-			screenStart[1] = static_cast<unsigned char>(alphaChannelModifier * static_cast<float>(g) +
-				static_cast<float>(screenStart[1]) * (1.0f - alphaChannelModifier)
-				);
-
-			screenStart[2] = static_cast<unsigned char>(alphaChannelModifier * static_cast<float>(b) +
-				static_cast<float>(screenStart[2]) * (1.0f - alphaChannelModifier)
-				);
-
+			if (a > 0) {
+				if (a == 255) {
+					memcpy(screenStart, m_textureData, 4);
+				} else {
+					screenStart[0] = screenStart[0] + ((a * (textureStart[2] - screenStart[0])) >> 8);
+					screenStart[1] = screenStart[1] + ((a * (textureStart[1] - screenStart[1])) >> 8);
+					screenStart[2] = screenStart[2] + ((a * (textureStart[0] - screenStart[2])) >> 8);
+				}
+			}
 			screenStart += 4;
 			textureStart += 4;
 
 		}
-		screenStart += endOfLineDestIncrement;
+		screenStart += increment;
 	}
 }
