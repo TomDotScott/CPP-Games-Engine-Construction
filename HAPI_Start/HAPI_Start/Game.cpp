@@ -5,7 +5,7 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 	m_starsAmount(100),
 	m_stars(),
 	m_currentEyeDistance(1),
-	m_testTexture("Data/alphaThing.tga", { 500, 500 }) {
+	m_testTexture("Data/alphaThing.tga", { 500, 500 }, true) {
 }
 
 void Game::Update() {
@@ -17,7 +17,12 @@ void Game::Update() {
 }
 
 void Game::Render() {
+	ClearScreen(HAPISPACE::HAPI_TColour::WHITE);
 	m_testTexture.Render(m_screen);
+
+
+
+	
 	if (!m_stars.empty()) {
 		ClearScreen();
 		for (auto& star : m_stars) {
