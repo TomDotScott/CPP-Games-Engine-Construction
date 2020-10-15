@@ -4,7 +4,8 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
 	m_starsAmount(100),
 	m_stars(),
-	m_currentEyeDistance(1) {
+	m_currentEyeDistance(1),
+	m_testTexture("Data/alphaThing.tga", { 500, 500 }) {
 }
 
 void Game::Update() {
@@ -16,13 +17,14 @@ void Game::Update() {
 }
 
 void Game::Render() {
+	m_testTexture.Render(m_screen);
 	if (!m_stars.empty()) {
 		ClearScreen();
 		for (auto& star : m_stars) {
 			star.Render(m_screen);
 		}
 		HAPI.RenderText(constants::k_screenWidth / 5, 0, HAPISPACE::HAPI_TColour::WHITE,
-		                "EYE DISTANCE : " + std::to_string(m_currentEyeDistance));
+			"EYE DISTANCE : " + std::to_string(m_currentEyeDistance));
 		HAPI.RenderText(constants::k_screenWidth / 2, 0, HAPISPACE::HAPI_TColour::WHITE,
 			"AMOUNT OF STARS : " + std::to_string(m_starsAmount));
 	}
@@ -72,7 +74,7 @@ void Game::HandleInput() {
 		if (m_stars.size() == static_cast<std::vector<Star>::size_type>(m_starsAmount)) {
 			if (static_cast<unsigned long long>(m_currentEyeDistance) > 1) {
 				m_currentEyeDistance -= 0.1f;
-			} 
+			}
 			for (auto& star : m_stars) {
 				star.Reset();
 				star.SetEyeDistance(m_currentEyeDistance);
@@ -81,7 +83,7 @@ void Game::HandleInput() {
 	} else if (GetKey(EKeyCode::RIGHT)) {
 		m_starsAmount++;
 		m_stars.resize(m_starsAmount);
-		for (auto& star : m_stars) 
+		for (auto& star : m_stars)
 			star.Reset();
 	} else if (GetKey(EKeyCode::LEFT)) {
 		if (m_starsAmount > 10) {
