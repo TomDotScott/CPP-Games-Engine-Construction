@@ -4,7 +4,7 @@
 
 class Texture {
 public:
-	explicit Texture(const std::string& _fileName, Vector2 _position, bool _transparency = false);
+	explicit Texture(const std::string& _fileName, Vector2 _position);
 	void Render(HAPISPACE::BYTE* _screen) const;
 
 private:
@@ -12,8 +12,6 @@ private:
 	int m_width;
 	int m_height;
 	Vector2 m_position;
-	bool m_hasAlphaChannel;
 
-	void FastBlit(HAPISPACE::BYTE* _screen) const;
 	void AlphaBlit(HAPISPACE::BYTE* _screen) const;
 };

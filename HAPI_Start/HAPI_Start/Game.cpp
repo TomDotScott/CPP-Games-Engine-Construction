@@ -2,101 +2,35 @@
 #include "Constants.h"
 Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
-	m_starsAmount(100),
-	m_stars(),
-	m_currentEyeDistance(1),
-	m_testTexture("Data/alphaThing.tga", { 500, 500 }, true) {
+	m_testTexture("Data/alphaThing.tga", { 500, 500 }),
+	m_testBackground("Data/playerSprite.tga", { 500, 500 }) {
 }
 
 void Game::Update() {
 	HandleInput();
-
-	for (auto& star : m_stars) {
-		star.Update();
-	}
 }
 
 void Game::Render() {
-	ClearScreen(HAPISPACE::HAPI_TColour::WHITE);
+	ClearScreen();
+	m_testBackground.Render(m_screen);
 	m_testTexture.Render(m_screen);
-
-
-
 	
-	if (!m_stars.empty()) {
-		ClearScreen();
-		for (auto& star : m_stars) {
-			star.Render(m_screen);
-		}
-		HAPI.RenderText(constants::k_screenWidth / 5, 0, HAPISPACE::HAPI_TColour::WHITE,
-			"EYE DISTANCE : " + std::to_string(m_currentEyeDistance));
-		HAPI.RenderText(constants::k_screenWidth / 2, 0, HAPISPACE::HAPI_TColour::WHITE,
-			"AMOUNT OF STARS : " + std::to_string(m_starsAmount));
-	}
 }
 
 void Game::HandleInput() {
-	// GENERAL CONTROLS
-	if (GetKey(EKeyCode::R)) {
-		m_stars.clear();
-		ClearScreen(HAPISPACE::HAPI_TColour::RED);
-	} else if (GetKey(EKeyCode::G)) {
-		m_stars.clear();
-		ClearScreen(HAPISPACE::HAPI_TColour::GREEN);
-	} else if (GetKey(EKeyCode::B)) {
-		m_stars.clear();
-		ClearScreen(HAPISPACE::HAPI_TColour::BLUE);
-	} else if (GetKey(EKeyCode::Y)) {
-		m_stars.clear();
-		ClearScreen({ 255, 255, 0, 255 });
-	} else if (GetKey(EKeyCode::P)) {
-		m_stars.clear();
-		SetPixel(constants::rand_range(0, (constants::k_screenWidth - 1) * 4),
-			constants::rand_range(0, (constants::k_screenHeight - 1) * 4),
-			{ static_cast<unsigned char>(constants::rand_range(0, 255)),
-				static_cast<unsigned char>(constants::rand_range(0, 255)),
-				static_cast<unsigned char>(constants::rand_range(0, 255)),
-				static_cast<unsigned char>(constants::rand_range(0, 255)) });
+	// Player One Controls
+	if (GetKey(EKeyCode::W)) {
+
 	} else if (GetKey(EKeyCode::S)) {
-		ClearScreen();
-		m_stars.resize(m_starsAmount);
-	} else if (GetKey(EKeyCode::C)) {
-		m_stars.clear();
-		ClearScreen();
+
 	}
+	// Player Two Controls
+	if (GetKey(EKeyCode::UP)) {
 
-	// STARS CONTROLS
 
-	else if (GetKey(EKeyCode::UP)) {
-		if (m_stars.size() == static_cast<std::vector<Star>::size_type>(m_starsAmount)) {
-			m_currentEyeDistance += 0.1f;
-			for (auto& star : m_stars) {
-				star.Reset();
-				star.SetEyeDistance(m_currentEyeDistance);
-			}
-		}
 	} else if (GetKey(EKeyCode::DOWN)) {
-		if (m_stars.size() == static_cast<std::vector<Star>::size_type>(m_starsAmount)) {
-			if (static_cast<unsigned long long>(m_currentEyeDistance) > 1) {
-				m_currentEyeDistance -= 0.1f;
-			}
-			for (auto& star : m_stars) {
-				star.Reset();
-				star.SetEyeDistance(m_currentEyeDistance);
-			}
-		}
-	} else if (GetKey(EKeyCode::RIGHT)) {
-		m_starsAmount++;
-		m_stars.resize(m_starsAmount);
-		for (auto& star : m_stars)
-			star.Reset();
-	} else if (GetKey(EKeyCode::LEFT)) {
-		if (m_starsAmount > 10) {
-			m_starsAmount--;
-			m_stars.resize(m_starsAmount);
-			for (auto& star : m_stars)
-				star.Reset();
-		}
+
+
 	}
 }
 
