@@ -6,11 +6,10 @@ public:
 		y(_y) {
 	};
 
-	void Add(Vector2 _other) {
-		x += _other.x;
-		y += _other.y;
-	}
-
+	Vector2 operator+(const Vector2& rhs) const;
+	Vector2 operator*(const int rhs) const;
+	Vector2 operator-(const Vector2& rhs) const;
+	
 	void Limit(Vector2 _max) {
 		if (x > _max.x) {
 			x = _max.x;
@@ -22,6 +21,19 @@ public:
 
 	int x, y;
 };
+
+inline Vector2 Vector2::operator +(const Vector2& rhs) const {
+	return{ this->x + rhs.x, this->y + rhs.y };
+}
+
+inline Vector2 Vector2::operator*(const int rhs) const {
+	return{ this->x * rhs, this->y * rhs };
+}
+
+inline Vector2 Vector2::operator -(const Vector2& rhs) const {
+	return{ rhs.x - this->x, rhs.y - this->y };
+}
+
 
 class Vector3 {
 public:

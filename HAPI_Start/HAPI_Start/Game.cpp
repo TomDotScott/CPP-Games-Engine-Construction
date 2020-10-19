@@ -4,18 +4,27 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
 	m_gameBackground(),
 	m_player1(nullptr),
-	m_player2(nullptr) {
+	m_player2(nullptr),
+	m_pongBall(nullptr) {
 
 	m_gameBackground = new Texture("Data/pongBackground.tga", { 0, 0 });
 
 	m_player1 = new Player("Data/playerOne.tga", {
 		100,
 		constants::k_screenHeight / 2 },
-		ePlayerNumber::ePlayerOne);
+		ePlayerNumber::ePlayerOne
+		);
 	m_player2 = new Player("Data/playerTwo.tga", {
 		constants::k_screenWidth - 164,
 		constants::k_screenHeight / 2 },
-		ePlayerNumber::ePlayerTwo);
+		ePlayerNumber::ePlayerTwo
+		);
+	m_pongBall = new Ball("Data/ball.tga",
+		{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
+		{ constants::rand_range(1, 2) },
+		m_player1,
+		m_player2
+	);
 
 }
 
@@ -23,6 +32,7 @@ void Game::Update() {
 	HandleInput();
 	m_player1->Update();
 	m_player2->Update();
+	m_pongBall->Update();
 }
 
 void Game::Render() const {
@@ -30,6 +40,7 @@ void Game::Render() const {
 	m_gameBackground->Render(m_screen);
 	m_player1->Render(m_screen);
 	m_player2->Render(m_screen);
+	m_pongBall->Render(m_screen);
 }
 
 void Game::HandleInput() {
