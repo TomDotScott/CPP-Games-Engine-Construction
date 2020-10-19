@@ -7,7 +7,7 @@ public:
 	explicit Texture(const std::string& _fileName, Vector2 _position);
 	void Render(HAPISPACE::BYTE* _screen) const;
 	void SetPosition(const Vector2 _pos);
-	
+	Vector2 GetSize() const;
 	std::pair<Vector2, Vector2> GetGlobalBounds() const;
 private:
 	HAPISPACE::BYTE* m_textureData;

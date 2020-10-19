@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <HAPI_lib.h>
-#include "Entity.h"
+#include "Player.h"
 
 
 enum class EKeyCode {
@@ -13,7 +13,7 @@ public:
 	explicit Game(HAPISPACE::BYTE* _screen);
 
 	void Update();
-	void Render();
+	void Render() const;
 	void HandleInput();
 
 	void ClearScreen(HAPISPACE::HAPI_TColour _col) const;
@@ -26,7 +26,7 @@ private:
 	bool GetKey(EKeyCode _keyCode);
 
 	HAPISPACE::BYTE* m_screen;
-	
-	Entity m_testTexture;
-	Entity m_testBackground;
+	Player* m_player1;
+	Player* m_player2;
+
 };

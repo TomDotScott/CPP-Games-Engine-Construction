@@ -2,35 +2,47 @@
 #include "Constants.h"
 Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
-	m_testTexture("Data/alphaThing.tga", { 500, 500 }),
-	m_testBackground("Data/playerSprite.tga", { 500, 500 }) {
+	m_player1(nullptr),
+	m_player2(nullptr) {
+	m_player1 = new Player("Data/playerSprite.tga", {
+		100,
+		constants::k_screenHeight / 2},
+		ePlayerNumber::ePlayerOne);
+	m_player2 = new Player("Data/alphaThing.tga", {
+		constants::k_screenWidth - 100,
+		constants::k_screenHeight / 2 },
+		ePlayerNumber::ePlayerTwo);
+
 }
 
 void Game::Update() {
 	HandleInput();
+	m_player1->Update();
+	m_player2->Update();
 }
 
-void Game::Render() {
+void Game::Render() const {
 	ClearScreen();
-	m_testBackground.Render(m_screen);
-	m_testTexture.Render(m_screen);
-	
+	m_player1->Render(m_screen);
+	m_player2->Render(m_screen);
 }
 
 void Game::HandleInput() {
 	// Player One Controls
 	if (GetKey(EKeyCode::W)) {
-
+		m_player1->SetDirection(eDirection::eUp);
 	} else if (GetKey(EKeyCode::S)) {
-
+		m_player1->SetDirection(eDirection::eDown);
+	} else {
+		m_player1->SetDirection(eDirection::eNone);
 	}
 	// Player Two Controls
 	if (GetKey(EKeyCode::UP)) {
-
-
+		m_player2->SetDirection(eDirection::eUp);
 	} else if (GetKey(EKeyCode::DOWN)) {
-
-
+		m_player2->SetDirection(eDirection::eDown);
+	} else {
+		m_player2->SetDirection(eDirection::eNone);
 	}
 }
 

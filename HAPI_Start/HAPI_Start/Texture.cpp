@@ -19,28 +19,24 @@ void Texture::SetPosition(const Vector2 _pos) {
 	m_position = _pos;
 }
 
+Vector2 Texture::GetSize() const {
+	return{ m_width, m_height };
+}
+
 std::pair<Vector2, Vector2> Texture::GetGlobalBounds() const {
 	return { m_position, {m_position.x + m_width, m_position.y + m_height} };
 }
 
-void Texture::FastBlit(HAPISPACE::BYTE* _screen) const {
-	for (int newY{ 0 }; newY < m_height; newY++) {
-		const int offset{ static_cast<int>((constants::k_screenWidth * (m_position.y + static_cast<float>(newY)) + m_position.x) * 4) };
-		const int textureOffset{ m_height * newY * 4 };
-		memcpy(_screen + offset, m_textureData + textureOffset, m_width * 4);
-	}
-}
-
 void Texture::AlphaBlit(HAPISPACE::BYTE* _screen) const {
 	HAPISPACE::BYTE* screenStart{
-		_screen + (m_position.x * constants::k_screenWidth + m_position.y) * 4
+		_screen + (m_position.x + m_position.y * constants::k_screenWidth) * 4
 	};
 	HAPISPACE::BYTE* textureStart{ m_textureData };
 
 	const int increment{ constants::k_screenWidth * 4 - m_width * 4 };
 
-	for (int y{ 0 }; y < m_height; y++) {
-		for (int x{ 0 }; x < m_width; x++) {
+	for (int x = 0; x < m_width; x++) {
+		for (int y = 0; y < m_height; y++) {
 			const HAPISPACE::BYTE a{ textureStart[3] };
 			// Only draw pixels if needed
 			if (a > 0) {

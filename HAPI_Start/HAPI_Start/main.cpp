@@ -11,7 +11,7 @@ void HAPI_Main() {
 	srand(static_cast<unsigned>(time(nullptr)));
 	int localScreenWidth{ constants::k_screenWidth };
 	int localScreenHeight{ constants::k_screenHeight };
-	if (HAPI.Initialise(localScreenWidth, localScreenHeight, "The Epilepsy Programme")) {
+	if (HAPI.Initialise(localScreenWidth, localScreenHeight, "HAPI Pong")) {
 		BYTE* screen = HAPI.GetScreenPointer();
 		if (screen) {
 			HAPI.SetShowFPS(true);
