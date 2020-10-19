@@ -26,6 +26,7 @@ private:
 	bool GetKey(EKeyCode _keyCode);
 
 	HAPISPACE::BYTE* m_screen;
+	Texture* m_gameBackground;
 	Player* m_player1;
 	Player* m_player2;
 

@@ -11,7 +11,8 @@ Texture::Texture(const std::string& _fileName, const Vector2 _position) :
 	}
 }
 
-void Texture::Render(HAPISPACE::BYTE* _screen) const {
+void Texture::Render(HAPISPACE::BYTE* _screen) const
+{
 	AlphaBlit(_screen);
 }
 

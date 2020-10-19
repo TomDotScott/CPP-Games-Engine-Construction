@@ -2,14 +2,18 @@
 #include "Constants.h"
 Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
+	m_gameBackground(),
 	m_player1(nullptr),
 	m_player2(nullptr) {
-	m_player1 = new Player("Data/playerSprite.tga", {
+
+	m_gameBackground = new Texture("Data/pongBackground.tga", { 0, 0 });
+
+	m_player1 = new Player("Data/playerOne.tga", {
 		100,
-		constants::k_screenHeight / 2},
+		constants::k_screenHeight / 2 },
 		ePlayerNumber::ePlayerOne);
-	m_player2 = new Player("Data/alphaThing.tga", {
-		constants::k_screenWidth - 100,
+	m_player2 = new Player("Data/playerTwo.tga", {
+		constants::k_screenWidth - 164,
 		constants::k_screenHeight / 2 },
 		ePlayerNumber::ePlayerTwo);
 
@@ -23,6 +27,7 @@ void Game::Update() {
 
 void Game::Render() const {
 	ClearScreen();
+	m_gameBackground->Render(m_screen);
 	m_player1->Render(m_screen);
 	m_player2->Render(m_screen);
 }
