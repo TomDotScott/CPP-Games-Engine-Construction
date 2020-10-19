@@ -11,4 +11,5 @@ private:
 	Entity* m_player2;
 	
 	void Reset();
+	float HitFactor(Vector2 _playerPosition);
 };

@@ -21,7 +21,7 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 		);
 	m_pongBall = new Ball("Data/ball.tga",
 		{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
-		{ constants::rand_range(1, 2) },
+		{static_cast<float>(constants::rand_range(1, 2))},
 		m_player1,
 		m_player2
 	);

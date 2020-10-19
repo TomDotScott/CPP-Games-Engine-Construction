@@ -16,6 +16,11 @@ void Entity::Render(HAPISPACE::BYTE* _screen) {
 	m_texture->Render(_screen);
 }
 
+Vector2 Entity::GetPosition() const
+{
+	return m_position;
+}
+
 void Entity::SetPosition(const Vector2 _newPos) {
 	m_position = _newPos;
 	m_texture->SetPosition(_newPos);

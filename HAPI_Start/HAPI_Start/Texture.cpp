@@ -21,7 +21,7 @@ void Texture::SetPosition(const Vector2 _pos) {
 }
 
 Vector2 Texture::GetSize() const {
-	return{ m_width, m_height };
+	return{static_cast<float>(m_width), static_cast<float>(m_height)};
 }
 
 std::pair<Vector2, Vector2> Texture::GetGlobalBounds() const {
@@ -30,7 +30,7 @@ std::pair<Vector2, Vector2> Texture::GetGlobalBounds() const {
 
 void Texture::AlphaBlit(HAPISPACE::BYTE* _screen) const {
 	HAPISPACE::BYTE* screenStart{
-		_screen + (m_position.x + m_position.y * constants::k_screenWidth) * 4
+		_screen + (static_cast<int>(m_position.x) + static_cast<int>(m_position.y) * constants::k_screenWidth) * 4
 	};
 	HAPISPACE::BYTE* textureStart{ m_textureData };
 

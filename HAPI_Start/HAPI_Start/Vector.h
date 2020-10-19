@@ -1,15 +1,15 @@
 ﻿#pragma once
 class Vector2 {
 public:
-	Vector2(const int _x = 0, const int _y = 0) :
+	Vector2(const float _x = 0, const float _y = 0) :
 		x(_x),
 		y(_y) {
 	};
 
 	Vector2 operator+(const Vector2& rhs) const;
-	Vector2 operator*(const int rhs) const;
+	Vector2 operator*(const float rhs) const;
 	Vector2 operator-(const Vector2& rhs) const;
-	
+
 	void Limit(Vector2 _max) {
 		if (x > _max.x) {
 			x = _max.x;
@@ -19,14 +19,23 @@ public:
 		}
 	}
 
-	int x, y;
+	float Magnitude() const {
+		return sqrt(pow(x, 2) + pow(y, 2));
+	}
+
+	void Normalised() {
+		x /= Magnitude();
+		y /= Magnitude();
+	}
+
+	float x, y;
 };
 
 inline Vector2 Vector2::operator +(const Vector2& rhs) const {
 	return{ this->x + rhs.x, this->y + rhs.y };
 }
 
-inline Vector2 Vector2::operator*(const int rhs) const {
+inline Vector2 Vector2::operator*(const float rhs) const {
 	return{ this->x * rhs, this->y * rhs };
 }
 
