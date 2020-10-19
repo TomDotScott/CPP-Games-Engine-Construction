@@ -15,9 +15,25 @@ void Texture::Render(HAPISPACE::BYTE* _screen) const {
 	AlphaBlit(_screen);
 }
 
+void Texture::SetPosition(const Vector2 _pos) {
+	m_position = _pos;
+}
+
+std::pair<Vector2, Vector2> Texture::GetGlobalBounds() const {
+	return { m_position, {m_position.x + m_width, m_position.y + m_height} };
+}
+
+void Texture::FastBlit(HAPISPACE::BYTE* _screen) const {
+	for (int newY{ 0 }; newY < m_height; newY++) {
+		const int offset{ static_cast<int>((constants::k_screenWidth * (m_position.y + static_cast<float>(newY)) + m_position.x) * 4) };
+		const int textureOffset{ m_height * newY * 4 };
+		memcpy(_screen + offset, m_textureData + textureOffset, m_width * 4);
+	}
+}
+
 void Texture::AlphaBlit(HAPISPACE::BYTE* _screen) const {
 	HAPISPACE::BYTE* screenStart{
-		_screen + (static_cast<int>(m_position.x) * m_width + static_cast<int>(m_position.y)) * 4
+		_screen + (m_position.x * constants::k_screenWidth + m_position.y) * 4
 	};
 	HAPISPACE::BYTE* textureStart{ m_textureData };
 
@@ -30,7 +46,7 @@ void Texture::AlphaBlit(HAPISPACE::BYTE* _screen) const {
 			if (a > 0) {
 				// Fast blit if no alpha
 				if (a == 255) {
-					memcpy(screenStart, m_textureData, 4);
+					memcpy(screenStart, textureStart, 4);
 				} else {
 					// Blend with background
 					screenStart[0] = screenStart[0] + ((a * (textureStart[2] - screenStart[0])) >> 8);
