@@ -1,7 +1,7 @@
-#include "Game.h"
 #include <ctime>
 
 #include "Constants.h"
+#include "Game.h"
 
 using namespace HAPISPACE;
 

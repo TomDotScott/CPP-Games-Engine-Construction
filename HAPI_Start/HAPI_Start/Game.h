@@ -22,10 +22,10 @@ public:
 
 private:
 	HAPISPACE::BYTE* m_screen;
-	Texture* m_gameBackground;
-	Player* m_player1;
-	Player* m_player2;
-	Ball* m_pongBall;
+	Texture m_gameBackground;
+	Player m_player1;
+	Player m_player2;
+	Ball m_pongBall;
 	
 	bool GetKey(EKeyCode _keyCode);
 };

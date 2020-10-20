@@ -2,63 +2,55 @@
 #include "Constants.h"
 Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
-	m_gameBackground(),
-	m_player1(nullptr),
-	m_player2(nullptr),
-	m_pongBall(nullptr) {
-
-	m_gameBackground = new Texture("Data/pongBackground.tga", { 0, 0 });
-
-	m_player1 = new Player("Data/playerOne.tga", {
-		100,
-		constants::k_screenHeight / 2 },
-		ePlayerNumber::ePlayerOne
-		);
-	m_player2 = new Player("Data/playerTwo.tga", {
-		constants::k_screenWidth - 164,
-		constants::k_screenHeight / 2 },
-		ePlayerNumber::ePlayerTwo
-		);
-	m_pongBall = new Ball("Data/ball.tga",
-		{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
-		{static_cast<float>(constants::rand_range(1, 2))},
-		m_player1,
-		m_player2
-	);
-
+	m_gameBackground("Data/pongBackground.tga", { 0, 0 }),
+	m_player1("Data/playerOne.tga", 
+		{100,
+		constants::k_screenHeight / 2
+		},
+		ePlayerNumber::ePlayerOne),
+	m_player2("Data/playerTwo.tga", 
+		{constants::k_screenWidth - 164,
+			constants::k_screenHeight / 2
+		},
+		ePlayerNumber::ePlayerTwo),
+m_pongBall("Data/ball.tga",
+				{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
+				{ static_cast<float>(constants::rand_range(1, 2)) },
+				m_player1,
+				m_player2) {
 }
 
 void Game::Update() {
 	HandleInput();
-	m_player1->Update();
-	m_player2->Update();
-	m_pongBall->Update();
+	m_player1.Update();
+	m_player2.Update();
+	m_pongBall.Update();
 }
 
 void Game::Render() const {
 	ClearScreen();
-	m_gameBackground->Render(m_screen);
-	m_player1->Render(m_screen);
-	m_player2->Render(m_screen);
-	m_pongBall->Render(m_screen);
+	m_gameBackground.Render(m_screen);
+	m_player1.Render(m_screen);
+	m_player2.Render(m_screen);
+	m_pongBall.Render(m_screen);
 }
 
 void Game::HandleInput() {
 	// Player One Controls
 	if (GetKey(EKeyCode::W)) {
-		m_player1->SetDirection(eDirection::eUp);
+		m_player1.SetDirection(Vector2::UP);
 	} else if (GetKey(EKeyCode::S)) {
-		m_player1->SetDirection(eDirection::eDown);
+		m_player1.SetDirection(Vector2::DOWN);
 	} else {
-		m_player1->SetDirection(eDirection::eNone);
+		m_player1.SetDirection(Vector2::ZERO);
 	}
 	// Player Two Controls
 	if (GetKey(EKeyCode::UP)) {
-		m_player2->SetDirection(eDirection::eUp);
+		m_player2.SetDirection(Vector2::UP);
 	} else if (GetKey(EKeyCode::DOWN)) {
-		m_player2->SetDirection(eDirection::eDown);
+		m_player2.SetDirection(Vector2::DOWN);
 	} else {
-		m_player2->SetDirection(eDirection::eNone);
+		m_player2.SetDirection(Vector2::ZERO);
 	}
 }
 

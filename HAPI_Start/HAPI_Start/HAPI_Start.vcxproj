@@ -30,6 +30,7 @@
     </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />

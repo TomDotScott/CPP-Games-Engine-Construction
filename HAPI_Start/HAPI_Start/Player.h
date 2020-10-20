@@ -12,12 +12,13 @@ enum class eDirection {
 class Player final : public Entity {
 public:
 	Player(const std::string& _spriteFileName, Vector2 _startingPosition, ePlayerNumber _playerNumber);
+
 	void Update() override;
-	void SetDirection(eDirection _direction);
+	void SetDirection(Vector2 _direction);
 
 private:
 	ePlayerNumber m_playerNumber;
-	eDirection m_currentDirection;
+	Vector2 m_currentDirection;
 	
 	void Move();
 };

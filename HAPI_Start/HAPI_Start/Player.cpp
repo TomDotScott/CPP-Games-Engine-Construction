@@ -1,34 +1,28 @@
 ﻿#include "Player.h"
 
 Player::Player(const std::string& _spriteFileName, const Vector2 _startingPosition, const ePlayerNumber _playerNumber) :
-	Entity(_spriteFileName, _startingPosition, {0, 1}),
+	Entity(_spriteFileName, _startingPosition, { 0, 1 }),
 	m_playerNumber(_playerNumber),
-	m_currentDirection(eDirection::eNone) {
+	m_currentDirection(Vector2::ZERO) {
 }
 
 void Player::Update() {
 	Move();
 }
 
-void Player::SetDirection(const eDirection _direction) {
+void Player::SetDirection(const Vector2 _direction) {
 	m_currentDirection = _direction;
 }
 
 void Player::Move() {
-	switch (m_currentDirection) {
-	case eDirection::eNone: break;
-	case eDirection::eUp:
+	if (m_currentDirection == Vector2::UP) {
 		if (m_position.y > constants::k_borderWidth) {
 			m_position.y -= m_velocity.y;
 		}
-		break;
-	case eDirection::eDown:
+	} else if (m_currentDirection == Vector2::DOWN) {
 		if (m_position.y < constants::k_screenHeight - m_texture->GetSize().y - constants::k_borderWidth) {
 			m_position.y += m_velocity.y;
 		}
-		break;
-	default:
-		break;
 	}
 	SetPosition(m_position);
 }

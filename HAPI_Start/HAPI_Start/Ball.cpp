@@ -1,20 +1,20 @@
 ﻿#include "Ball.h"
 
-Ball::Ball(const std::string& _filename, const Vector2 _position, const Vector2 _velocity, Entity* _p1, Entity* _p2) :
+Ball::Ball(const std::string& _filename, const Vector2 _position, const Vector2 _velocity, Player& _p1, Player& _p2) :
 	Entity(_filename, _position, _velocity),
 	m_player1(_p1),
 	m_player2(_p2) {
 }
 
 void Ball::Update() {
-	if (CheckCollision(m_player1)) {
-		const float y = HitFactor(m_player1->GetPosition());
+	if (CheckCollision(&m_player1)) {
+		const float y = HitFactor(m_player1.GetPosition());
 		Vector2 direction(1, y);
 		direction.Normalised();
 		m_velocity = direction;
 	}
-	if (CheckCollision(m_player2)) {
-		const float y = HitFactor(m_player2->GetPosition());
+	if (CheckCollision(&m_player2)) {
+		const float y = HitFactor(m_player2.GetPosition());
 		Vector2 direction(-1, y);
 		direction.Normalised();
 		m_velocity = direction;

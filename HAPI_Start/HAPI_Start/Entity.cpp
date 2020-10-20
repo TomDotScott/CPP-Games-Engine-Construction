@@ -12,7 +12,7 @@ Entity::~Entity() {
 	delete m_texture;
 }
 
-void Entity::Render(HAPISPACE::BYTE* _screen) {
+void Entity::Render(HAPISPACE::BYTE* _screen) const{
 	m_texture->Render(_screen);
 }
 
@@ -30,8 +30,8 @@ bool Entity::CheckCollision(Entity* _other) const {
 	const auto bounds = this->m_texture->GetGlobalBounds();
 	const auto otherBounds = _other->m_texture->GetGlobalBounds();
 
-	return bounds.first.x < otherBounds.second.x&&
-		otherBounds.first.x < bounds.second.x&&
-		bounds.first.y < otherBounds.second.y&&
-		otherBounds.first.y < bounds.second.y;
+	return bounds.m_topLeft.x < otherBounds.m_bottomRight.x &&
+		otherBounds.m_topLeft.x < bounds.m_bottomRight.x &&
+		bounds.m_topLeft.y < otherBounds.m_bottomRight.y&&
+		otherBounds.m_topLeft.y < bounds.m_bottomRight.y;
 }

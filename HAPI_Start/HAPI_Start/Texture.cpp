@@ -24,8 +24,14 @@ Vector2 Texture::GetSize() const {
 	return{static_cast<float>(m_width), static_cast<float>(m_height)};
 }
 
-std::pair<Vector2, Vector2> Texture::GetGlobalBounds() const {
-	return { m_position, {m_position.x + m_width, m_position.y + m_height} };
+GlobalBounds Texture::GetGlobalBounds() const {
+	// return { m_position, {m_position.x + m_width, m_position.y + m_height} };
+	return {
+		m_position,
+		{ m_position.x + static_cast<float>(m_width), m_position.y },
+		{ m_position.x, m_position.y + static_cast<float>(m_height)},
+		{ m_position.x + static_cast<float>(m_width), m_position.y + static_cast<float>(m_height)}
+	};
 }
 
 void Texture::AlphaBlit(HAPISPACE::BYTE* _screen) const {

@@ -12,7 +12,7 @@ public:
 	virtual ~Entity();
 
 	virtual void Update() = 0;
-	virtual void Render(HAPISPACE::BYTE* _screen);
+	virtual void Render(HAPISPACE::BYTE* _screen) const;
 	Vector2 GetPosition() const;
 	void SetPosition(const Vector2 _newPos);
 	bool CheckCollision(Entity* _other) const;
