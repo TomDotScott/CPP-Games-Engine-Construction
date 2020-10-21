@@ -25,14 +25,22 @@ void Ball::Update() {
 		m_position.y > constants::k_screenHeight - constants::k_borderWidth - m_texture->GetSize().y) {
 		m_velocity.y *= -1;
 	}
-	// For now, check the x positions
+	//Reset if going off left or right sides
 	if (m_position.x < constants::k_borderWidth ||
 		m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_texture->GetSize().x) {
-		m_velocity.x *= -1;
+		Reset();
 	}
 
 	m_position = m_position + m_velocity;
 	SetPosition(m_position);
+}
+
+void Ball::Reset() {
+	SetPosition({ static_cast<float>(constants::k_screenWidth) / 2, static_cast<float>(constants::k_screenHeight) / 2 });
+	m_velocity.x = static_cast<float>(constants::rand_range(1, 3));
+	if (rand() % 2 == 0) {
+		m_velocity.x *= -1;
+	}
 }
 
 float Ball::HitFactor(Vector2 _playerPosition) {
