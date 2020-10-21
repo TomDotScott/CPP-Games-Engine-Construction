@@ -8,12 +8,25 @@ Texture::Texture(const std::string& _fileName, const Vector2 _position) :
 	m_position(_position) {
 	if (!HAPI.LoadTexture(_fileName, &m_textureData, m_width, m_height)) {
 		std::cout << "FILE : " << _fileName << " NOT FOUND" << std::endl;
+		const std::string message{ "The file: " + _fileName + " was not located. Check the file path or the filename." };
+		HAPI.UserMessage(message, "File not found");
+		m_width = 64;
+		m_height = 64;
 	}
 }
 
-void Texture::Render(HAPISPACE::BYTE* _screen) const
-{
-	AlphaBlit(_screen);
+void Texture::Render(HAPISPACE::BYTE* _screen) const {
+	if (m_textureData) {
+		AlphaBlit(_screen);
+	} else {
+		HAPISPACE::HAPI_TColour* horridPink = &HAPISPACE::HAPI_TColour::HORRID_PINK;
+		for (int x = static_cast<int>(m_position.x); x < (static_cast<int>(m_position.x + m_width)); x++) {
+			for (int y = static_cast<int>(m_position.y); y < (static_cast<int>(m_position.y + m_height)); y++) {
+				const int offset = (x + y * constants::k_screenWidth) * 4;
+				memcpy(_screen + offset, horridPink, 4);
+			}
+		}
+	}
 }
 
 void Texture::SetPosition(const Vector2 _pos) {
@@ -21,7 +34,7 @@ void Texture::SetPosition(const Vector2 _pos) {
 }
 
 Vector2 Texture::GetSize() const {
-	return{static_cast<float>(m_width), static_cast<float>(m_height)};
+	return{ static_cast<float>(m_width), static_cast<float>(m_height) };
 }
 
 GlobalBounds Texture::GetGlobalBounds() const {

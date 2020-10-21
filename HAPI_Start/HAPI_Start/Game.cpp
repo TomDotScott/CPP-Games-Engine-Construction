@@ -4,7 +4,7 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
 	m_gameScore(),
 	m_gameBackground("Data/pongBackground.tga", { 0, 0 }),
-	m_player1("Data/playerOne.tga",
+	m_player1("Data/payerOne.tga",
 		{ 100,
 		constants::k_screenHeight / 2 },
 		ePlayerNumber::ePlayerOne),
