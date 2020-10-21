@@ -2,22 +2,22 @@
 #include "Constants.h"
 Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
+	m_gameScore(),
 	m_gameBackground("Data/pongBackground.tga", { 0, 0 }),
-	m_player1("Data/playerOne.tga", 
-		{100,
-		constants::k_screenHeight / 2
-		},
+	m_player1("Data/playerOne.tga",
+		{ 100,
+		constants::k_screenHeight / 2 },
 		ePlayerNumber::ePlayerOne),
-	m_player2("Data/playerTwo.tga", 
-		{constants::k_screenWidth - 164,
-			constants::k_screenHeight / 2
-		},
+	m_player2("Data/playerTwo.tga",
+		{ constants::k_screenWidth - 164,
+			constants::k_screenHeight / 2 },
 		ePlayerNumber::ePlayerTwo),
-m_pongBall("Data/ball.tga",
-				{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
-				{ static_cast<float>(constants::rand_range(1, 2)) },
-				m_player1,
-				m_player2) {
+	m_pongBall("Data/ball.tga",
+		{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
+		{ static_cast<float>(constants::rand_range(1, 2)) },
+		m_player1,
+		m_player2,
+		m_gameScore) {
 }
 
 void Game::Update() {
@@ -30,6 +30,22 @@ void Game::Update() {
 void Game::Render() const {
 	ClearScreen();
 	m_gameBackground.Render(m_screen);
+
+	HAPI.RenderText(constants::k_screenWidth / 4,
+		constants::k_screenHeight / 2,
+		HAPISPACE::HAPI_TColour::WHITE,
+		std::to_string(m_gameScore.player1Score),
+		60,
+		HAPISPACE::eBold
+	);
+	HAPI.RenderText(constants::k_screenWidth - (constants::k_screenWidth / 4) - 60,
+		constants::k_screenHeight / 2,
+		HAPISPACE::HAPI_TColour::WHITE,
+		std::to_string(m_gameScore.player2Score),
+		60,
+		HAPISPACE::eBold
+	);
+
 	m_player1.Render(m_screen);
 	m_player2.Render(m_screen);
 	m_pongBall.Render(m_screen);

@@ -1,9 +1,11 @@
 ﻿#include "Ball.h"
 
-Ball::Ball(const std::string& _filename, const Vector2 _position, const Vector2 _velocity, Player& _p1, Player& _p2) :
+Ball::Ball(const std::string& _filename, const Vector2 _position, const Vector2 _velocity, Player& _p1,
+	Player& _p2, Score& _score) :
 	Entity(_filename, _position, _velocity),
 	m_player1(_p1),
-	m_player2(_p2) {
+	m_player2(_p2),
+	m_score(_score) {
 }
 
 void Ball::Update() {
@@ -20,14 +22,18 @@ void Ball::Update() {
 		m_velocity = direction;
 	}
 
-
 	if (m_position.y < constants::k_borderWidth ||
 		m_position.y > constants::k_screenHeight - constants::k_borderWidth - m_texture->GetSize().y) {
 		m_velocity.y *= -1;
 	}
+	
 	//Reset if going off left or right sides
-	if (m_position.x < constants::k_borderWidth ||
-		m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_texture->GetSize().x) {
+	if (m_position.x < constants::k_borderWidth) {
+		m_score.player2Score += 1;
+		Reset();
+	}
+	if (m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_texture->GetSize().x) {
+		m_score.player1Score += 1;
 		Reset();
 	}
 
