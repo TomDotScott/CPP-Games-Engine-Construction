@@ -11,7 +11,6 @@ public:
 	explicit Game(HAPISPACE::BYTE* _screen);
 	void Update();
 	void Render() const;
-	void HandleInput();
 	void ClearScreen(HAPISPACE::HAPI_TColour _col) const;
 	void ClearScreen() const;
 	void SetPixel(int _x, int _y, HAPISPACE::HAPI_TColour _colour) const;
@@ -26,6 +25,8 @@ private:
 	Ball m_pongBall;
 
 	bool GetKey(EKeyCode _keyCode);
+	void HandleKeyBoardInput();
+	void HandleControllerInput();
 };
 
 enum class EKeyCode {

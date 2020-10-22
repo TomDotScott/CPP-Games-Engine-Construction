@@ -4,7 +4,7 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 	m_screen(_screen),
 	m_gameScore(),
 	m_gameBackground("Data/pongBackground.tga", { 0, 0 }),
-	m_player1("Data/payerOne.tga",
+	m_player1("Data/playerOne.tga",
 		{ 100,
 		constants::k_screenHeight / 2 },
 		ePlayerNumber::ePlayerOne),
@@ -21,7 +21,8 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 }
 
 void Game::Update() {
-	HandleInput();
+	HandleKeyBoardInput();
+	HandleControllerInput();
 	m_player1.Update();
 	m_player2.Update();
 	m_pongBall.Update();
@@ -51,7 +52,7 @@ void Game::Render() const {
 	m_pongBall.Render(m_screen);
 }
 
-void Game::HandleInput() {
+void Game::HandleKeyBoardInput() {
 	// Player One Controls
 	if (GetKey(EKeyCode::W)) {
 		m_player1.SetDirection(Vector2::UP);
@@ -60,12 +61,28 @@ void Game::HandleInput() {
 	} else {
 		m_player1.SetDirection(Vector2::ZERO);
 	}
-	// Player Two Controls
+	// Player Two Controls	
 	if (GetKey(EKeyCode::UP)) {
 		m_player2.SetDirection(Vector2::UP);
 	} else if (GetKey(EKeyCode::DOWN)) {
 		m_player2.SetDirection(Vector2::DOWN);
 	} else {
+		m_player2.SetDirection(Vector2::ZERO);
+	}
+}
+
+void Game::HandleControllerInput() {
+	auto state = HAPI.GetControllerData(0);
+	Vector2 leftStickVector{ static_cast<float>(state.analogueButtons[2]), static_cast<float>(state.analogueButtons[3]) };
+	leftStickVector.Normalised();
+
+	if (leftStickVector.y > 0) {
+		m_player2.SetDirection(Vector2::UP);
+	}
+	else if (leftStickVector.y < 0) {
+		m_player2.SetDirection(Vector2::DOWN);
+	}
+	else {
 		m_player2.SetDirection(Vector2::ZERO);
 	}
 }
