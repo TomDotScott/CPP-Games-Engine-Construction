@@ -3,6 +3,9 @@
 #include <HAPI_lib.h>
 #include "Ball.h"
 #include "Player.h"
+constexpr float LEFT_THUMB_DEADZONE = 7849.f;
+constexpr float RIGHT_THUMB_DEADZONE = 8689.f;
+
 
 enum class EKeyCode;
 

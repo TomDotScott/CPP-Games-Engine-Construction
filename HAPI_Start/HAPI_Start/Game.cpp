@@ -73,17 +73,36 @@ void Game::HandleKeyBoardInput() {
 
 void Game::HandleControllerInput() {
 	auto state = HAPI.GetControllerData(0);
+	//Player One Controls 
 	Vector2 leftStickVector{ static_cast<float>(state.analogueButtons[2]), static_cast<float>(state.analogueButtons[3]) };
-	leftStickVector.Normalised();
+	if (leftStickVector.Magnitude() > LEFT_THUMB_DEADZONE) {
+		leftStickVector.Normalised();
 
-	if (leftStickVector.y > 0) {
-		m_player2.SetDirection(Vector2::UP);
+		if (leftStickVector.y > 0) {
+			m_player1.SetDirection(Vector2::UP);
+		}
+		else if (leftStickVector.y < 0) {
+			m_player1.SetDirection(Vector2::DOWN);
+		}
+		else {
+			m_player1.SetDirection(Vector2::ZERO);
+		}
 	}
-	else if (leftStickVector.y < 0) {
-		m_player2.SetDirection(Vector2::DOWN);
-	}
-	else {
-		m_player2.SetDirection(Vector2::ZERO);
+
+	//Player Two Controls 
+	Vector2 rightStickVector{ static_cast<float>(state.analogueButtons[4]), static_cast<float>(state.analogueButtons[5]) };
+	if (rightStickVector.Magnitude() > RIGHT_THUMB_DEADZONE) {
+		rightStickVector.Normalised();
+
+		if (rightStickVector.y > 0) {
+			m_player2.SetDirection(Vector2::UP);
+		}
+		else if (rightStickVector.y < 0) {
+			m_player2.SetDirection(Vector2::DOWN);
+		}
+		else {
+			m_player2.SetDirection(Vector2::ZERO);
+		}
 	}
 }
 
