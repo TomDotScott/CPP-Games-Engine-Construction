@@ -17,15 +17,25 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 		{ static_cast<float>(constants::rand_range(1, 2)) },
 		m_player1,
 		m_player2,
-		m_gameScore) {
+		m_gameScore),
+	m_gameClock(),
+	m_countDownTimer(3),
+	m_gameStarted(false) {
+	HAPI.UserMessage("Press SPACE to start :)", "Press SPACE to start :)");
 }
 
 void Game::Update() {
 	HandleKeyBoardInput();
 	HandleControllerInput();
-	m_player1.Update();
-	m_player2.Update();
-	m_pongBall.Update();
+	if (m_gameStarted) {
+		m_player1.Update();
+		m_player2.Update();
+		m_pongBall.Update();
+		if (m_pongBall.GetBallInPlay() == false) {
+			CountDown();
+		}
+	}
+	m_gameClock = clock();
 }
 
 void Game::Render() const {
@@ -33,26 +43,47 @@ void Game::Render() const {
 	m_gameBackground.Render(m_screen);
 
 	HAPI.RenderText(constants::k_screenWidth / 4,
-		constants::k_screenHeight / 2,
+		constants::k_screenHeight / 2 - 50,
 		HAPISPACE::HAPI_TColour::WHITE,
+		HAPISPACE::HAPI_TColour::BLACK,
+		3,
 		std::to_string(m_gameScore.player1Score),
-		60,
+		100,
 		HAPISPACE::eBold
 	);
-	HAPI.RenderText(constants::k_screenWidth - (constants::k_screenWidth / 4) - 60,
-		constants::k_screenHeight / 2,
+
+	HAPI.RenderText(constants::k_screenWidth - (constants::k_screenWidth / 4) - 100,
+		constants::k_screenHeight / 2 - 50,
 		HAPISPACE::HAPI_TColour::WHITE,
+		HAPISPACE::HAPI_TColour::BLACK,
+		3,
 		std::to_string(m_gameScore.player2Score),
-		60,
+		100,
 		HAPISPACE::eBold
 	);
 
 	m_player1.Render(m_screen);
 	m_player2.Render(m_screen);
 	m_pongBall.Render(m_screen);
+
+	// Only render the timer if we need to
+	if (m_pongBall.GetBallInPlay() == false) {
+		HAPI.RenderText((constants::k_screenWidth / 2) - (constants::k_screenHeight - 200) / 4,
+			(constants::k_screenHeight / 2) - ((constants::k_screenHeight - 200) / 2) - 50,
+			HAPISPACE::HAPI_TColour::WHITE,
+			HAPISPACE::HAPI_TColour::BLACK,
+			3,
+			std::to_string(static_cast<int>(m_countDownTimer)),
+			constants::k_screenHeight - 200,
+			HAPISPACE::eItalic
+		);
+	}
 }
 
 void Game::HandleKeyBoardInput() {
+	if (GetKey(EKeyCode::SPACE)) {
+		m_gameStarted = true;
+	}
 	// Player One Controls
 	if (GetKey(EKeyCode::W)) {
 		m_player1.SetDirection(Vector2::UP);
@@ -80,11 +111,9 @@ void Game::HandleControllerInput() {
 
 		if (leftStickVector.y > 0) {
 			m_player1.SetDirection(Vector2::UP);
-		}
-		else if (leftStickVector.y < 0) {
+		} else if (leftStickVector.y < 0) {
 			m_player1.SetDirection(Vector2::DOWN);
-		}
-		else {
+		} else {
 			m_player1.SetDirection(Vector2::ZERO);
 		}
 	}
@@ -96,11 +125,9 @@ void Game::HandleControllerInput() {
 
 		if (rightStickVector.y > 0) {
 			m_player2.SetDirection(Vector2::UP);
-		}
-		else if (rightStickVector.y < 0) {
+		} else if (rightStickVector.y < 0) {
 			m_player2.SetDirection(Vector2::DOWN);
-		}
-		else {
+		} else {
 			m_player2.SetDirection(Vector2::ZERO);
 		}
 	}
@@ -125,6 +152,18 @@ void Game::SetPixel(const int _x, const int _y, const HAPISPACE::HAPI_TColour _c
 
 void Game::SetPixel(const int _x, const int _y, const int _value) const {
 	m_screen[constants::k_screenWidth * _x + _y] = _value;
+}
+
+void Game::CountDown() {
+	if (m_countDownTimer > 0) {
+		const clock_t programTickCount = clock() - m_gameClock;
+		const float seconds = (1000.f / CLOCKS_PER_SEC) / 1000.f;
+		const float deltaTime = (programTickCount * seconds);
+		m_countDownTimer -= deltaTime;
+	} else {
+		m_pongBall.SetBallInPlay(true);
+		m_countDownTimer = 3.f;
+	}
 }
 
 bool Game::GetKey(const EKeyCode _keyCode) {
