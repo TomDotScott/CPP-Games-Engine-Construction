@@ -2,7 +2,7 @@
 
 Ball::Ball(const std::string& _filename, const Vector2 _position, const Vector2 _velocity, Player& _p1,
 	Player& _p2, Score& _score) :
-	Entity(_filename, _position, _velocity),
+	Entity(_filename, _position, _velocity, {0.1f, 0.1f}),
 	m_player1(_p1),
 	m_player2(_p2),
 	m_score(_score),
@@ -14,8 +14,7 @@ void Ball::Update() {
 		Bounce();
 		Collide();
 		ScorePlayers();
-		m_position = m_position + m_velocity;
-		SetPosition(m_position);
+		Move();
 	}
 }
 
@@ -25,6 +24,10 @@ void Ball::SetBallInPlay(const bool _val) {
 
 bool Ball::GetBallInPlay() const {
 	return m_isBallInPlay;
+}
+
+void Ball::Move() {
+	SetPosition(m_position + m_velocity);
 }
 
 void Ball::Collide() {
@@ -40,6 +43,8 @@ void Ball::Collide() {
 		direction.Normalised();
 		m_velocity = direction;
 	}
+
+	m_velocity.Limit({ m_velocity.x, 3.f });
 }
 
 void Ball::Reset() {

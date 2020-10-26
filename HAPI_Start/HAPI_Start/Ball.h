@@ -18,6 +18,7 @@ private:
 	Score& m_score;
 	bool m_isBallInPlay;
 
+	void Move();
 	void Collide();
 	void Reset();
 	void ScorePlayers();

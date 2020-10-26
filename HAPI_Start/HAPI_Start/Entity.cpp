@@ -1,10 +1,11 @@
 ﻿#include "Entity.h"
 
-Entity::Entity(const std::string& _fileName, const Vector2 _position, const Vector2 _velocity) :
-	m_texture(nullptr),
+Entity::Entity(const std::string& _fileName, const Vector2 _position, const Vector2 _velocity, const Vector2 _acceleration) :
+	m_texture(),
 	m_position(_position),
-	m_velocity(_velocity) {
-
+	m_velocity(_velocity),
+	m_acceleration(_acceleration),
+	m_physicsClock(){
 	m_texture = new Texture(_fileName, m_position);
 }
 
