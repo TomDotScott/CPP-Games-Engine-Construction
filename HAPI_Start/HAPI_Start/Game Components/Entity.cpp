@@ -1,15 +1,15 @@
 ﻿#include "Entity.h"
 #include "../Graphics/Graphics.h"
 
-Entity::Entity(const std::string& _fileName, std::string _textureIdentifier, const Vector2 _position, const Vector2 _velocity, const Vector2 _acceleration) :
-	m_textureIdentifier(std::move(_textureIdentifier)),
+Entity::Entity(const std::string& fileName, std::string textureIdentifier, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
+	m_textureIdentifier(std::move(textureIdentifier)),
 	m_size(64, 64),
-	m_position(_position),
-	m_velocity(_velocity),
-	m_acceleration(_acceleration),
+	m_position(position),
+	m_velocity(velocity),
+	m_acceleration(acceleration),
 	m_physicsClock() {
-	if (!Graphics::GetInstance().CreateTexture(_fileName, m_textureIdentifier)) {
-		const std::string message{ "The file: " + _fileName + " was not located. Check the file path or the filename." };
+	if (!Graphics::GetInstance().CreateTexture(fileName, m_textureIdentifier)) {
+		const std::string message{ "The file: " + fileName + " was not located. Check the file path or the filename." };
 		HAPI.UserMessage(message, "File not found");
 	}
 }
@@ -22,13 +22,13 @@ Vector2 Entity::GetPosition() const {
 	return m_position;
 }
 
-void Entity::SetPosition(const Vector2 _newPos) {
-	m_position = _newPos;
+void Entity::SetPosition(const Vector2 newPos) {
+	m_position = newPos;
 }
 
-bool Entity::CheckCollision(Entity* _other) const {
+bool Entity::CheckCollision(Entity* other) const {
 	const auto bounds = this->GetGlobalBounds();
-	const auto otherBounds = _other->GetGlobalBounds();
+	const auto otherBounds = other->GetGlobalBounds();
 
 	return bounds.m_topLeft.x < otherBounds.m_bottomRight.x&&
 		otherBounds.m_topLeft.x < bounds.m_bottomRight.x&&

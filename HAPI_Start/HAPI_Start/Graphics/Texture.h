@@ -7,12 +7,12 @@ public:
 	Texture();
 	~Texture();
 	bool Initialise(const std::string& fileName);
-	void Render(HAPISPACE::BYTE* _screen, Vector2 _position) const;
+	void Render(HAPISPACE::BYTE* screen, Vector2 position) const;
 	Vector2 GetSize() const;
-	
+
 private:
 	HAPISPACE::BYTE* m_textureData;
 	Vector2 m_size;
 
-	void AlphaBlit(HAPISPACE::BYTE* _screen, Vector2 _position) const;
+	void AlphaBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
 };

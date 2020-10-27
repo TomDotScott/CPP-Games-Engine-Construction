@@ -27,9 +27,9 @@ Graphics::~Graphics() {
 	delete m_instance;
 }
 
-void Graphics::ClearScreen(HAPISPACE::HAPI_TColour _col) const {
+void Graphics::ClearScreen(HAPISPACE::HAPI_TColour col) const {
 	for (int i = 0; i < constants::k_screenWidth * constants::k_screenHeight; i++) {
-		memcpy(m_screen + 4 * i, &_col, 4);
+		memcpy(m_screen + 4 * i, &col, 4);
 	}
 }
 
@@ -37,15 +37,15 @@ void Graphics::ClearScreen() const {
 	memset(m_screen, 0, static_cast<size_t>(constants::k_screenWidth * constants::k_screenHeight * 4));
 }
 
-void Graphics::SetPixel(const int _x, const int _y, const HAPISPACE::HAPI_TColour _colour) const {
-	m_screen[constants::k_screenWidth * _x + _y] = _colour.red;
-	m_screen[constants::k_screenWidth * _x + _y + 1] = _colour.green;
-	m_screen[constants::k_screenWidth * _x + _y + 2] = _colour.blue;
-	m_screen[constants::k_screenWidth * _x + _y + 3] = _colour.alpha;
+void Graphics::SetPixel(const int x, const int y, const HAPISPACE::HAPI_TColour colour) const {
+	m_screen[constants::k_screenWidth * x + y] = colour.red;
+	m_screen[constants::k_screenWidth * x + y + 1] = colour.green;
+	m_screen[constants::k_screenWidth * x + y + 2] = colour.blue;
+	m_screen[constants::k_screenWidth * x + y + 3] = colour.alpha;
 }
 
-void Graphics::SetPixel(const int _x, const int _y, const int _value) const {
-	m_screen[constants::k_screenWidth * _x + _y] = _value;
+void Graphics::SetPixel(const int x, const int y, const int value) const {
+	m_screen[constants::k_screenWidth * x + y] = value;
 }
 
 
@@ -59,10 +59,10 @@ bool Graphics::CreateTexture(const std::string& filename, const std::string& nam
 	return true;
 }
 
-void Graphics::DrawTexture(const std::string& _name, const Vector2 _position) {
-	if (!m_textureMap.at(_name)) {
-		HAPI.UserMessage("Error: Can't draw the sprite " + _name + "\nCheck the Spelling and try again.", "Error :(");
+void Graphics::DrawTexture(const std::string& name, const Vector2 position) {
+	if (!m_textureMap.at(name)) {
+		HAPI.UserMessage("Error: Can't draw the sprite " + name + "\nCheck the Spelling and try again.", "Error :(");
 		return;
 	}
-	m_textureMap.at(_name)->Render(m_screen, _position);
+	m_textureMap.at(name)->Render(m_screen, position);
 }

@@ -1,7 +1,7 @@
 ﻿#include "Player.h"
 
-Player::Player(const std::string& _textureFileName, const std::string& _textureIdentifier, const Vector2 _startingPosition) :
-	Entity(_textureFileName, _textureIdentifier, _startingPosition, { 0, 1 }),
+Player::Player(const std::string& textureFileName, const std::string& textureIdentifier, const Vector2 startingPosition) :
+	Entity(textureFileName, textureIdentifier, startingPosition, { 0, 1 }),
 	m_currentDirection(Vector2::ZERO) {
 }
 
@@ -9,8 +9,8 @@ void Player::Update() {
 	Move();
 }
 
-void Player::SetDirection(const Vector2 _direction) {
-	m_currentDirection = _direction;
+void Player::SetDirection(const Vector2 direction) {
+	m_currentDirection = direction;
 }
 
 void Player::Move() {

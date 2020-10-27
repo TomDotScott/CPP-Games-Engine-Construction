@@ -21,15 +21,15 @@ bool Texture::Initialise(const std::string& fileName) {
 	return true;
 }
 
-void Texture::Render(HAPISPACE::BYTE* _screen, const Vector2 _position) const {
+void Texture::Render(HAPISPACE::BYTE* screen, const Vector2 position) const {
 	if (m_textureData) {
-		AlphaBlit(_screen, _position);
+		AlphaBlit(screen, position);
 	} else {
 		HAPISPACE::HAPI_TColour* horridPink = &HAPISPACE::HAPI_TColour::HORRID_PINK;
-		for (int x = static_cast<int>(_position.x); x < (static_cast<int>(_position.x + m_size.x)); x++) {
-			for (int y = static_cast<int>(_position.y); y < (static_cast<int>(_position.y + m_size.y)); y++) {
+		for (int x = static_cast<int>(position.x); x < (static_cast<int>(position.x + m_size.x)); x++) {
+			for (int y = static_cast<int>(position.y); y < (static_cast<int>(position.y + m_size.y)); y++) {
 				const int offset = (x + y * constants::k_screenWidth) * 4;
-				memcpy(_screen + offset, horridPink, 4);
+				memcpy(screen + offset, horridPink, 4);
 			}
 		}
 	}
@@ -39,9 +39,9 @@ Vector2 Texture::GetSize() const {
 	return{ m_size };
 }
 
-void Texture::AlphaBlit(HAPISPACE::BYTE* _screen, const Vector2 _position) const {
+void Texture::AlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
 	HAPISPACE::BYTE* screenStart{
-		_screen + (static_cast<int>(_position.y) * constants::k_screenWidth + static_cast<int>(_position.x)) * 4
+		screen + (static_cast<int>(position.y) * constants::k_screenWidth + static_cast<int>(position.x)) * 4
 	};
 	HAPISPACE::BYTE* textureStart{ m_textureData };
 

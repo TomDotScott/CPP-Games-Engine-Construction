@@ -11,7 +11,7 @@ Game::Game() :
 			static_cast<float>(constants::k_screenHeight) / 2 }),
 	m_pongBall("Data/ball.tga",
 		"Ball",
-		{static_cast<float>(constants::k_screenWidth) / 2, static_cast<float>(constants::k_screenHeight) / 2 },
+		{ static_cast<float>(constants::k_screenWidth) / 2, static_cast<float>(constants::k_screenHeight) / 2 },
 		{ static_cast<float>(constants::rand_range(1, 2)) },
 		m_player1,
 		m_player2,
@@ -38,7 +38,7 @@ void Game::Update() {
 }
 
 void Game::Render() const {
-	Graphics::GetInstance().ClearScreen();	
+	Graphics::GetInstance().ClearScreen();
 	Graphics::GetInstance().DrawTexture("Background", { 0, 0 });
 
 	HAPI.RenderText(constants::k_screenWidth / 4,
@@ -144,6 +144,6 @@ void Game::CountDown() {
 	}
 }
 
-bool Game::GetKey(const EKeyCode _keyCode) {
-	return HAPI.GetKeyboardData().scanCode[static_cast<int>(_keyCode)] ? true : false;
+bool Game::GetKey(const EKeyCode keyCode) {
+	return HAPI.GetKeyboardData().scanCode[static_cast<int>(keyCode)] ? true : false;
 }

@@ -1,11 +1,11 @@
 ﻿#include "Ball.h"
 
-Ball::Ball(const std::string& _filename, const std::string& _textureIdentifier, const Vector2 _position, const Vector2 _velocity, Player& _p1,
-	Player& _p2, Score& _score) :
-	Entity(_filename, _textureIdentifier, _position, _velocity, {0.1f, 0.1f}),
-	m_player1(_p1),
-	m_player2(_p2),
-	m_score(_score),
+Ball::Ball(const std::string& filename, const std::string& textureIdentifier, const Vector2 position, const Vector2 velocity, Player& p1,
+	Player& p2, Score& score) :
+	Entity(filename, textureIdentifier, position, velocity, { 0.1f, 0.1f }),
+	m_player1(p1),
+	m_player2(p2),
+	m_score(score),
 	m_isBallInPlay(false) {
 }
 
@@ -75,11 +75,11 @@ void Ball::Bounce() {
 	}
 }
 
-float Ball::HitFactor(const Vector2 _playerPosition) const {
+float Ball::HitFactor(const Vector2 playerPosition) const {
 	// ||  1 <- at the top of the racket
 	// ||
 	// ||  0 <- at the middle of the racket
 	// ||
 	// || -1 <- at the bottom of the racket
-	return(m_position.y - _playerPosition.y) / m_size.y;
+	return(m_position.y - playerPosition.y) / m_size.y;
 }

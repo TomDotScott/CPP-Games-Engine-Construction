@@ -6,13 +6,13 @@ struct Score;
 
 class Ball final : public Entity {
 public:
-	explicit Ball(const std::string& _filename, 
-		const std::string& _textureIdentifier, 
-		const Vector2 _position, 
-		Vector2 _velocity, 
-		Player& _p1, 
-		Player& _p2, 
-		Score& _score
+	explicit Ball(const std::string& filename, 
+		const std::string& textureIdentifier, 
+		const Vector2 position, 
+		Vector2 velocity, 
+		Player& p1, 
+		Player& p2, 
+		Score& score
 	);
 	
 	void Update() override;
@@ -32,7 +32,7 @@ private:
 	void ScorePlayers();
 	void Bounce();
 	
-	float HitFactor(Vector2 _playerPosition) const;
+	float HitFactor(Vector2 playerPosition) const;
 };
 
 struct Score {

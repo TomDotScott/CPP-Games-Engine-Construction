@@ -21,7 +21,7 @@ private:
 	bool m_gameStarted;
 
 	void CountDown();
-	bool GetKey(EKeyCode _keyCode);
+	static bool GetKey(EKeyCode keyCode);
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 };
