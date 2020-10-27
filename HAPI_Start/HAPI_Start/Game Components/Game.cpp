@@ -1,19 +1,17 @@
 #include "Game.h"
-#include "Constants.h"
-Game::Game(HAPISPACE::BYTE* _screen) :
-	m_screen(_screen),
+#include "../Graphics/Graphics.h"
+Game::Game() :
 	m_gameScore(),
-	m_gameBackground("Data/pongBackground.tga", { 0, 0 }),
 	m_player1("Data/playerOne.tga",
-		{ 100,
-		constants::k_screenHeight / 2 },
-		ePlayerNumber::ePlayerOne),
+		"Player1",
+		{ 100.f, static_cast<float>(constants::k_screenHeight) / 2 }),
 	m_player2("Data/playerTwo.tga",
-		{ constants::k_screenWidth - 164,
-			constants::k_screenHeight / 2 },
-		ePlayerNumber::ePlayerTwo),
+		"Player2",
+		{ constants::k_screenWidth - 164.f,
+			static_cast<float>(constants::k_screenHeight) / 2 }),
 	m_pongBall("Data/ball.tga",
-		{ constants::k_screenWidth / 2, constants::k_screenHeight / 2 },
+		"Ball",
+		{static_cast<float>(constants::k_screenWidth) / 2, static_cast<float>(constants::k_screenHeight) / 2 },
 		{ static_cast<float>(constants::rand_range(1, 2)) },
 		m_player1,
 		m_player2,
@@ -21,6 +19,7 @@ Game::Game(HAPISPACE::BYTE* _screen) :
 	m_gameClock(),
 	m_countDownTimer(3),
 	m_gameStarted(false) {
+	Graphics::GetInstance().CreateTexture("Data/pongBackground.tga", "Background");
 	HAPI.UserMessage("Press SPACE to start :)", "Press SPACE to start :)");
 }
 
@@ -39,8 +38,8 @@ void Game::Update() {
 }
 
 void Game::Render() const {
-	ClearScreen();
-	m_gameBackground.Render(m_screen);
+	Graphics::GetInstance().ClearScreen();	
+	Graphics::GetInstance().DrawTexture("Background", { 0, 0 });
 
 	HAPI.RenderText(constants::k_screenWidth / 4,
 		constants::k_screenHeight / 2 - 50,
@@ -62,9 +61,9 @@ void Game::Render() const {
 		HAPISPACE::eBold
 	);
 
-	m_player1.Render(m_screen);
-	m_player2.Render(m_screen);
-	m_pongBall.Render(m_screen);
+	m_player1.Render();
+	m_player2.Render();
+	m_pongBall.Render();
 
 	// Only render the timer if we need to
 	if (m_pongBall.GetBallInPlay() == false) {
@@ -106,7 +105,7 @@ void Game::HandleControllerInput() {
 	auto state = HAPI.GetControllerData(0);
 	//Player One Controls 
 	Vector2 leftStickVector{ static_cast<float>(state.analogueButtons[2]), static_cast<float>(state.analogueButtons[3]) };
-	if (leftStickVector.Magnitude() > LEFT_THUMB_DEADZONE) {
+	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
 		leftStickVector.Normalised();
 
 		if (leftStickVector.y > 0) {
@@ -120,7 +119,7 @@ void Game::HandleControllerInput() {
 
 	//Player Two Controls 
 	Vector2 rightStickVector{ static_cast<float>(state.analogueButtons[4]), static_cast<float>(state.analogueButtons[5]) };
-	if (rightStickVector.Magnitude() > RIGHT_THUMB_DEADZONE) {
+	if (rightStickVector.Magnitude() > constants::k_rightThumbDeadzone) {
 		rightStickVector.Normalised();
 
 		if (rightStickVector.y > 0) {
@@ -131,27 +130,6 @@ void Game::HandleControllerInput() {
 			m_player2.SetDirection(Vector2::ZERO);
 		}
 	}
-}
-
-void Game::ClearScreen(HAPISPACE::HAPI_TColour _col) const {
-	for (int i = 0; i < constants::k_screenWidth * constants::k_screenHeight; i++) {
-		memcpy(m_screen + 4 * i, &_col, 4);
-	}
-}
-
-void Game::ClearScreen() const {
-	memset(m_screen, 0, static_cast<size_t>(constants::k_screenWidth * constants::k_screenHeight * 4));
-}
-
-void Game::SetPixel(const int _x, const int _y, const HAPISPACE::HAPI_TColour _colour) const {
-	m_screen[constants::k_screenWidth * _x + _y] = _colour.red;
-	m_screen[constants::k_screenWidth * _x + _y + 1] = _colour.green;
-	m_screen[constants::k_screenWidth * _x + _y + 2] = _colour.blue;
-	m_screen[constants::k_screenWidth * _x + _y + 3] = _colour.alpha;
-}
-
-void Game::SetPixel(const int _x, const int _y, const int _value) const {
-	m_screen[constants::k_screenWidth * _x + _y] = _value;
 }
 
 void Game::CountDown() {

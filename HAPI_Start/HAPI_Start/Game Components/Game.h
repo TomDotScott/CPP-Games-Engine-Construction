@@ -1,35 +1,25 @@
 #pragma once
 #include <ctime>
-#include <HAPI_lib.h>
 #include "Ball.h"
 #include "Player.h"
-constexpr float LEFT_THUMB_DEADZONE = 7849.f;
-constexpr float RIGHT_THUMB_DEADZONE = 8689.f;
-
 
 enum class EKeyCode;
 
 class Game {
 public:
-	explicit Game(HAPISPACE::BYTE* _screen);
+	Game();
 	void Update();
 	void Render() const;
-	void ClearScreen(HAPISPACE::HAPI_TColour _col) const;
-	void ClearScreen() const;
-	void SetPixel(int _x, int _y, HAPISPACE::HAPI_TColour _colour) const;
-	void SetPixel(int _x, int _y, int _value) const;
 
 private:
-	HAPISPACE::BYTE* m_screen;
 	Score m_gameScore;
-	Texture m_gameBackground;
 	Player m_player1;
 	Player m_player2;
 	Ball m_pongBall;
 	clock_t m_gameClock;
 	float m_countDownTimer;
 	bool m_gameStarted;
-	
+
 	void CountDown();
 	bool GetKey(EKeyCode _keyCode);
 	void HandleKeyBoardInput();

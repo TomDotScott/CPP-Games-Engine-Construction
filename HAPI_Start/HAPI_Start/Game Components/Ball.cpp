@@ -1,8 +1,8 @@
 ﻿#include "Ball.h"
 
-Ball::Ball(const std::string& _filename, const Vector2 _position, const Vector2 _velocity, Player& _p1,
+Ball::Ball(const std::string& _filename, const std::string& _textureIdentifier, const Vector2 _position, const Vector2 _velocity, Player& _p1,
 	Player& _p2, Score& _score) :
-	Entity(_filename, _position, _velocity, {0.1f, 0.1f}),
+	Entity(_filename, _textureIdentifier, _position, _velocity, {0.1f, 0.1f}),
 	m_player1(_p1),
 	m_player2(_p2),
 	m_score(_score),
@@ -62,7 +62,7 @@ void Ball::ScorePlayers() {
 		m_score.player2Score += 1;
 		Reset();
 	}
-	if (m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_texture->GetSize().x) {
+	if (m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_size.x) {
 		m_score.player1Score += 1;
 		Reset();
 	}
@@ -70,16 +70,16 @@ void Ball::ScorePlayers() {
 
 void Ball::Bounce() {
 	if (m_position.y < constants::k_borderWidth ||
-		m_position.y > constants::k_screenHeight - constants::k_borderWidth - m_texture->GetSize().y) {
+		m_position.y > constants::k_screenHeight - constants::k_borderWidth - m_size.y) {
 		m_velocity.y *= -1;
 	}
 }
 
-float Ball::HitFactor(Vector2 _playerPosition) const {
+float Ball::HitFactor(const Vector2 _playerPosition) const {
 	// ||  1 <- at the top of the racket
 	// ||
 	// ||  0 <- at the middle of the racket
 	// ||
 	// || -1 <- at the bottom of the racket
-	return(m_position.y - _playerPosition.y) / m_texture->GetSize().y;
+	return(m_position.y - _playerPosition.y) / m_size.y;
 }

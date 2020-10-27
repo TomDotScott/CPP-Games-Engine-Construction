@@ -6,7 +6,15 @@ struct Score;
 
 class Ball final : public Entity {
 public:
-	explicit Ball(const std::string& _filename, const Vector2 _position, Vector2 _velocity, Player& _p1, Player& _p2, Score& _score);
+	explicit Ball(const std::string& _filename, 
+		const std::string& _textureIdentifier, 
+		const Vector2 _position, 
+		Vector2 _velocity, 
+		Player& _p1, 
+		Player& _p2, 
+		Score& _score
+	);
+	
 	void Update() override;
 	
 	void SetBallInPlay(bool _val);
