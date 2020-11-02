@@ -1,5 +1,6 @@
 #pragma once
 #include <ctime>
+#include <HAPI_lib.h>
 #include "Ball.h"
 #include "Player.h"
 
@@ -12,6 +13,8 @@ public:
 	void Render() const;
 
 private:
+	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
+	const HAPISPACE::HAPI_TControllerData& m_controllerData;
 	Score m_gameScore;
 	Player m_player1;
 	Player m_player2;
@@ -21,7 +24,7 @@ private:
 	bool m_gameStarted;
 
 	void CountDown();
-	static bool GetKey(EKeyCode keyCode);
+	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 };

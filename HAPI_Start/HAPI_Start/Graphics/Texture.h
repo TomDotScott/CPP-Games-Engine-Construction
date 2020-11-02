@@ -15,4 +15,5 @@ private:
 	Vector2 m_size;
 
 	void AlphaBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
+	void ClipBlit(HAPISPACE::BYTE* screen, Vector2 position);
 };

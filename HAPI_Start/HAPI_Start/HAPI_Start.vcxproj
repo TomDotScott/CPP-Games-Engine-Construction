@@ -31,11 +31,13 @@
     </ClCompile>
     <ClCompile Include="Game Components\Player.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Utilities\BoundsRectangle.cpp" />
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Design Patterns\Singleton.h" />
     <ClInclude Include="Game Components\Ball.h" />
+    <ClInclude Include="Utilities\BoundsRectangle.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entity.h" />
     <ClInclude Include="Game Components\Game.h" />

@@ -27,16 +27,10 @@ void Entity::SetPosition(const Vector2 newPos) {
 }
 
 bool Entity::CheckCollision(Entity* other) const {
-	const auto bounds = this->GetGlobalBounds();
-	const auto otherBounds = other->GetGlobalBounds();
-
-	return bounds.m_topLeft.x < otherBounds.m_bottomRight.x&&
-		otherBounds.m_topLeft.x < bounds.m_bottomRight.x&&
-		bounds.m_topLeft.y < otherBounds.m_bottomRight.y&&
-		otherBounds.m_topLeft.y < bounds.m_bottomRight.y;
+	return (GetGlobalBounds().Overlapping(other->GetGlobalBounds()));
 }
 
-GlobalBounds Entity::GetGlobalBounds() const {
+BoundsRectangle Entity::GetGlobalBounds() const {
 	return {
 		m_position,
 		{ m_position.x + static_cast<float>(m_size.x), m_position.y },

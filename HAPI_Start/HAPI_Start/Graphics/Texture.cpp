@@ -68,3 +68,7 @@ void Texture::AlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
 		screenStart += increment;
 	}
 }
+
+void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) {
+	
+}

@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "../Graphics/Graphics.h"
 Game::Game() :
+	m_keyboardData(HAPI.GetKeyboardData()),
+	m_controllerData(HAPI.GetControllerData(0)),
 	m_gameScore(),
 	m_player1("Data/playerOne.tga",
 		"Player1",
@@ -102,9 +104,8 @@ void Game::HandleKeyBoardInput() {
 }
 
 void Game::HandleControllerInput() {
-	auto state = HAPI.GetControllerData(0);
 	//Player One Controls 
-	Vector2 leftStickVector{ static_cast<float>(state.analogueButtons[2]), static_cast<float>(state.analogueButtons[3]) };
+	Vector2 leftStickVector{ static_cast<float>(m_controllerData.analogueButtons[2]), static_cast<float>(m_controllerData.analogueButtons[3]) };
 	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
 		leftStickVector.Normalised();
 
@@ -118,7 +119,7 @@ void Game::HandleControllerInput() {
 	}
 
 	//Player Two Controls 
-	Vector2 rightStickVector{ static_cast<float>(state.analogueButtons[4]), static_cast<float>(state.analogueButtons[5]) };
+	Vector2 rightStickVector{ static_cast<float>(m_controllerData.analogueButtons[4]), static_cast<float>(m_controllerData.analogueButtons[5]) };
 	if (rightStickVector.Magnitude() > constants::k_rightThumbDeadzone) {
 		rightStickVector.Normalised();
 
@@ -144,6 +145,6 @@ void Game::CountDown() {
 	}
 }
 
-bool Game::GetKey(const EKeyCode keyCode) {
-	return HAPI.GetKeyboardData().scanCode[static_cast<int>(keyCode)] ? true : false;
+bool Game::GetKey(const EKeyCode keyCode) const {
+	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
 }
