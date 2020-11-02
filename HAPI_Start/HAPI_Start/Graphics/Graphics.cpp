@@ -1,16 +1,7 @@
 ﻿#include "Graphics.h"
 #include "../Utilities/Constants.h"
 
-Graphics* Graphics::m_instance{ nullptr };
-
-Graphics& Graphics::GetInstance() {
-	if (m_instance == nullptr) {
-		m_instance = new Graphics();
-	}
-	return *m_instance;
-}
-
-Graphics::Graphics() : m_screen(), m_textureMap() {
+Graphics::Graphics() : m_screen(), m_textureBuffer() {
 	int width = constants::k_screenWidth;
 	int height = constants::k_screenHeight;
 
@@ -21,10 +12,9 @@ Graphics::Graphics() : m_screen(), m_textureMap() {
 }
 
 Graphics::~Graphics() {
-	for (auto& texture : m_textureMap) {
+	for (auto& texture : m_textureBuffer) {
 		delete texture.second;
 	}
-	delete m_instance;
 }
 
 void Graphics::ClearScreen(HAPISPACE::HAPI_TColour col) const {
@@ -55,14 +45,14 @@ bool Graphics::CreateTexture(const std::string& filename, const std::string& nam
 		delete newSprite;
 		return false;
 	}
-	m_textureMap[name] = newSprite;
+	m_textureBuffer[name] = newSprite;
 	return true;
 }
 
 void Graphics::DrawTexture(const std::string& name, const Vector2 position) {
-	if (!m_textureMap.at(name)) {
+	if (!m_textureBuffer.at(name)) {
 		HAPI.UserMessage("Error: Can't draw the sprite " + name + "\nCheck the Spelling and try again.", "Error :(");
 		return;
 	}
-	m_textureMap.at(name)->Render(m_screen, position);
+	m_textureBuffer.at(name)->Render(m_screen, position);
 }

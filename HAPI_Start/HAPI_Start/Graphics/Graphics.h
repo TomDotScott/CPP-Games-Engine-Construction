@@ -1,13 +1,12 @@
 ﻿#pragma once
 #include <HAPI_lib.h>
 #include <unordered_map>
+#include "../Design Patterns/Singleton.h"
 #include "Texture.h"
 
-class Graphics {
+class Graphics : public Singleton<Graphics> {
+	friend class Singleton<Graphics>;
 public:
-	~Graphics();
-	static Graphics& GetInstance();
-
 	void ClearScreen(HAPISPACE::HAPI_TColour col) const;
 	void ClearScreen() const;
 
@@ -19,9 +18,8 @@ public:
 
 private:
 	HAPISPACE::BYTE* m_screen;
-
-	std::unordered_map<std::string, Texture*> m_textureMap;
-	static Graphics* m_instance;
+	std::unordered_map<std::string, Texture*> m_textureBuffer;
 
 	Graphics();
+	~Graphics();
 };
