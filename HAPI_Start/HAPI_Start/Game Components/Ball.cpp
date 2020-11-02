@@ -1,5 +1,5 @@
 ﻿#include "Ball.h"
-
+#include <iostream>
 Ball::Ball(const std::string& filename, const std::string& textureIdentifier, const Vector2 position, const Vector2 velocity, Player& p1,
 	Player& p2, Score& score) :
 	Entity(filename, textureIdentifier, position, velocity, { 0.1f, 0.1f }),
@@ -18,8 +18,8 @@ void Ball::Update() {
 	}
 }
 
-void Ball::SetBallInPlay(const bool _val) {
-	m_isBallInPlay = _val;
+void Ball::SetBallInPlay(const bool val) {
+	m_isBallInPlay = val;
 }
 
 bool Ball::GetBallInPlay() const {
@@ -60,11 +60,11 @@ void Ball::ScorePlayers() {
 	//Reset if going off left or right sides
 	if (m_position.x < constants::k_borderWidth) {
 		m_score.player2Score += 1;
-		Reset();
+		// Reset();
 	}
 	if (m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_size.x) {
 		m_score.player1Score += 1;
-		Reset();
+		// Reset();
 	}
 }
 

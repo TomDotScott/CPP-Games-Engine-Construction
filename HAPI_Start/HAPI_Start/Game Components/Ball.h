@@ -17,7 +17,7 @@ public:
 	
 	void Update() override;
 	
-	void SetBallInPlay(bool _val);
+	void SetBallInPlay(bool val);
 	bool GetBallInPlay() const;
 	
 private:

@@ -33,8 +33,6 @@ bool Entity::CheckCollision(Entity* other) const {
 BoundsRectangle Entity::GetGlobalBounds() const {
 	return {
 		m_position,
-		{ m_position.x + static_cast<float>(m_size.x), m_position.y },
-		{ m_position.x, m_position.y + static_cast<float>(m_size.y)},
 		{ m_position.x + static_cast<float>(m_size.x), m_position.y + static_cast<float>(m_size.y)}
 	};
 }

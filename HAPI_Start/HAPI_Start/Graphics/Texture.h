@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <HAPI_lib.h>
+#include "../Utilities/BoundsRectangle.h"
 #include "../Utilities/Vector.h"
 
 class Texture {
@@ -15,5 +16,5 @@ private:
 	Vector2 m_size;
 
 	void AlphaBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
-	void ClipBlit(HAPISPACE::BYTE* screen, Vector2 position);
+	void ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
 };
