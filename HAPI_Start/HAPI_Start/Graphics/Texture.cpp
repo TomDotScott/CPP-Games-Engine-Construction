@@ -22,17 +22,54 @@ bool Texture::Initialise(const std::string& fileName) {
 	return true;
 }
 
-void Texture::Render(HAPISPACE::BYTE* screen, const Vector2 position) const {
+void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePosition) const {
 	if (m_textureData) {
-		ClipBlit(screen, position);
+		ClipBlit(screen, texturePosition);
 	} else {
 		HAPISPACE::HAPI_TColour* horridPink = &HAPISPACE::HAPI_TColour::HORRID_PINK;
-		for (int x = static_cast<int>(position.x); x < (static_cast<int>(position.x + m_size.x)); x++) {
-			for (int y = static_cast<int>(position.y); y < (static_cast<int>(position.y + m_size.y)); y++) {
+		for (int x = static_cast<int>(texturePosition.x); x < (static_cast<int>(texturePosition.x + m_size.x)); x++) {
+			for (int y = static_cast<int>(texturePosition.y); y < (static_cast<int>(texturePosition.y + m_size.y)); y++) {
 				const int offset = (x + y * constants::k_screenWidth) * 4;
 				memcpy(screen + offset, horridPink, 4);
 			}
 		}
+	}
+}
+
+void Texture::RenderSprite(HAPISPACE::BYTE* screen, Vector2 spriteSheetPosition, const unsigned short cellWidth, const Vector2 spritePosition) const {
+	
+	HAPISPACE::BYTE* screenStart{
+		screen + (static_cast<int>(spritePosition.y) * constants::k_screenWidth + static_cast<int>(spritePosition.x)) * 4
+	};
+
+	HAPISPACE::BYTE* textureStart{
+		m_textureData + (static_cast<int>(spriteSheetPosition.y) * cellWidth + static_cast<int>(spriteSheetPosition.x)) * 4
+	};
+
+	const int screenInc{ constants::k_screenWidth * 4 - cellWidth * 4 };
+
+	const int texInc{static_cast<int>(m_size.x) * 4 - cellWidth * 4 };
+
+	for (int y = 0; y < cellWidth; y++) {
+		for (int x = 0; x < cellWidth; x++) {
+			const HAPISPACE::BYTE a{ textureStart[3] };
+			// Only draw pixels if needed
+			if (a > 0) {
+				// Fast blit if no alpha
+				if (a == 255) {
+					memcpy(screenStart, textureStart, 4);
+				} else {
+					// Blend with background
+					screenStart[0] = screenStart[0] + ((a * (textureStart[2] - screenStart[0])) >> 8);
+					screenStart[1] = screenStart[1] + ((a * (textureStart[1] - screenStart[1])) >> 8);
+					screenStart[2] = screenStart[2] + ((a * (textureStart[0] - screenStart[2])) >> 8);
+				}
+			}
+			screenStart += 4;
+			textureStart += 4;
+		}
+		screenStart += screenInc;
+		textureStart += texInc;
 	}
 }
 
@@ -48,8 +85,8 @@ void Texture::AlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
 
 	const int increment{ constants::k_screenWidth * 4 - static_cast<int>(m_size.x) * 4 };
 
-	for (int x = 0; x < static_cast<int>(m_size.x); x++) {
-		for (int y = 0; y < static_cast<int>(m_size.y); y++) {
+	for (int y = 0; y < static_cast<int>(m_size.y); y++) {
+		for (int x = 0; x < static_cast<int>(m_size.x); x++) {
 			const HAPISPACE::BYTE a{ textureStart[3] };
 			// Only draw pixels if needed
 			if (a > 0) {
@@ -79,27 +116,26 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 		position,
 		{position.x + m_size.x, position.y + m_size.y}
 	};
-	auto tempRect = objectBounds;
+	auto clippedRectangle = objectBounds;
 	// If not completely offscreen, we need to render
-	if(!tempRect.CompletelyOutside(screenBounds)) {
+	if (!clippedRectangle.CompletelyOutside(screenBounds)) {
 		// If not completely onscreen, we need to clip
-		if(!tempRect.CompletelyInside(screenBounds)) {
+		if (!clippedRectangle.CompletelyInside(screenBounds)) {
 			// Clip the rectangle
-			tempRect.ClipToBound(screenBounds);
+			clippedRectangle.ClipToBound(screenBounds);
 			// Translate the temporary Rectangle
-			auto temp = position;
-			tempRect.Translate(-temp.x, -temp.y);
+			clippedRectangle.Translate(-position.x, -position.y);
 			// Clamp the values
-			temp.x = std::max(temp.x, 0.f);
-			temp.y = std::max(temp.y, 0.f);
+			position.x = std::max(position.x, 0.f);
+			position.y = std::max(position.y, 0.f);
 
 			// Find the start position of the screen for the texture 
-			auto* screenPtr = screen + (static_cast<int>(temp.x + temp.y * screenBounds.GetSize().x)) * 4;
+			auto* screenPtr = screen + (static_cast<int>(position.x + position.y * constants::k_screenWidth)) * 4;
 			// Find the start position of the texture
-			auto* texturePtr = m_textureData + static_cast<int>((tempRect.GetTopLeft().x + tempRect.GetTopLeft().y * objectBounds.GetSize().x)) * 4;
+			auto* texturePtr = m_textureData + static_cast<int>((clippedRectangle.GetTopLeft().x * 4) + (clippedRectangle.GetTopLeft().y * objectBounds.GetSize().x * 4));
 
-			for (int y = 0; y < tempRect.GetSize().y; y++) {
-				for (int x = 0; x < tempRect.GetSize().x; x++) {
+			for (int y = 0; y < clippedRectangle.GetSize().y; y++) {
+				for (int x = 0; x < clippedRectangle.GetSize().x; x++) {
 					const auto red = texturePtr[0];
 					const auto green = texturePtr[1];
 					const auto blue = texturePtr[2];
@@ -121,11 +157,12 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 					//Move screen pointer to the next line
 					texturePtr += 4;
 				}
-				texturePtr += static_cast<int>((screenBounds.GetSize().x - tempRect.GetSize().x)) * 4;
-				screenPtr += static_cast<int>((objectBounds.GetSize().x - tempRect.GetSize().x)) * 4;
+				texturePtr += static_cast<int>((screenBounds.GetSize().x * 4 - clippedRectangle.GetSize().x * 4));
+				screenPtr += static_cast<int>((objectBounds.GetSize().x * 4 - clippedRectangle.GetSize().x * 4));
 			}
 		} else {
 			AlphaBlit(screen, position);
 		}
 	}
+	clippedRectangle.Translate(-position.x, -position.y);
 }

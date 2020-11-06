@@ -28,8 +28,11 @@ void Vector2::Normalised() {
 // Static Variables
 Vector2 Vector2::UP = { 0.f, 1.f };
 Vector2 Vector2::DOWN = { 0.f, -1.f };
+Vector2 Vector2::LEFT = { -1.f, 0.f };
+Vector2 Vector2::RIGHT = { 1.f, 0.f };
 Vector2 Vector2::ZERO = { 0.f, 0.f };
 
+// Operators
 Vector2 Vector2::operator +(const Vector2& rhs) const {
 	return{ this->x + rhs.x, this->y + rhs.y };
 }

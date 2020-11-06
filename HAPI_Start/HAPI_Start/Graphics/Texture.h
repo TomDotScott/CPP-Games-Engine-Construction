@@ -8,7 +8,8 @@ public:
 	Texture();
 	~Texture();
 	bool Initialise(const std::string& fileName);
-	void Render(HAPISPACE::BYTE* screen, Vector2 position) const;
+	void RenderTexture(HAPISPACE::BYTE* screen, Vector2 texturePosition) const;
+	void RenderSprite(HAPISPACE::BYTE* screen, Vector2 spriteSheetPosition, const unsigned short cellWidth, const Vector2 spritePosition) const;
 	Vector2 GetSize() const;
 
 private:
