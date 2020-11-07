@@ -1,5 +1,4 @@
 ﻿#include "Texture.h"
-
 #include "../Utilities/Constants.h"
 
 Texture::Texture() : m_textureData(), m_size(64, 64) {
@@ -36,19 +35,19 @@ void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePositi
 	}
 }
 
-void Texture::RenderSprite(HAPISPACE::BYTE* screen, Vector2 spriteSheetPosition, const unsigned short cellWidth, const Vector2 spritePosition) const {
+void Texture::RenderSprite(HAPISPACE::BYTE* screen, int spriteSheetIndex, int cellWidth, const Vector2 spritePosition) const {
 	
 	HAPISPACE::BYTE* screenStart{
 		screen + (static_cast<int>(spritePosition.y) * constants::k_screenWidth + static_cast<int>(spritePosition.x)) * 4
 	};
 
 	HAPISPACE::BYTE* textureStart{
-		m_textureData + (static_cast<int>(spriteSheetPosition.y) * cellWidth + static_cast<int>(spriteSheetPosition.x)) * 4
+		m_textureData + spriteSheetIndex * cellWidth * 4
 	};
 
 	const int screenInc{ constants::k_screenWidth * 4 - cellWidth * 4 };
 
-	const int texInc{static_cast<int>(m_size.x) * 4 - cellWidth * 4 };
+	const int texInc{ static_cast<int>(m_size.x) * 4 - cellWidth * 4 };
 
 	for (int y = 0; y < cellWidth; y++) {
 		for (int x = 0; x < cellWidth; x++) {

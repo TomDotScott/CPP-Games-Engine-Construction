@@ -5,7 +5,7 @@ Graphics::Graphics() : m_screen(), m_textureBuffer(), m_spriteSheetLocations(), 
 	int width = constants::k_screenWidth;
 	int height = constants::k_screenHeight;
 
-	if (!HAPI.Initialise(width, height, "HAPI Pong!"))
+	if (!HAPI.Initialise(width, height, "HAPI Arcanoid!"))
 		return;
 	HAPI.SetShowFPS(true);
 	m_screen = HAPI.GetScreenPointer();
@@ -38,7 +38,6 @@ void Graphics::SetPixel(const int x, const int y, const int value) const {
 	m_screen[constants::k_screenWidth * x + y] = value;
 }
 
-
 bool Graphics::CreateTexture(const std::string& filename, const std::string& name) {
 	auto* newTexture = new Texture();
 	if (!newTexture->Initialise(filename)) {
@@ -67,19 +66,17 @@ bool Graphics::CreateSpriteSheet(const std::string& filename, unsigned short cel
 	return true;
 }
 
-void Graphics::SetSpriteSheetLocation(const std::string& spriteName, Vector2 gridLocation) {
-	if(gridLocation.x >= 0 
-		&& gridLocation.y >= 0 
-		&& gridLocation.x <= m_spriteSheet->GetSize().x / m_spriteSheetCellSize 
-		&& gridLocation.y <= m_spriteSheet->GetSize().y / m_spriteSheetCellSize) {
+void Graphics::CreateSprite(const std::string& spriteName, int spriteLocation) {
+	/*if(spriteLocation >= 0  
+		&& spriteLocation <= pow(static_cast<int>(m_spriteSheet->GetSize().x / static_cast<float>(m_spriteSheetCellSize)), 2) - 1) {*/
 		if(!(m_spriteSheetLocations.find(spriteName) == m_spriteSheetLocations.end())) {
 			HAPI.UserMessage("A sprite with the name " + spriteName + " already exists.", "Error Occured");
 		} else {
-			m_spriteSheetLocations[spriteName] = gridLocation;
+			m_spriteSheetLocations[spriteName] = spriteLocation;
 		}
-	}else {
+	/*}else {
 		HAPI.UserMessage("Sprite Grid Location Not Valid", "Error Occured");
-	}
+	}*/
 }
 
 void Graphics::DrawTexture(const std::string& name, const Vector2 position) {
@@ -90,9 +87,9 @@ void Graphics::DrawTexture(const std::string& name, const Vector2 position) {
 	m_textureBuffer.at(name)->RenderTexture(m_screen, position);
 }
 
-void Graphics::DrawSprite(const std::string& name, Vector2& position) {
+void Graphics::DrawSprite(const std::string& name, const Vector2 position) {
 	if (m_spriteSheetLocations.find(name) == m_spriteSheetLocations.end()) {
-		HAPI.UserMessage("Error: Can't draw the sprite " + name + "\nCheck the Spelling and try again.", "Error Occured");
+		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.", "Error Occured");
 		return;
 	}else {
 		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], m_spriteSheetCellSize, position);

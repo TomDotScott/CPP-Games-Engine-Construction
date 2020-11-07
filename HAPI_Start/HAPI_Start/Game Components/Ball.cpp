@@ -1,21 +1,30 @@
 ﻿#include "Ball.h"
 #include <iostream>
-Ball::Ball(const std::string& filename, const std::string& textureIdentifier, const Vector2 position, const Vector2 velocity, Player& p1,
-	Player& p2, Score& score) :
+
+#include "../Graphics/Graphics.h"
+
+Ball::Ball(const std::string& filename, const std::string& textureIdentifier, const Vector2 position, const Vector2 velocity) :
 	Entity(filename, textureIdentifier, position, velocity, { 0.1f, 0.1f }),
-	m_player1(p1),
-	m_player2(p2),
-	m_score(score),
 	m_isBallInPlay(false) {
 }
 
-void Ball::Update() {
+Ball::Ball(const std::string& spriteSheetIdentifier, int spriteSheetLocation, const Vector2 position, Vector2 velocity) :
+	Entity(spriteSheetIdentifier, spriteSheetLocation, position, velocity, { 0.1f, 0.1f }),
+	m_isBallInPlay(false) {
+
+}
+
+void Ball::Update(float deltaTime) {
 	if (m_isBallInPlay) {
 		Bounce();
 		Collide();
 		ScorePlayers();
 		Move();
 	}
+}
+
+void Ball::Render() {
+	Graphics::GetInstance().DrawSprite(m_identifier, m_position);
 }
 
 void Ball::SetBallInPlay(const bool val) {
@@ -31,18 +40,12 @@ void Ball::Move() {
 }
 
 void Ball::Collide() {
-	if (CheckCollision(&m_player1)) {
-		const float y = HitFactor(m_player1.GetPosition());
+	/*if(m_hasCollided){
+		const float y = HitFactor(m_player->GetPosition());
 		Vector2 direction(1, y);
 		direction.Normalised();
 		m_velocity = direction;
-	}
-	if (CheckCollision(&m_player2)) {
-		const float y = HitFactor(m_player2.GetPosition());
-		Vector2 direction(-1, y);
-		direction.Normalised();
-		m_velocity = direction;
-	}
+	}*/
 
 	m_velocity.Limit({ m_velocity.x, 3.f });
 }
@@ -59,11 +62,11 @@ void Ball::Reset() {
 void Ball::ScorePlayers() {
 	//Reset if going off left or right sides
 	if (m_position.x < constants::k_borderWidth) {
-		m_score.player2Score += 1;
+		// m_score.player2Score += 1;
 		// Reset();
 	}
 	if (m_position.x > constants::k_screenWidth - constants::k_borderWidth - m_size.x) {
-		m_score.player1Score += 1;
+		// m_score.player1Score += 1;
 		// Reset();
 	}
 }

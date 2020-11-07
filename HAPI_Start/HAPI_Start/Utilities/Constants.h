@@ -2,9 +2,12 @@
 #include <cstdlib>
 
 namespace constants {
-	constexpr int k_screenWidth = 1024;
-	constexpr int k_screenHeight = 768;
+	constexpr int k_screenWidth = 512;
+	constexpr int k_screenHeight = 640;
 	constexpr int k_borderWidth = 28;
+
+	constexpr int k_spriteSheetCellWith = 64;
+	
 	constexpr float k_leftThumbDeadzone = 7849.f;
 	constexpr float k_rightThumbDeadzone = 8689.f;
 

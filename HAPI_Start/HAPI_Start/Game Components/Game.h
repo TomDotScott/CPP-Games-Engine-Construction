@@ -2,6 +2,7 @@
 #include <ctime>
 #include <HAPI_lib.h>
 #include "Ball.h"
+#include "Brick.h"
 #include "Player.h"
 
 enum class EKeyCode;
@@ -10,7 +11,7 @@ class Game {
 public:
 	Game();
 	void Update();
-	void Render() const;
+	void Render();
 
 private:
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
@@ -20,10 +21,12 @@ private:
 	Ball m_ball;
 	clock_t m_gameClock;
 	float m_countDownTimer;
-
+	std::vector<Brick> m_bricks;
+	
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
+	float DeltaTime();
 };
 
 enum class EKeyCode {

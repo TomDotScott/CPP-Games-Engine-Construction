@@ -9,7 +9,7 @@ public:
     }
 protected:
     Singleton() = default;
-    ~Singleton() {}
+    ~Singleton() = default;
 public:
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;

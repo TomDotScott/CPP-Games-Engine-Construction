@@ -9,7 +9,7 @@ public:
 	~Texture();
 	bool Initialise(const std::string& fileName);
 	void RenderTexture(HAPISPACE::BYTE* screen, Vector2 texturePosition) const;
-	void RenderSprite(HAPISPACE::BYTE* screen, Vector2 spriteSheetPosition, const unsigned short cellWidth, const Vector2 spritePosition) const;
+	void RenderSprite(HAPISPACE::BYTE* screen, int spriteSheetIndex, int cellWidth, const Vector2 spritePosition) const;
 	Vector2 GetSize() const;
 
 private:

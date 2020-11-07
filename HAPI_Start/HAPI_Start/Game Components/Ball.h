@@ -9,21 +9,22 @@ public:
 	explicit Ball(const std::string& filename, 
 		const std::string& textureIdentifier, 
 		const Vector2 position, 
-		Vector2 velocity, 
-		Player& p1, 
-		Player& p2, 
-		Score& score
+		Vector2 velocity
+	);
+
+	explicit Ball(const std::string& spriteSheetIdentifier,
+		int spriteSheetLocation,
+		const Vector2 position,
+		Vector2 velocity
 	);
 	
-	void Update() override;
+	void Update(float deltaTime) override;
+	void Render() override;
 	
 	void SetBallInPlay(bool val);
 	bool GetBallInPlay() const;
 	
 private:
-	Player& m_player1;
-	Player& m_player2;
-	Score& m_score;
 	bool m_isBallInPlay;
 
 	void Move();
