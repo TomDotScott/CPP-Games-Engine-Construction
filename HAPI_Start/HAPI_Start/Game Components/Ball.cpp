@@ -40,10 +40,14 @@ void Ball::Move(const float deltaTime) {
 	if (bounds.TOP_LEFT.x < constants::k_borderWidth || bounds.BOTTOM_RIGHT.x > constants::k_screenWidth - constants::k_borderWidth) {
 		m_velocity.x *= -1;
 	}
-	if (bounds.TOP_LEFT.y < constants::k_borderWidth || bounds.BOTTOM_RIGHT.y > constants::k_screenHeight - constants::k_borderWidth) {
+	if (bounds.TOP_LEFT.y < constants::k_borderWidth) {
 		m_velocity.y *= -1;
 	}
 
+	if(bounds.BOTTOM_RIGHT.y > constants::k_screenHeight + m_size.y * 2) {
+		Reset();
+	}
+	
 	m_position = m_position + (m_velocity * (deltaTime / 1000.f)) * m_speedMultiplier;
 }
 
@@ -58,11 +62,7 @@ void Ball::CheckCollisions(const BoundsRectangle other, const Vector2 otherPosit
 
 void Ball::Reset() {
 	m_position = { Vector2::CENTRE };
-	// m_isBallInPlay = false;
-	m_velocity = { 0, 1 };
-	if (rand() % 2 == 0) {
-		m_velocity.x *= -1;
-	}
+	m_velocity = { 0, m_speedMultiplier };
 }
 
 float Ball::HitFactor(const Vector2 playerPosition) const {

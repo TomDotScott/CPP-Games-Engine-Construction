@@ -26,7 +26,7 @@ Game::Game() :
 	int bricksPlaced{ 0 };
 	for (int y = 0; y < constants::k_screenHeight / 2; y += constants::k_spriteSheetCellWith) {
 		for (int x = 0; x < constants::k_screenWidth; x += constants::k_spriteSheetCellWith) {
-			if (constants::rand_range(1, 100) < 50 && bricksPlaced < 10) {
+			if (constants::rand_range(1, 100) < 25 && bricksPlaced < 20) {
 				// Randomly Assign Red or Green bricks
 				if(constants::rand_range(0, 10) < 5) {
 					Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eRed };
@@ -53,7 +53,10 @@ void Game::Update() {
 	// Check Collisions
 	m_ball.CheckCollisions(m_player.GetGlobalBounds(), m_player.GetPosition());
 	for (auto& brick : m_bricks) {
-		m_ball.CheckCollisions(brick.GetGlobalBounds(), brick.GetPosition());
+		if (brick.GetIsActive() == true) {
+			m_ball.CheckCollisions(brick.GetGlobalBounds(), brick.GetPosition());
+			brick.CheckCollision(m_ball.GetGlobalBounds());
+		}
 	}
 	
 	// Reset the clock
@@ -69,25 +72,12 @@ void Game::Render() {
 	Graphics::GetInstance().DrawSprite("PlayerRight", { playerPosition.x + constants::k_spriteSheetCellWith, playerPosition.y });
 	
 	for (auto& brick : m_bricks) {
-		Graphics::GetInstance().DrawSprite(brick.GetType() == EBrickType::eRed ? "RedBrick" : "GreenBrick", brick.GetPosition());
+		if (brick.GetIsActive() == true) {
+			Graphics::GetInstance().DrawSprite(brick.GetType() == EBrickType::eRed ? "RedBrick" : "GreenBrick", brick.GetPosition());
+		}
 	}
 
 	Graphics::GetInstance().DrawTexture("Ball", m_ball.GetPosition());
-
-	// m_ball.Render();
-
-	//// Only render the timer if we need to
-	//if (m_ball.GetBallInPlay() == false) {
-	//	HAPI.RenderText((constants::k_screenWidth / 2) - (constants::k_screenHeight - 200) / 4,
-	//		(constants::k_screenHeight / 2) - ((constants::k_screenHeight - 200) / 2) - 50,
-	//		HAPISPACE::HAPI_TColour::WHITE,
-	//		HAPISPACE::HAPI_TColour::BLACK,
-	//		3,
-	//		std::to_string(static_cast<int>(m_countDownTimer)),
-	//		constants::k_screenHeight - 200,
-	//		HAPISPACE::eItalic
-	//	);
-	//}
 }
 
 void Game::HandleKeyBoardInput() {
@@ -111,10 +101,10 @@ void Game::HandleControllerInput() {
 	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
 		leftStickVector.Normalised();
 
-		if (leftStickVector.y > 0) {
-			m_player.SetDirection(Vector2::UP);
-		} else if (leftStickVector.y < 0) {
-			m_player.SetDirection(Vector2::DOWN);
+		if (leftStickVector.x > 0) {
+			m_player.SetDirection(Vector2::RIGHT);
+		} else if (leftStickVector.x < 0) {
+			m_player.SetDirection(Vector2::LEFT);
 		} else {
 			m_player.SetDirection(Vector2::ZERO);
 		}
