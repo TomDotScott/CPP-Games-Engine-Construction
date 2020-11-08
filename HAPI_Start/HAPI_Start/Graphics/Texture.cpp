@@ -131,7 +131,7 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 			// Find the start position of the screen for the texture 
 			auto* screenPtr = screen + (static_cast<int>(position.x + position.y * constants::k_screenWidth)) * 4;
 			// Find the start position of the texture
-			auto* texturePtr = m_textureData + static_cast<int>((clippedRectangle.GetTopLeft().x * 4) + (clippedRectangle.GetTopLeft().y * objectBounds.GetSize().x * 4));
+			auto* texturePtr = m_textureData + static_cast<int>((clippedRectangle.TOP_LEFT.x * 4) + (clippedRectangle.TOP_LEFT.y * objectBounds.GetSize().x * 4));
 
 			for (int y = 0; y < clippedRectangle.GetSize().y; y++) {
 				for (int x = 0; x < clippedRectangle.GetSize().x; x++) {

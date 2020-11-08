@@ -1,6 +1,8 @@
 #include "Vector.h"
 #include <cmath>
 
+#include "Constants.h"
+
 Vector2::Vector2(const float _x, const float _y) :
 	x(_x),
 	y(_y) {
@@ -26,11 +28,12 @@ void Vector2::Normalised() {
 }
 
 // Static Variables
-Vector2 Vector2::UP = { 0.f, 1.f };
-Vector2 Vector2::DOWN = { 0.f, -1.f };
-Vector2 Vector2::LEFT = { -1.f, 0.f };
-Vector2 Vector2::RIGHT = { 1.f, 0.f };
-Vector2 Vector2::ZERO = { 0.f, 0.f };
+Vector2 Vector2::UP { 0.f, 1.f };
+Vector2 Vector2::DOWN { 0.f, -1.f };
+Vector2 Vector2::LEFT { -1.f, 0.f };
+Vector2 Vector2::RIGHT { 1.f, 0.f };
+Vector2 Vector2::ZERO { 0.f, 0.f };
+Vector2 Vector2::CENTRE{ static_cast<float>(constants::k_screenWidth) / 2.f, static_cast<float>(constants::k_screenHeight) / 2.f };
 
 // Operators
 Vector2 Vector2::operator +(const Vector2& rhs) const {

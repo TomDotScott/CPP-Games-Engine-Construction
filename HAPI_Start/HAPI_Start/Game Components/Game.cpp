@@ -5,49 +5,74 @@ Game::Game() :
 	m_controllerData(HAPI.GetControllerData(0)),
 	m_gameScore(),
 	m_player("PlayerLeft",
-		1,
-		{ static_cast<float>(constants::k_screenWidth) / 2, constants::k_screenHeight - 150 }
+		{(static_cast<float>(constants::k_screenWidth) / 2) - constants::k_spriteSheetCellWith, constants::k_screenHeight - 150 }
 	),
-	m_ball("Ball",
-		0,
-		{ static_cast<float>(constants::k_screenWidth) / 2, static_cast<float>(constants::k_screenHeight) / 2 },
-		{ static_cast<float>(constants::rand_range(1, 2)) }
+	m_ball("Data/Ball.tga",
+		"Ball",
+		{ Vector2::CENTRE },
+		{0.f, 1.f}
 	),
 	m_gameClock(),
 	m_countDownTimer(3) {
-	//Graphics::GetInstance().CreateTexture("Data/pongBackground.tga", "Background");
+	
+	Graphics::GetInstance().CreateTexture("Data/Background.tga", "Background");
 	Graphics::GetInstance().CreateSpriteSheet("Data/SpriteSheet.tga", 64);
-	Graphics::GetInstance().CreateSprite("Brick", 3);
+	
+	CreateSprite("PlayerLeft", 0);
+	CreateSprite("PlayerRight", 1);
+	CreateSprite("GreenBrick", 2);
+	CreateSprite("RedBrick", 3);
+
 	int bricksPlaced{ 0 };
 	for (int y = 0; y < constants::k_screenHeight / 2; y += constants::k_spriteSheetCellWith) {
 		for (int x = 0; x < constants::k_screenWidth; x += constants::k_spriteSheetCellWith) {
-			if (constants::rand_range(1, 100) < 50) {
-				if (bricksPlaced < 10) {
-					Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)} };
+			if (constants::rand_range(1, 100) < 50 && bricksPlaced < 10) {
+				// Randomly Assign Red or Green bricks
+				if(constants::rand_range(0, 10) < 5) {
+					Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eRed };
 					m_bricks.push_back(newBrick);
-					bricksPlaced += 1;
+				}else {
+					Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eGreen };
+					m_bricks.push_back(newBrick);
 				}
+				bricksPlaced += 1;
 			}
 		}
 	}
 }
 
 void Game::Update() {
+	// Handle Inputs
 	HandleKeyBoardInput();
 	HandleControllerInput();
+
+	// Update Objects
 	m_player.Update(DeltaTime());
 	m_ball.Update(DeltaTime());
+
+	// Check Collisions
+	m_ball.CheckCollisions(m_player.GetGlobalBounds(), m_player.GetPosition());
+	for (auto& brick : m_bricks) {
+		m_ball.CheckCollisions(brick.GetGlobalBounds(), brick.GetPosition());
+	}
+	
+	// Reset the clock
 	m_gameClock = clock();
 }
 
 void Game::Render() {
 	Graphics::GetInstance().ClearScreen();
-	//Graphics::GetInstance().DrawTexture("Background", { 0, 0 });
+	Graphics::GetInstance().DrawTexture("Background", { 0, 0 });
 
-	m_player.Render();
-	for (auto brick : m_bricks) {
-		brick.Render();
+	const Vector2 playerPosition = m_player.GetPosition();
+	Graphics::GetInstance().DrawSprite("PlayerLeft", playerPosition);
+	Graphics::GetInstance().DrawSprite("PlayerRight", { playerPosition.x + constants::k_spriteSheetCellWith, playerPosition.y });
+	
+	for (auto& brick : m_bricks) {
+		Graphics::GetInstance().DrawSprite(brick.GetType() == EBrickType::eRed ? "RedBrick" : "GreenBrick", brick.GetPosition());
 	}
+
+	Graphics::GetInstance().DrawTexture("Ball", m_ball.GetPosition());
 
 	// m_ball.Render();
 
@@ -96,7 +121,11 @@ void Game::HandleControllerInput() {
 	}
 }
 
-float Game::DeltaTime() {
+void Game::CreateSprite(const std::string& spriteSheetIdentifier, const int spriteSheetLocation) {
+	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, spriteSheetLocation);
+}
+
+float Game::DeltaTime() const {
 	//CPU "ticks" since the program started.
 	const clock_t programTickCount = clock() - m_gameClock;
 

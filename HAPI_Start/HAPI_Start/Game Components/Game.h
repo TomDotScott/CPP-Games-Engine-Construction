@@ -22,11 +22,12 @@ private:
 	clock_t m_gameClock;
 	float m_countDownTimer;
 	std::vector<Brick> m_bricks;
-	
+
+	void CreateSprite(const std::string& spriteSheetIdentifier, int spriteSheetLocation);
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
-	float DeltaTime();
+	float DeltaTime() const;
 };
 
 enum class EKeyCode {

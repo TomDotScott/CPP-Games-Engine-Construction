@@ -10,8 +10,7 @@ public:
 	bool CompletelyOutside(const BoundsRectangle& other) const;
 	void Translate(float dx, float dy);
 	Vector2 GetSize() const;
-	Vector2 GetTopLeft() const;
-private:
-	Vector2 m_topLeft;
-	Vector2 m_bottomRight;
+
+	Vector2 TOP_LEFT;
+	Vector2 BOTTOM_RIGHT;	
 };

@@ -3,7 +3,6 @@
 
 Entity::Entity(const std::string& fileName, const std::string& textureIdentifier, const Vector2 size, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
 	m_identifier(textureIdentifier),
-	m_hasCollided(false),
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
@@ -14,14 +13,12 @@ Entity::Entity(const std::string& fileName, const std::string& textureIdentifier
 	}
 }
 
-Entity::Entity(const std::string& spriteSheetIdentifier, const int spriteSheetLocation, const Vector2 size, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
+Entity::Entity(const std::string& spriteSheetIdentifier, const Vector2 size, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
 	m_identifier(spriteSheetIdentifier),
-	m_hasCollided(false),
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
 	m_acceleration(acceleration) {
-	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, spriteSheetLocation);
 }
 
 Vector2 Entity::GetPosition() const {
@@ -32,9 +29,8 @@ void Entity::SetPosition(const Vector2 newPos) {
 	m_position = newPos;
 }
 
-bool Entity::CheckCollision(Entity* other) {
-	if (GetGlobalBounds().Overlapping(other->GetGlobalBounds())) {
-		m_hasCollided = true;
+bool Entity::CheckCollisions(const BoundsRectangle other) const {
+	if (GetGlobalBounds().Overlapping(other)) {
 		return true;
 	}
 	return false;

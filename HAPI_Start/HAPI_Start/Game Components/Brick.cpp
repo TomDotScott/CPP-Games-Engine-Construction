@@ -1,12 +1,20 @@
 ﻿#include "Brick.h"
-#include "../Graphics/Graphics.h"
 
-Brick::Brick(const Vector2 position) : m_position(position), m_isActive(true)
+Brick::Brick(const Vector2 position, const EBrickType type) : m_isActive(true), m_position(position), m_type(type)
 {
 }
 
-void Brick::Render() {
-	if(m_isActive) {
-		Graphics::GetInstance().DrawSprite("Brick", m_position);
-	}
+Vector2 Brick::GetPosition() const {
+	return m_position;
+}
+
+EBrickType Brick::GetType() const {
+	return m_type;
+}
+
+BoundsRectangle Brick::GetGlobalBounds() const {
+	return {
+		m_position,
+		{ m_position.x + 64.f, m_position.y + 64.f }
+	};
 }

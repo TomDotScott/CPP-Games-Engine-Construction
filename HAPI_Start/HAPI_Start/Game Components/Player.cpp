@@ -2,34 +2,26 @@
 
 #include "../Graphics/Graphics.h"
 
-Player::Player(const std::string& textureFileName, const std::string& textureIdentifier, const Vector2 startingPosition) :
-	Entity(textureFileName, 
-		textureIdentifier, 
-		{constants::k_spriteSheetCellWith * 2, constants::k_spriteSheetCellWith }, 
-		startingPosition, 
+Player::Player(const std::string& textureFilename, const std::string& textureIdentifier, const Vector2 startingPosition) :
+	Entity(textureFilename,
+		textureIdentifier,
+		{ constants::k_spriteSheetCellWith * 2, constants::k_spriteSheetCellWith },
+		startingPosition,
 		{ 1 }
 	),
 	m_currentDirection(Vector2::ZERO) {
 }
 
-Player::Player(const std::string& spriteSheetIdentifier, const int spriteSheetLocation, const Vector2 startingPosition) :
-	Entity(spriteSheetIdentifier, 
-		spriteSheetLocation,
-		{constants::k_spriteSheetCellWith * 2, constants::k_spriteSheetCellWith}, 
-		startingPosition, 
-		{1}
-	),
+Player::Player(const std::string& spriteSheetIdentifier, const Vector2 startingPosition) :
+	Entity(spriteSheetIdentifier,
+		Vector2(constants::k_spriteSheetCellWith * 2,constants::k_spriteSheetCellWith),
+		startingPosition,
+		{ 1 }),
 	m_currentDirection(Vector2::ZERO) {
-	Graphics::GetInstance().CreateSprite("PlayerRight", spriteSheetLocation + 1);
 }
 
 void Player::Update(const float deltaTime) {
 	Move(deltaTime);
-}
-
-void Player::Render() {
-	Graphics::GetInstance().DrawSprite("PlayerLeft", m_position);
-	Graphics::GetInstance().DrawSprite("PlayerRight", { m_position.x + 64, m_position.y });
 }
 
 void Player::SetDirection(const Vector2 direction) {

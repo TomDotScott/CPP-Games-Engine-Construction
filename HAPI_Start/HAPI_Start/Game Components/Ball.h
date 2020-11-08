@@ -6,32 +6,28 @@ struct Score;
 
 class Ball final : public Entity {
 public:
-	explicit Ball(const std::string& filename, 
+	explicit Ball(const std::string& textureFilename, 
 		const std::string& textureIdentifier, 
 		const Vector2 position, 
 		Vector2 velocity
 	);
 
 	explicit Ball(const std::string& spriteSheetIdentifier,
-		int spriteSheetLocation,
 		const Vector2 position,
 		Vector2 velocity
 	);
 	
-	void Update(float deltaTime) override;
-	void Render() override;
+	void Update(const float deltaTime) override;
 	
 	void SetBallInPlay(bool val);
 	bool GetBallInPlay() const;
-	
-private:
-	bool m_isBallInPlay;
+	void CheckCollisions(BoundsRectangle other, const Vector2 otherPosition);
 
-	void Move();
-	void Collide();
+private:
+	float m_speedMultiplier;
+	
+	void Move(const float deltaTime);
 	void Reset();
-	void ScorePlayers();
-	void Bounce();
 	
 	float HitFactor(Vector2 playerPosition) const;
 };

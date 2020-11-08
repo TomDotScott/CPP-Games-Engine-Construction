@@ -66,7 +66,7 @@ bool Graphics::CreateSpriteSheet(const std::string& filename, unsigned short cel
 	return true;
 }
 
-void Graphics::CreateSprite(const std::string& spriteName, int spriteLocation) {
+void Graphics::CreateSprite(const std::string& spriteName, const int spriteLocation) {
 	/*if(spriteLocation >= 0  
 		&& spriteLocation <= pow(static_cast<int>(m_spriteSheet->GetSize().x / static_cast<float>(m_spriteSheetCellSize)), 2) - 1) {*/
 		if(!(m_spriteSheetLocations.find(spriteName) == m_spriteSheetLocations.end())) {

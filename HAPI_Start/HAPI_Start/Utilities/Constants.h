@@ -4,7 +4,7 @@
 namespace constants {
 	constexpr int k_screenWidth = 512;
 	constexpr int k_screenHeight = 640;
-	constexpr int k_borderWidth = 28;
+	constexpr int k_borderWidth = 20;
 
 	constexpr int k_spriteSheetCellWith = 64;
 	

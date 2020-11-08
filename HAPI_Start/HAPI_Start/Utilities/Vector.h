@@ -21,6 +21,7 @@ public:
 	static Vector2 LEFT;
 	static Vector2 RIGHT;
 	static Vector2 ZERO;
+	static Vector2 CENTRE;
 
 	float x, y;
 };
