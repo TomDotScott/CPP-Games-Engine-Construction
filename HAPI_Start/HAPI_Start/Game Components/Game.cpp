@@ -24,6 +24,13 @@ Game::Game() :
 	CreateSprite("PlayerRight", 1);
 	CreateSprite("GreenBrick", 2);
 	CreateSprite("RedBrick", 3);
+	CreateSprite("Explosion0", 4);
+	CreateSprite("Explosion1", 5);
+	CreateSprite("Explosion2", 6);
+	CreateSprite("Explosion3", 7);
+	CreateSprite("Explosion4", 8);
+	CreateSprite("Explosion5", 9);
+
 
 	for (int y = 0; y < constants::k_screenHeight / 2; y += constants::k_spriteSheetCellWith) {
 		for (int x = 0; x < constants::k_screenWidth; x += constants::k_spriteSheetCellWith) {
@@ -54,7 +61,10 @@ void Game::Update() {
 		// Update Objects
 		m_player.Update(DeltaTime());
 		m_ball.Update(DeltaTime());
-
+		for (auto& brick : m_bricks) {
+			brick.Update(DeltaTime());
+		}
+		
 		// Check Collisions
 		m_ball.CheckCollisions(m_player.GetGlobalBounds(), m_player.GetPosition());
 		for (auto& brick : m_bricks) {
@@ -84,6 +94,9 @@ void Game::Render() {
 		if (brick.GetIsActive() == true) {
 			Graphics::GetInstance().DrawSprite(brick.GetType() == EBrickType::eRed ? "RedBrick" : "GreenBrick", brick.GetPosition());
 		} else {
+			if (!brick.GetExplosionAnimationHasEnded()) {
+				Graphics::GetInstance().DrawSprite("Explosion" + std::to_string(brick.GetCurrentAnimationFrame()), brick.GetPosition());
+			}
 			inactiveBricks += 1;
 			if (inactiveBricks == m_brickAmount) {
 				PLAYER_WON = true;

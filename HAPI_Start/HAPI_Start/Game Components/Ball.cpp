@@ -35,10 +35,10 @@ int Ball::GetLivesRemaining() const {
 void Ball::Move(const float deltaTime) {
 
 	const BoundsRectangle bounds = GetGlobalBounds();
-	if (bounds.TOP_LEFT.x < constants::k_borderWidth || bounds.BOTTOM_RIGHT.x > constants::k_screenWidth - constants::k_borderWidth) {
+	if (bounds.TOP_LEFT.x < 1 || bounds.BOTTOM_RIGHT.x > constants::k_screenWidth - 1) {
 		m_velocity.x *= -1;
 	}
-	if (bounds.TOP_LEFT.y < constants::k_borderWidth) {
+	if (bounds.TOP_LEFT.y < 1) {
 		m_velocity.y *= -1;
 	}
 

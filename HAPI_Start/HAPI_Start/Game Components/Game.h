@@ -14,6 +14,7 @@ public:
 	void Render();
 	bool PLAYER_WON;
 	bool PLAYER_LOST;
+
 private:
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
@@ -23,7 +24,7 @@ private:
 	std::vector<Brick> m_bricks;
 	int m_brickAmount;
 	int m_gameScore;
-	
+
 	void CreateSprite(const std::string& spriteSheetIdentifier, int spriteSheetLocation);
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();

@@ -23,7 +23,7 @@ public:
 
 	virtual ~Entity() = default;
 
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(const float deltaTime) = 0;
 
 	BoundsRectangle GetGlobalBounds() const;
 	Vector2 GetPosition() const;

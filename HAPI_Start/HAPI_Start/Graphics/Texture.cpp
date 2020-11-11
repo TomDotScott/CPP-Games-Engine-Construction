@@ -157,10 +157,6 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 			const int texInc{
 				(static_cast<int>(textureBounds.GetSize().x) - static_cast<int>(clippedRect.GetSize().x)) * 4
 			};
-
-			// std::cout << "POSITION:\n" << position.x << " " << position.y << std::endl;
-			// std::cout << "BOUNDS \n" << textureBounds.TOP_LEFT.x << " " << textureBounds.TOP_LEFT.y << "\n" << textureBounds.BOTTOM_RIGHT.x << " " << textureBounds.BOTTOM_RIGHT.y << std::endl;
-
 			
 			// Start blitting...
 			for (int y = 0; y < clippedRect.GetSize().y; y++) {
