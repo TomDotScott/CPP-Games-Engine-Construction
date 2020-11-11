@@ -9,7 +9,7 @@ Player::Player(const std::string& textureFilename, const std::string& textureIde
 		startingPosition,
 		{ 1 }
 	),
-	m_currentDirection(Vector2::ZERO) {
+	m_currentDirection(Vector2::ZERO){
 }
 
 Player::Player(const std::string& spriteSheetIdentifier, const Vector2 startingPosition) :

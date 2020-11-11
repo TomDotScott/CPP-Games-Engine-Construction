@@ -9,5 +9,13 @@ void HAPI_Main() {
 	while (HAPI.Update()) {
 		game.Update();
 		game.Render();
+		if (game.PLAYER_WON) {
+			HAPI.UserMessage("You Win!", "You Win");
+			HAPI.Close();
+		}
+		if (game.PLAYER_LOST) {
+			HAPI.UserMessage("Game Over! :(", "GAME OVER");
+			HAPI.Close();
+		}
 	}
 }

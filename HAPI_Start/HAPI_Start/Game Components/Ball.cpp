@@ -6,11 +6,12 @@
 Ball::Ball(const std::string& textureFilename, const std::string& textureIdentifier, const Vector2 position, const Vector2 velocity) :
 	Entity(textureFilename,
 		textureIdentifier,
-		Vector2(22, 22),
+		Vector2(32, 32),
 		position,
 		velocity,
 		{ 0.1f, 0.1f }),
-	m_speedMultiplier(20.f) {
+	m_speedMultiplier(20.f),
+	m_livesRemaining(5) {
 }
 
 Ball::Ball(const std::string& spriteSheetIdentifier, const Vector2 position, const Vector2 velocity) :
@@ -19,20 +20,16 @@ Ball::Ball(const std::string& spriteSheetIdentifier, const Vector2 position, con
 		position,
 		velocity,
 		{ 0.1f, 0.1f }),
-	m_speedMultiplier(20.f) {
+	m_speedMultiplier(20.f),
+	m_livesRemaining(5) {
 }
 
 void Ball::Update(const float deltaTime) {
 	Move(deltaTime);
 }
 
-void Ball::SetBallInPlay(const bool val) {
-	// m_isBallInPlay = val;
-}
-
-bool Ball::GetBallInPlay() const {
-	// return m_isBallInPlay;
-	return true;
+int Ball::GetLivesRemaining() const {
+	return m_livesRemaining;
 }
 
 void Ball::Move(const float deltaTime) {
@@ -54,8 +51,8 @@ void Ball::Move(const float deltaTime) {
 
 void Ball::CheckCollisions(const BoundsRectangle other, const Vector2 otherPosition) {
 	if (Entity::CheckCollisions(other)) {
-		const float y = HitFactor(otherPosition);
-		Vector2 direction(1, y);
+		const float hitFactor = HitFactor(otherPosition);
+		Vector2 direction(1, hitFactor);
 		direction.Normalised();
 		m_velocity = direction * m_speedMultiplier;
 	}
@@ -64,13 +61,14 @@ void Ball::CheckCollisions(const BoundsRectangle other, const Vector2 otherPosit
 void Ball::Reset() {
 	m_position = { Vector2::CENTRE };
 	m_velocity = { 0, m_speedMultiplier };
+	m_livesRemaining -= 1;
 }
 
-float Ball::HitFactor(const Vector2 playerPosition) const {
+float Ball::HitFactor(const Vector2 hitPosition) const {
 	// ||  1 <- at the top of the racket
 	// ||
 	// ||  0 <- at the middle of the racket
 	// ||
 	// || -1 <- at the bottom of the racket
-	return(m_position.y - playerPosition.y) / m_size.y;
+	return(m_position.y - hitPosition.y) / m_size.y;
 }

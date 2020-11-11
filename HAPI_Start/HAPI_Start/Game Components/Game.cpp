@@ -1,32 +1,33 @@
 #include "Game.h"
 #include "../Graphics/Graphics.h"
 Game::Game() :
+	PLAYER_WON(false),
+	PLAYER_LOST(false),
 	m_keyboardData(HAPI.GetKeyboardData()),
 	m_controllerData(HAPI.GetControllerData(0)),
-	m_gameScore(),
 	m_player("PlayerLeft",
-		{(static_cast<float>(constants::k_screenWidth) / 2) - constants::k_spriteSheetCellWith, constants::k_screenHeight - 150 }
+		{ (static_cast<float>(constants::k_screenWidth) / 2) - constants::k_spriteSheetCellWith, constants::k_screenHeight - 150 }
 	),
 	m_ball("Data/Ball.tga",
 		"Ball",
 		{ Vector2::CENTRE },
-		{0.f, 1.f}
+		{ 0.f, 1.f }
 	),
 	m_gameClock(),
-	m_countDownTimer(3) {
-	
+	m_brickAmount(0),
+	m_gameScore(0) {
+
 	Graphics::GetInstance().CreateTexture("Data/Background.tga", "Background");
 	Graphics::GetInstance().CreateSpriteSheet("Data/SpriteSheet.tga", 64);
-	
+
 	CreateSprite("PlayerLeft", 0);
 	CreateSprite("PlayerRight", 1);
 	CreateSprite("GreenBrick", 2);
 	CreateSprite("RedBrick", 3);
 
-	int bricksPlaced{ 0 };
 	for (int y = 0; y < constants::k_screenHeight / 2; y += constants::k_spriteSheetCellWith) {
 		for (int x = 0; x < constants::k_screenWidth; x += constants::k_spriteSheetCellWith) {
-			if (bricksPlaced < 20) {
+			if (m_brickAmount < 20) {
 				if (constants::rand_range(1, 100) < 25) {
 					// Randomly Assign Red or Green bricks
 					if (constants::rand_range(0, 10) < 5) {
@@ -36,9 +37,9 @@ Game::Game() :
 						Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eGreen };
 						m_bricks.push_back(newBrick);
 					}
-					bricksPlaced += 1;
+					m_brickAmount += 1;
 				}
-			}else {
+			} else {
 				return;
 			}
 		}
@@ -49,20 +50,23 @@ void Game::Update() {
 	// Handle Inputs
 	HandleKeyBoardInput();
 	HandleControllerInput();
+	if (m_ball.GetLivesRemaining() > -1) {
+		// Update Objects
+		m_player.Update(DeltaTime());
+		m_ball.Update(DeltaTime());
 
-	// Update Objects
-	m_player.Update(DeltaTime());
-	m_ball.Update(DeltaTime());
-
-	// Check Collisions
-	m_ball.CheckCollisions(m_player.GetGlobalBounds(), m_player.GetPosition());
-	for (auto& brick : m_bricks) {
-		if (brick.GetIsActive() == true) {
-			m_ball.CheckCollisions(brick.GetGlobalBounds(), brick.GetPosition());
-			brick.CheckCollision(m_ball.GetGlobalBounds());
+		// Check Collisions
+		m_ball.CheckCollisions(m_player.GetGlobalBounds(), m_player.GetPosition());
+		for (auto& brick : m_bricks) {
+			if (brick.GetIsActive() == true) {
+				m_ball.CheckCollisions(brick.GetGlobalBounds(), brick.GetPosition());
+				brick.CheckCollision(m_ball.GetGlobalBounds(), m_gameScore);
+			}
 		}
+	} else {
+		PLAYER_LOST = true;
 	}
-	
+
 	// Reset the clock
 	m_gameClock = clock();
 }
@@ -74,14 +78,43 @@ void Game::Render() {
 	const Vector2 playerPosition = m_player.GetPosition();
 	Graphics::GetInstance().DrawSprite("PlayerLeft", playerPosition);
 	Graphics::GetInstance().DrawSprite("PlayerRight", { playerPosition.x + constants::k_spriteSheetCellWith, playerPosition.y });
-	
+
+	int inactiveBricks{ 0 };
 	for (auto& brick : m_bricks) {
 		if (brick.GetIsActive() == true) {
 			Graphics::GetInstance().DrawSprite(brick.GetType() == EBrickType::eRed ? "RedBrick" : "GreenBrick", brick.GetPosition());
+		} else {
+			inactiveBricks += 1;
+			if (inactiveBricks == m_brickAmount) {
+				PLAYER_WON = true;
+			}
 		}
 	}
 
 	Graphics::GetInstance().DrawTexture("Ball", m_ball.GetPosition());
+
+	/*======================================= UI ==============================================*/
+	Graphics::GetInstance().DrawTexture("Ball", { 0, constants::k_screenHeight - 32 });
+	// Lives
+	HAPI.RenderText(
+		40, constants::k_screenHeight - 36,
+		HAPISPACE::HAPI_TColour::WHITE,
+		HAPISPACE::HAPI_TColour::BLACK,
+		3,
+		"x " + std::to_string(m_ball.GetLivesRemaining()),
+		32
+	);
+	// Score
+	HAPI.RenderText(
+		constants::k_screenWidth / 2, constants::k_screenHeight - 40,
+		HAPISPACE::HAPI_TColour::WHITE,
+		HAPISPACE::HAPI_TColour::BLACK,
+		5,
+		"Score: " + std::to_string(m_gameScore),
+		32
+	);
+
+
 }
 
 void Game::HandleKeyBoardInput() {

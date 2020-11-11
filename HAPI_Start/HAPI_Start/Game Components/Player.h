@@ -14,7 +14,7 @@ public:
 
 	void Update(float deltaTime) override;
 	void SetDirection(Vector2 direction);
-
+	
 private:
 	Vector2 m_currentDirection;
 	

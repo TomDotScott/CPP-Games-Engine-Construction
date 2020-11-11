@@ -21,12 +21,14 @@ bool Brick::GetIsActive() const {
 	return m_isActive;
 }
 
-void Brick::CheckCollision(const BoundsRectangle other) {
+void Brick::CheckCollision(const BoundsRectangle other, int& gameScore) {
 	if(Entity::CheckCollisions(other)) {
 		if(m_type == EBrickType::eGreen) {
 			m_type = EBrickType::eRed;
+			gameScore += 32;
 		}else {
 			m_isActive = false;
+			gameScore += 64;
 		}
 	}
 }

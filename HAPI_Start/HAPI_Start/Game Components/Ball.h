@@ -2,8 +2,6 @@
 #include "Entity.h"
 #include "Player.h"
 
-struct Score;
-
 class Ball final : public Entity {
 public:
 	explicit Ball(const std::string& textureFilename, 
@@ -18,21 +16,16 @@ public:
 	);
 	
 	void Update(const float deltaTime) override;
-	
-	void SetBallInPlay(bool val);
-	bool GetBallInPlay() const;
+
+	int GetLivesRemaining() const;
 	void CheckCollisions(BoundsRectangle other, const Vector2 otherPosition);
 
 private:
 	float m_speedMultiplier;
+	int m_livesRemaining;
 	
 	void Move(const float deltaTime);
 	void Reset();
 	
-	float HitFactor(Vector2 playerPosition) const;
-};
-
-struct Score {
-	int player1Score;
-	int player2Score;
+	float HitFactor(Vector2 hitPosition) const;
 };

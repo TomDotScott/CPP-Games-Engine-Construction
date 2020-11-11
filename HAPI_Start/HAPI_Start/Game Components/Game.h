@@ -12,17 +12,18 @@ public:
 	Game();
 	void Update();
 	void Render();
-
+	bool PLAYER_WON;
+	bool PLAYER_LOST;
 private:
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
-	Score m_gameScore;
 	Player m_player;
 	Ball m_ball;
 	clock_t m_gameClock;
-	float m_countDownTimer;
 	std::vector<Brick> m_bricks;
-
+	int m_brickAmount;
+	int m_gameScore;
+	
 	void CreateSprite(const std::string& spriteSheetIdentifier, int spriteSheetLocation);
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();

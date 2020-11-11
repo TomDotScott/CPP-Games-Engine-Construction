@@ -14,7 +14,7 @@ public:
 	
 	EBrickType GetType() const;
 	bool GetIsActive() const;
-	void CheckCollision(const BoundsRectangle other);
+	void CheckCollision(const BoundsRectangle other, int& gameScore);
 private:
 	bool m_isActive;
 	Vector2 m_position;
