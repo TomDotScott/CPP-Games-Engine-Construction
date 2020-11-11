@@ -36,6 +36,7 @@ bool Ball::GetBallInPlay() const {
 }
 
 void Ball::Move(const float deltaTime) {
+
 	const BoundsRectangle bounds = GetGlobalBounds();
 	if (bounds.TOP_LEFT.x < constants::k_borderWidth || bounds.BOTTOM_RIGHT.x > constants::k_screenWidth - constants::k_borderWidth) {
 		m_velocity.x *= -1;
@@ -44,10 +45,10 @@ void Ball::Move(const float deltaTime) {
 		m_velocity.y *= -1;
 	}
 
-	if(bounds.BOTTOM_RIGHT.y > constants::k_screenHeight + m_size.y * 2) {
+	if (bounds.BOTTOM_RIGHT.y > constants::k_screenHeight + m_size.y * 2) {
 		Reset();
 	}
-	
+
 	m_position = m_position + (m_velocity * (deltaTime / 1000.f)) * m_speedMultiplier;
 }
 

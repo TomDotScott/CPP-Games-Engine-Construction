@@ -6,7 +6,7 @@ BoundsRectangle::BoundsRectangle(const Vector2 topLeft,	const Vector2 bottomRigh
 	BOTTOM_RIGHT(bottomRight) {
 }
 
-void BoundsRectangle::ClipToBound(const BoundsRectangle& other) {
+void BoundsRectangle::ClipTo(const BoundsRectangle& other) {
 	// Work out the bounds to clip to
 	const auto x1 = std::max(TOP_LEFT.x, other.TOP_LEFT.x);
 	const auto y1 = std::max(TOP_LEFT.y, other.TOP_LEFT.y);
@@ -24,12 +24,12 @@ bool BoundsRectangle::Overlapping(const BoundsRectangle& other) const {
 		other.TOP_LEFT.y < BOTTOM_RIGHT.y;
 }
 
-bool BoundsRectangle::CompletelyInside(const BoundsRectangle& other) const {
+bool BoundsRectangle::IsCompletelyInside(const BoundsRectangle& other) const {
 	return (TOP_LEFT.x > other.TOP_LEFT.x && TOP_LEFT.y > other.TOP_LEFT.y) &&
 		(BOTTOM_RIGHT.x < other.BOTTOM_RIGHT.x&& BOTTOM_RIGHT.y < other.BOTTOM_RIGHT.y);
 }
 
-bool BoundsRectangle::CompletelyOutside(const BoundsRectangle& other) const {
+bool BoundsRectangle::IsCompletelyOutside(const BoundsRectangle& other) const {
 	return (TOP_LEFT.x < other.TOP_LEFT.x && TOP_LEFT.y < other.TOP_LEFT.y) &&
 		(BOTTOM_RIGHT.x > other.BOTTOM_RIGHT.x&& BOTTOM_RIGHT.y > other.BOTTOM_RIGHT.y);
 }

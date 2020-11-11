@@ -36,7 +36,7 @@ void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePositi
 }
 
 void Texture::RenderSprite(HAPISPACE::BYTE* screen, int spriteSheetIndex, int cellWidth, const Vector2 spritePosition) const {
-	
+
 	HAPISPACE::BYTE* screenStart{
 		screen + (static_cast<int>(spritePosition.y) * constants::k_screenWidth + static_cast<int>(spritePosition.x)) * 4
 	};
@@ -107,61 +107,84 @@ void Texture::AlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
 }
 
 void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
-	const BoundsRectangle screenBounds{
-		{ 0, 0 },
-		{ constants::k_screenWidth, constants::k_screenHeight }
-	};
-	const BoundsRectangle objectBounds{
-		position,
-		{position.x + m_size.x, position.y + m_size.y}
-	};
-	auto clippedRectangle = objectBounds;
-	// If not completely offscreen, we need to render
-	if (!clippedRectangle.CompletelyOutside(screenBounds)) {
-		// If not completely onscreen, we need to clip
-		if (!clippedRectangle.CompletelyInside(screenBounds)) {
-			// Clip the rectangle
-			clippedRectangle.ClipToBound(screenBounds);
-			// Translate the temporary Rectangle
-			clippedRectangle.Translate(-position.x, -position.y);
-			// Clamp the values
-			position.x = std::max(position.x, 0.f);
-			position.y = std::max(position.y, 0.f);
+	// BoundsRectangle takes in coordinates for the top left and bottom right
+	// My Vector2 class defaults to zeros
+	Vector2 temp = position;
+	const BoundsRectangle textureBounds({}, m_size);
 
-			// Find the start position of the screen for the texture 
-			auto* screenPtr = screen + (static_cast<int>(position.x + position.y * constants::k_screenWidth)) * 4;
-			// Find the start position of the texture
-			auto* texturePtr = m_textureData + static_cast<int>((clippedRectangle.TOP_LEFT.x * 4) + (clippedRectangle.TOP_LEFT.y * objectBounds.GetSize().x * 4));
+	const BoundsRectangle screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
 
-			for (int y = 0; y < clippedRectangle.GetSize().y; y++) {
-				for (int x = 0; x < clippedRectangle.GetSize().x; x++) {
-					const auto red = texturePtr[0];
-					const auto green = texturePtr[1];
-					const auto blue = texturePtr[2];
-					const auto alpha = texturePtr[3];
+	// Create a copy to clip with 
+	BoundsRectangle clippedRect(textureBounds);
 
+	//Translate to screen space
+	clippedRect.Translate(temp.x, temp.y);
+
+	// If the object is onscreen...
+	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
+		// If the object is completely onscreen then alphablit...
+		if (clippedRect.IsCompletelyInside(screenBounds)) {
+			AlphaBlit(screen, position);
+		} else {
+			// we must be offscreen...
+			//Clip against screen
+			clippedRect.ClipTo(screenBounds);
+
+			clippedRect.Translate(-temp.x, -temp.y);
+
+			//Clamping to negative
+			position.x = std::max(0.f, temp.x);
+			position.y = std::max(0.f, temp.y);
+
+			// Calculate offsets and starting points for screen and texture....
+			const int screenOffset{
+				(static_cast<int>(position.x) + static_cast<int>(position.y) * static_cast<int>(screenBounds.GetSize().x)) * 4
+			};
+
+			HAPISPACE::BYTE* screenPtr = screen + screenOffset;
+
+			const int textureOffset{
+				(static_cast<int>(clippedRect.TOP_LEFT.x) + static_cast<int>(clippedRect.TOP_LEFT.y) * static_cast<int>(textureBounds.GetSize().x)) * 4
+			};
+
+			HAPISPACE::BYTE* texPtr = m_textureData + textureOffset;
+
+			// Calculate the increment up here rather than in the loop since it doesn't change...
+			const int screenInc{
+				(static_cast<int>(screenBounds.GetSize().x) - static_cast<int>(clippedRect.GetSize().x)) * 4
+			};
+
+			const int texInc{
+				(static_cast<int>(textureBounds.GetSize().x) - static_cast<int>(clippedRect.GetSize().x)) * 4
+			};
+
+			// std::cout << "POSITION:\n" << position.x << " " << position.y << std::endl;
+			// std::cout << "BOUNDS \n" << textureBounds.TOP_LEFT.x << " " << textureBounds.TOP_LEFT.y << "\n" << textureBounds.BOTTOM_RIGHT.x << " " << textureBounds.BOTTOM_RIGHT.y << std::endl;
+
+			
+			// Start blitting...
+			for (int y = 0; y < clippedRect.GetSize().y; y++) {
+				for (int x = 0; x < clippedRect.GetSize().x; x++) {
+					const HAPISPACE::BYTE alpha = texPtr[3];
+					// Fully opaque
 					if (alpha == 255) {
-						//screen = texture
-						screenPtr[0] = red;
-						screenPtr[1] = green;
-						screenPtr[2] = blue;
-					} else if (alpha > 0) {
+						memcpy(screenPtr, texPtr, 4);
+					} else if (alpha > 0) { // Has alpha channel
+						const HAPISPACE::BYTE red = texPtr[0];
+						const HAPISPACE::BYTE green = texPtr[1];
+						const HAPISPACE::BYTE blue = texPtr[2];
+
 						screenPtr[0] = screenPtr[0] + ((alpha * (red - screenPtr[0])) >> 8);
 						screenPtr[1] = screenPtr[1] + ((alpha * (green - screenPtr[1])) >> 8);
 						screenPtr[2] = screenPtr[2] + ((alpha * (blue - screenPtr[2])) >> 8);
 					}
-
-					//Move texture pointer to next line
+					texPtr += 4;
 					screenPtr += 4;
-					//Move screen pointer to the next line
-					texturePtr += 4;
 				}
-				texturePtr += static_cast<int>((screenBounds.GetSize().x * 4 - clippedRectangle.GetSize().x * 4));
-				screenPtr += static_cast<int>((objectBounds.GetSize().x * 4 - clippedRectangle.GetSize().x * 4));
+				
+				screenPtr += screenInc;
+				texPtr += texInc;
 			}
-		} else {
-			AlphaBlit(screen, position);
 		}
 	}
-	clippedRectangle.Translate(-position.x, -position.y);
 }

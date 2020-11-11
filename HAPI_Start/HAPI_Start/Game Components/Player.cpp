@@ -14,7 +14,7 @@ Player::Player(const std::string& textureFilename, const std::string& textureIde
 
 Player::Player(const std::string& spriteSheetIdentifier, const Vector2 startingPosition) :
 	Entity(spriteSheetIdentifier,
-		Vector2(constants::k_spriteSheetCellWith * 2,constants::k_spriteSheetCellWith),
+		Vector2(constants::k_spriteSheetCellWith * 2, constants::k_spriteSheetCellWith),
 		startingPosition,
 		{ 1 }),
 	m_currentDirection(Vector2::ZERO) {

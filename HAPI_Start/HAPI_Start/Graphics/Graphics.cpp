@@ -8,6 +8,7 @@ Graphics::Graphics() : m_screen(), m_textureBuffer(), m_spriteSheetLocations(), 
 	if (!HAPI.Initialise(width, height, "HAPI Arcanoid!"))
 		return;
 	HAPI.SetShowFPS(true);
+	//HAPI.LimitFrameRate(60);
 	m_screen = HAPI.GetScreenPointer();
 }
 
@@ -60,23 +61,18 @@ bool Graphics::CreateSpriteSheet(const std::string& filename, unsigned short cel
 	}
 	if ((static_cast<int>(m_spriteSheet->GetSize().x * m_spriteSheet->GetSize().y) % (cellSize * cellSize)) == 0) {
 		m_spriteSheetCellSize = cellSize;
-	}else {
+	} else {
 		HAPI.UserMessage(std::to_string(cellSize) + " is an invalid cell size", "Error Occured");
 	}
 	return true;
 }
 
 void Graphics::CreateSprite(const std::string& spriteName, const int spriteLocation) {
-	/*if(spriteLocation >= 0  
-		&& spriteLocation <= pow(static_cast<int>(m_spriteSheet->GetSize().x / static_cast<float>(m_spriteSheetCellSize)), 2) - 1) {*/
-		if(!(m_spriteSheetLocations.find(spriteName) == m_spriteSheetLocations.end())) {
-			HAPI.UserMessage("A sprite with the name " + spriteName + " already exists.", "Error Occured");
-		} else {
-			m_spriteSheetLocations[spriteName] = spriteLocation;
-		}
-	/*}else {
-		HAPI.UserMessage("Sprite Grid Location Not Valid", "Error Occured");
-	}*/
+	if (!(m_spriteSheetLocations.find(spriteName) == m_spriteSheetLocations.end())) {
+		HAPI.UserMessage("A sprite with the name " + spriteName + " already exists.", "Error Occured");
+	} else {
+		m_spriteSheetLocations[spriteName] = spriteLocation;
+	}
 }
 
 void Graphics::DrawTexture(const std::string& name, const Vector2 position) {
@@ -91,7 +87,7 @@ void Graphics::DrawSprite(const std::string& name, const Vector2 position) {
 	if (m_spriteSheetLocations.find(name) == m_spriteSheetLocations.end()) {
 		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.", "Error Occured");
 		return;
-	}else {
+	} else {
 		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], m_spriteSheetCellSize, position);
 	}
 }

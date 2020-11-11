@@ -26,16 +26,20 @@ Game::Game() :
 	int bricksPlaced{ 0 };
 	for (int y = 0; y < constants::k_screenHeight / 2; y += constants::k_spriteSheetCellWith) {
 		for (int x = 0; x < constants::k_screenWidth; x += constants::k_spriteSheetCellWith) {
-			if (constants::rand_range(1, 100) < 25 && bricksPlaced < 20) {
-				// Randomly Assign Red or Green bricks
-				if(constants::rand_range(0, 10) < 5) {
-					Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eRed };
-					m_bricks.push_back(newBrick);
-				}else {
-					Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eGreen };
-					m_bricks.push_back(newBrick);
+			if (bricksPlaced < 20) {
+				if (constants::rand_range(1, 100) < 25) {
+					// Randomly Assign Red or Green bricks
+					if (constants::rand_range(0, 10) < 5) {
+						Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eRed };
+						m_bricks.push_back(newBrick);
+					} else {
+						Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eGreen };
+						m_bricks.push_back(newBrick);
+					}
+					bricksPlaced += 1;
 				}
-				bricksPlaced += 1;
+			}else {
+				return;
 			}
 		}
 	}
@@ -100,7 +104,6 @@ void Game::HandleControllerInput() {
 	Vector2 leftStickVector{ static_cast<float>(m_controllerData.analogueButtons[2]), static_cast<float>(m_controllerData.analogueButtons[3]) };
 	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
 		leftStickVector.Normalised();
-
 		if (leftStickVector.x > 0) {
 			m_player.SetDirection(Vector2::RIGHT);
 		} else if (leftStickVector.x < 0) {
