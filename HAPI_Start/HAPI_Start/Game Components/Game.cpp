@@ -18,7 +18,7 @@ Game::Game() :
 	m_gameScore(0) {
 
 	Graphics::GetInstance().CreateTexture("Data/Background.tga", "Background");
-	Graphics::GetInstance().CreateSpriteSheet("Data/SpriteSheet.tga", 64);
+	Graphics::GetInstance().CreateSpriteSheet("Data/SpriteSheetVertical.tga", 64);
 
 	CreateSprite("PlayerLeft", 0);
 	CreateSprite("PlayerRight", 1);

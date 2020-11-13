@@ -50,7 +50,7 @@ bool Graphics::CreateTexture(const std::string& filename, const std::string& nam
 	return true;
 }
 
-bool Graphics::CreateSpriteSheet(const std::string& filename, unsigned short cellSize) {
+bool Graphics::CreateSpriteSheet(const std::string& filename, const unsigned short cellSize) {
 	auto* newSprite = new Texture();
 	if (!newSprite->Initialise(filename)) {
 		HAPI.UserMessage("Could not load the file: " + filename + "\nPlease check the spelling and try again", "Error Occured");
@@ -86,7 +86,6 @@ void Graphics::DrawTexture(const std::string& name, const Vector2 position) {
 void Graphics::DrawSprite(const std::string& name, const Vector2 position) {
 	if (m_spriteSheetLocations.find(name) == m_spriteSheetLocations.end()) {
 		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.", "Error Occured");
-		return;
 	} else {
 		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], m_spriteSheetCellSize, position);
 	}

@@ -22,61 +22,28 @@ bool Texture::Initialise(const std::string& fileName) {
 }
 
 void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePosition) const {
-	if (m_textureData) {
-		ClipBlit(screen, texturePosition);
-	} else {
-		HAPISPACE::HAPI_TColour* horridPink = &HAPISPACE::HAPI_TColour::HORRID_PINK;
-		for (int x = static_cast<int>(texturePosition.x); x < (static_cast<int>(texturePosition.x + m_size.x)); x++) {
-			for (int y = static_cast<int>(texturePosition.y); y < (static_cast<int>(texturePosition.y + m_size.y)); y++) {
-				const int offset = (x + y * constants::k_screenWidth) * 4;
-				memcpy(screen + offset, horridPink, 4);
-			}
-		}
-	}
+	TextureClipBlit(screen, texturePosition);
 }
 
-void Texture::RenderSprite(HAPISPACE::BYTE* screen, int spriteSheetIndex, int cellWidth, const Vector2 spritePosition) const {
-
+void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const int cellWidth, const Vector2 spritePosition) const {
 	HAPISPACE::BYTE* screenStart{
-		screen + (static_cast<int>(spritePosition.y) * constants::k_screenWidth + static_cast<int>(spritePosition.x)) * 4
+		screen + (static_cast<int>(spritePosition.x) + static_cast<int>(spritePosition.y) * constants::k_screenWidth) * 4
 	};
 
 	HAPISPACE::BYTE* textureStart{
-		m_textureData + spriteSheetIndex * cellWidth * 4
+		m_textureData + (cellWidth * cellWidth * 4) * spriteSheetIndex
 	};
 
-	const int screenInc{ constants::k_screenWidth * 4 - cellWidth * 4 };
+	/*SpriteAlphaBlit(screenStart, textureStart, cellWidth, spritePosition);*/
+	SpriteClipBlit(screenStart, textureStart, spriteSheetIndex, cellWidth, spritePosition);
 
-	const int texInc{ static_cast<int>(m_size.x) * 4 - cellWidth * 4 };
-
-	for (int y = 0; y < cellWidth; y++) {
-		for (int x = 0; x < cellWidth; x++) {
-			const HAPISPACE::BYTE a{ textureStart[3] };
-			// Only draw pixels if needed
-			if (a > 0) {
-				// Fast blit if no alpha
-				if (a == 255) {
-					memcpy(screenStart, textureStart, 4);
-				} else {
-					// Blend with background
-					screenStart[0] = screenStart[0] + ((a * (textureStart[2] - screenStart[0])) >> 8);
-					screenStart[1] = screenStart[1] + ((a * (textureStart[1] - screenStart[1])) >> 8);
-					screenStart[2] = screenStart[2] + ((a * (textureStart[0] - screenStart[2])) >> 8);
-				}
-			}
-			screenStart += 4;
-			textureStart += 4;
-		}
-		screenStart += screenInc;
-		textureStart += texInc;
-	}
 }
 
 Vector2 Texture::GetSize() const {
 	return{ m_size };
 }
 
-void Texture::AlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
+void Texture::TextureAlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
 	HAPISPACE::BYTE* screenStart{
 		screen + (static_cast<int>(position.y) * constants::k_screenWidth + static_cast<int>(position.x)) * 4
 	};
@@ -106,7 +73,7 @@ void Texture::AlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
 	}
 }
 
-void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
+void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	Vector2 temp = position;
@@ -124,7 +91,7 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
 		// If the object is completely onscreen then alphablit...
 		if (clippedRect.IsCompletelyInside(screenBounds)) {
-			AlphaBlit(screen, position);
+			TextureAlphaBlit(screen, position);
 		} else {
 			// we must be offscreen...
 			//Clip against screen
@@ -157,7 +124,7 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 			const int texInc{
 				(static_cast<int>(textureBounds.GetSize().x) - static_cast<int>(clippedRect.GetSize().x)) * 4
 			};
-			
+
 			// Start blitting...
 			for (int y = 0; y < clippedRect.GetSize().y; y++) {
 				for (int x = 0; x < clippedRect.GetSize().x; x++) {
@@ -177,10 +144,109 @@ void Texture::ClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 					texPtr += 4;
 					screenPtr += 4;
 				}
-				
+
 				screenPtr += screenInc;
 				texPtr += texInc;
 			}
 		}
 	}
+}
+
+void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetCellWidth, const Vector2 position) const {
+	const int screenInc{ constants::k_screenWidth * 4 - spriteSheetCellWidth * 4 };
+
+	const int spriteInc{ static_cast<int>(m_size.x) * 4 - spriteSheetCellWidth * 4 };
+
+	for (int y = 0; y < spriteSheetCellWidth; y++) {
+		for (int x = 0; x < spriteSheetCellWidth; x++) {
+			const HAPISPACE::BYTE a{ spriteData[3] };
+			// Only draw pixels if needed
+			if (a > 0) {
+				// Fast blit if no alpha
+				if (a == 255) {
+					memcpy(screenStart, spriteData, 4);
+				} else {
+					// Blend with background
+					screenStart[0] = screenStart[0] + ((a * (spriteData[2] - screenStart[0])) >> 8);
+					screenStart[1] = screenStart[1] + ((a * (spriteData[1] - screenStart[1])) >> 8);
+					screenStart[2] = screenStart[2] + ((a * (spriteData[0] - screenStart[2])) >> 8);
+				}
+			}
+			screenStart += 4;
+			spriteData += 4;
+		}
+		screenStart += screenInc;
+		spriteData += spriteInc;
+	}
+}
+
+void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, const int spriteSheetCellWidth, Vector2 position) const {
+	// BoundsRectangle takes in coordinates for the top left and bottom right
+	// My Vector2 class defaults to zeros
+	const Vector2 temp = position;
+	const BoundsRectangle spriteBounds({}, { static_cast<float>(spriteSheetCellWidth), static_cast<float>(spriteSheetCellWidth) });
+
+	const BoundsRectangle screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
+
+	// Create a copy to clip with 
+	BoundsRectangle clippedRect(spriteBounds);
+
+	//Translate to screen space
+	clippedRect.Translate(temp.x, temp.y);
+
+	// If the object is onscreen...
+	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
+		// If the object is completely onscreen then alphablit...
+		if (clippedRect.IsCompletelyInside(screenBounds)) {
+			SpriteAlphaBlit(screenStart, spriteData, spriteSheetCellWidth, position);
+		} else {
+			// we must be offscreen...
+			//Clip against screen
+			clippedRect.ClipTo(screenBounds);
+
+			clippedRect.Translate(-temp.x, -temp.y);
+
+			//Clamping to negative
+			position.x = std::max(0.f, temp.x);
+			position.y = std::max(0.f, temp.y);
+
+			// Calculate the increment up here rather than in the loop since it doesn't change...
+			const int screenInc{static_cast<int>(screenBounds.GetSize().x) * 4 - static_cast<int>(clippedRect.GetSize().x) * 4 };
+
+
+			const int spriteOffset{
+				(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * spriteSheetCellWidth) * 4
+			};
+
+			HAPISPACE::BYTE* spritePtr = spriteData + spriteOffset;
+			
+			const int spriteInc {
+				((spriteSheetCellWidth - static_cast<int>(clippedRect.GetSize().x))) * 4
+			};
+
+			// Start blitting...
+			for (int y = 0; y < clippedRect.GetSize().y; y++) {
+				for (int x = 0; x < clippedRect.GetSize().x; x++) {
+					const HAPISPACE::BYTE alpha = spritePtr[3];
+					// Fully opaque
+					if (alpha == 255) {
+						memcpy(screenStart, spritePtr, 4);
+					} else if (alpha > 0) { // Has alpha channel
+						const HAPISPACE::BYTE red = spritePtr[0];
+						const HAPISPACE::BYTE green = spritePtr[1];
+						const HAPISPACE::BYTE blue = spritePtr[2];
+
+						screenStart[0] = screenStart[0] + ((alpha * (red - screenStart[0])) >> 8);
+						screenStart[1] = screenStart[1] + ((alpha * (green - screenStart[1])) >> 8);
+						screenStart[2] = screenStart[2] + ((alpha * (blue - screenStart[2])) >> 8);
+					}
+					spritePtr += 4;
+					screenStart += 4;
+				}
+				screenStart += screenInc;
+				spritePtr += spriteInc;
+			}
+		}
+	}
+
 }
