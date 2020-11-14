@@ -19,13 +19,12 @@ private:
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
 	Player m_player;
-	Ball m_ball;
 	clock_t m_gameClock;
-	std::vector<Brick> m_bricks;
-	int m_brickAmount;
-	int m_gameScore;
 
-	void CreateSprite(const std::string& spriteSheetIdentifier, int spriteSheetLocation);
+	int m_gameScore;
+	int m_currentSprite;
+	
+	void CreateSprite(const std::string& spriteSheetIdentifier);
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();

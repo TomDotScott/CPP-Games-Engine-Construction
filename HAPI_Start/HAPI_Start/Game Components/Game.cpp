@@ -5,77 +5,99 @@ Game::Game() :
 	PLAYER_LOST(false),
 	m_keyboardData(HAPI.GetKeyboardData()),
 	m_controllerData(HAPI.GetControllerData(0)),
-	m_player("PlayerLeft",
-		{ (static_cast<float>(constants::k_screenWidth) / 2) - constants::k_spriteSheetCellWith, constants::k_screenHeight - 150 }
-	),
-	m_ball("Data/Ball.tga",
-		"Ball",
-		{ Vector2::CENTRE },
-		{ 0.f, 1.f }
+	m_player("Player_Idle_Body_1",
+		{ Vector2::CENTRE }
 	),
 	m_gameClock(),
-	m_brickAmount(0),
-	m_gameScore(0) {
+	m_gameScore(0),
+	m_currentSprite(0) {
 
-	Graphics::GetInstance().CreateTexture("Data/Background.tga", "Background");
-	Graphics::GetInstance().CreateSpriteSheet("Data/SpriteSheetVertical.tga", 64);
+	Graphics::GetInstance().CreateTexture("Data/PlatformerBackground.tga", "Background");
+	Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheet.tga");
 
-	CreateSprite("PlayerLeft", 0);
-	CreateSprite("PlayerRight", 1);
-	CreateSprite("GreenBrick", 2);
-	CreateSprite("RedBrick", 3);
-	CreateSprite("Explosion0", 4);
-	CreateSprite("Explosion1", 5);
-	CreateSprite("Explosion2", 6);
-	CreateSprite("Explosion3", 7);
-	CreateSprite("Explosion4", 8);
-	CreateSprite("Explosion5", 9);
-
-
-	for (int y = 0; y < constants::k_screenHeight / 2; y += constants::k_spriteSheetCellWith) {
-		for (int x = 0; x < constants::k_screenWidth; x += constants::k_spriteSheetCellWith) {
-			if (m_brickAmount < 20) {
-				if (constants::rand_range(1, 100) < 25) {
-					// Randomly Assign Red or Green bricks
-					if (constants::rand_range(0, 10) < 5) {
-						Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eRed };
-						m_bricks.push_back(newBrick);
-					} else {
-						Brick newBrick{ {static_cast<float>(x), static_cast<float>(y)}, EBrickType::eGreen };
-						m_bricks.push_back(newBrick);
-					}
-					m_brickAmount += 1;
-				}
-			} else {
-				return;
-			}
-		}
-	}
+	CreateSprite("0");
+	CreateSprite("1");
+	CreateSprite("2");
+	CreateSprite("3");
+	CreateSprite("4");
+	CreateSprite("5");
+	CreateSprite("6");
+	CreateSprite("7");
+	CreateSprite("8");
+	CreateSprite("9");
+	CreateSprite("Player_Walk_Top_1");
+	CreateSprite("Player_Walk_Body_1");
+	CreateSprite("Player_Walk_Top_2");
+	CreateSprite("Player_Walk_Body_2");
+	CreateSprite("Player_Jump_Top");
+	CreateSprite("Player_Jump_Body");
+	CreateSprite("Player_Idle_Top_1");
+	CreateSprite("Player_Idle_Body_1");
+	CreateSprite("Player_Idle_Top_2");
+	CreateSprite("Player_Idle_Body_2");
+	CreateSprite("Player_Climb_Top_1");
+	CreateSprite("Player_Climb_Body_1");
+	CreateSprite("Player_Climb_Top_2");
+	CreateSprite("Player_Climb_Body_2");
+	CreateSprite("Grass_Left");
+	CreateSprite("Grass_Centre");
+	CreateSprite("Grass_Right");
+	CreateSprite("Dirt");
+	CreateSprite("Stone_Left");
+	CreateSprite("Stone_Centre");
+	CreateSprite("Stone_Right");
+	CreateSprite("Stone_Top");
+	CreateSprite("Coin1");
+	CreateSprite("Coin2");
+	CreateSprite("Coin3");
+	CreateSprite("Flag_Up_1");
+	CreateSprite("Flag_Up_2");
+	CreateSprite("Flag_Down");
+	CreateSprite("Flag_Pole");
+	CreateSprite("Gem_1");
+	CreateSprite("Gem_2");
+	CreateSprite("Gem_3");
+	CreateSprite("UI_Heart_Empty");
+	CreateSprite("UI_Heart_Half");
+	CreateSprite("UI_Heart_Full");
+	CreateSprite("UI_Lives");
+	CreateSprite("UI_Coins");
+	CreateSprite("UI_X");
+	CreateSprite("Slime_1");
+	CreateSprite("Slime_2");
+	CreateSprite("Slime_Squashed");
+	CreateSprite("Snail_1");
+	CreateSprite("Snail_2");
+	CreateSprite("Snail_Shell");
+	CreateSprite("Block_Item");
+	CreateSprite("Block_Boxed_Coin");
+	CreateSprite("Block_Coin");
+	CreateSprite("Block_Brick");
+	CreateSprite("Block_Crate");
+	CreateSprite("Ladder_Top");
+	CreateSprite("Ladder_Mid");
+	CreateSprite("Arrow_Sign");
+	CreateSprite("Bush");
+	CreateSprite("Plant");
+	CreateSprite("Spikes");
+	CreateSprite("Rock");
+	CreateSprite("Mushroom1");
+	CreateSprite("Mushroom2");
+	CreateSprite("Door_Closed_Top");
+	CreateSprite("Door_Closed_Mid");
+	CreateSprite("Door_Open_Top");
+	CreateSprite("Door_Open_Mid");
+	CreateSprite("UI_Key_Not_Found");
+	CreateSprite("UI_Key_Found");
+	CreateSprite("Key");
 }
 
 void Game::Update() {
 	// Handle Inputs
 	HandleKeyBoardInput();
 	HandleControllerInput();
-	if (m_ball.GetLivesRemaining() > -1) {
-		// Update Objects
-		m_player.Update(DeltaTime());
-		m_ball.Update(DeltaTime());
-		for (auto& brick : m_bricks) {
-			brick.Update(DeltaTime());
-		}
-		
-		// Check Collisions
-		m_ball.CheckCollisions(m_player.GetGlobalBounds(), m_player.GetPosition());
-		for (auto& brick : m_bricks) {
-			if (brick.GetIsActive() == true) {
-				m_ball.CheckCollisions(brick.GetGlobalBounds(), brick.GetPosition());
-				brick.CheckCollision(m_ball.GetGlobalBounds(), m_gameScore);
-			}
-		}
-	} else {
-		PLAYER_LOST = true;
-	}
+
+	m_player.Update(DeltaTime());
 
 	// Reset the clock
 	m_gameClock = clock();
@@ -85,64 +107,31 @@ void Game::Render() {
 	Graphics::GetInstance().ClearScreen();
 	Graphics::GetInstance().DrawTexture("Background", { 0, 0 });
 
-	const Vector2 playerPosition = m_player.GetPosition();
-	Graphics::GetInstance().DrawSprite("PlayerLeft", playerPosition);
-	Graphics::GetInstance().DrawSprite("PlayerRight", { playerPosition.x + constants::k_spriteSheetCellWith, playerPosition.y });
-
-	int inactiveBricks{ 0 };
-	for (auto& brick : m_bricks) {
-		if (brick.GetIsActive() == true) {
-			Graphics::GetInstance().DrawSprite(brick.GetType() == EBrickType::eRed ? "RedBrick" : "GreenBrick", brick.GetPosition());
-		} else {
-			if (!brick.GetExplosionAnimationHasEnded()) {
-				Graphics::GetInstance().DrawSprite("Explosion" + std::to_string(brick.GetCurrentAnimationFrame()), brick.GetPosition());
-			}
-			inactiveBricks += 1;
-			if (inactiveBricks == m_brickAmount) {
-				PLAYER_WON = true;
-			}
-		}
+	for(int i = 0; i < (constants::k_screenWidth / constants::k_spriteSheetCellWith) + 1; i++) {
+		Graphics::GetInstance().DrawSprite("Grass_Centre", {static_cast<float>(i * constants::k_spriteSheetCellWith), constants::k_screenHeight - constants::k_spriteSheetCellWith });
 	}
-
-	Graphics::GetInstance().DrawTexture("Ball", m_ball.GetPosition());
-
-	/*======================================= UI ==============================================*/
-	Graphics::GetInstance().DrawTexture("Ball", { 0, constants::k_screenHeight - 32 });
-	// Lives
-	HAPI.RenderText(
-		40, constants::k_screenHeight - 36,
-		HAPISPACE::HAPI_TColour::WHITE,
-		HAPISPACE::HAPI_TColour::BLACK,
-		3,
-		"x " + std::to_string(m_ball.GetLivesRemaining()),
-		32
-	);
-	// Score
-	HAPI.RenderText(
-		constants::k_screenWidth / 2, constants::k_screenHeight - 40,
-		HAPISPACE::HAPI_TColour::WHITE,
-		HAPISPACE::HAPI_TColour::BLACK,
-		5,
-		"Score: " + std::to_string(m_gameScore),
-		32
-	);
+	
+	const Vector2 playerPos = m_player.GetPosition();
+	Graphics::GetInstance().DrawSprite("Player_Idle_Top_1", { playerPos.x, playerPos.y - constants::k_spriteSheetCellWith });
+	Graphics::GetInstance().DrawSprite("Player_Idle_Body_1", playerPos);
 
 
 }
 
 void Game::HandleKeyBoardInput() {
-	// Player One Controls
-	if (GetKey(EKeyCode::W)) {
-		m_player.SetDirection(Vector2::UP);
-	} else if (GetKey(EKeyCode::S)) {
-		m_player.SetDirection(Vector2::DOWN);
-	} else if (GetKey(EKeyCode::A)) {
-		m_player.SetDirection(Vector2::LEFT);
-	} else if (GetKey(EKeyCode::D)) {
-		m_player.SetDirection(Vector2::RIGHT);
-	} else {
-		m_player.SetDirection(Vector2::ZERO);
+	if(GetKey(EKeyCode::SPACE)) {
+		m_player.SetIsJumping(true);
 	}
+
+	
+	Vector2 playerMoveDir = Vector2::ZERO;
+	if (GetKey(EKeyCode::A) || GetKey(EKeyCode::LEFT)) {
+		playerMoveDir = playerMoveDir + Vector2::LEFT;
+	}
+	if (GetKey(EKeyCode::D) || GetKey(EKeyCode::RIGHT)) {
+		playerMoveDir = playerMoveDir + Vector2::RIGHT;
+	} 
+	m_player.SetDirection(playerMoveDir);
 }
 
 void Game::HandleControllerInput() {
@@ -160,8 +149,9 @@ void Game::HandleControllerInput() {
 	}
 }
 
-void Game::CreateSprite(const std::string& spriteSheetIdentifier, const int spriteSheetLocation) {
-	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, spriteSheetLocation);
+void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
+	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite);
+	m_currentSprite++;
 }
 
 float Game::DeltaTime() const {

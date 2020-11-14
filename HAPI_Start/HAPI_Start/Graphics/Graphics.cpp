@@ -1,11 +1,11 @@
 ﻿#include "Graphics.h"
 #include "../Utilities/Constants.h"
 
-Graphics::Graphics() : m_screen(), m_textureBuffer(), m_spriteSheetLocations(), m_spriteSheet(), m_spriteSheetCellSize(64) {
+Graphics::Graphics() : m_screen(), m_textureBuffer(), m_spriteSheetLocations(), m_spriteSheet() {
 	int width = constants::k_screenWidth;
 	int height = constants::k_screenHeight;
 
-	if (!HAPI.Initialise(width, height, "HAPI Arcanoid!"))
+	if (!HAPI.Initialise(width, height, "Nano's Adventure"))
 		return;
 	HAPI.SetShowFPS(true);
 	//HAPI.LimitFrameRate(60);
@@ -50,7 +50,7 @@ bool Graphics::CreateTexture(const std::string& filename, const std::string& nam
 	return true;
 }
 
-bool Graphics::CreateSpriteSheet(const std::string& filename, const unsigned short cellSize) {
+bool Graphics::CreateSpriteSheet(const std::string& filename) {
 	auto* newSprite = new Texture();
 	if (!newSprite->Initialise(filename)) {
 		HAPI.UserMessage("Could not load the file: " + filename + "\nPlease check the spelling and try again", "Error Occured");
@@ -58,11 +58,6 @@ bool Graphics::CreateSpriteSheet(const std::string& filename, const unsigned sho
 		return false;
 	} else {
 		m_spriteSheet = newSprite;
-	}
-	if ((static_cast<int>(m_spriteSheet->GetSize().x * m_spriteSheet->GetSize().y) % (cellSize * cellSize)) == 0) {
-		m_spriteSheetCellSize = cellSize;
-	} else {
-		HAPI.UserMessage(std::to_string(cellSize) + " is an invalid cell size", "Error Occured");
 	}
 	return true;
 }
@@ -87,6 +82,6 @@ void Graphics::DrawSprite(const std::string& name, const Vector2 position) {
 	if (m_spriteSheetLocations.find(name) == m_spriteSheetLocations.end()) {
 		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.", "Error Occured");
 	} else {
-		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], m_spriteSheetCellSize, position);
+		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], position);
 	}
 }

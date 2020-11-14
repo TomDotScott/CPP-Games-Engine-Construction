@@ -3,20 +3,20 @@
 
 class Player final : public Entity {
 public:
-	Player(const std::string& textureFilename, 
-		const std::string& textureIdentifier, 
-		Vector2 startingPosition
-	);
-	
 	Player(const std::string& spriteSheetIdentifier, 
 		Vector2 startingPosition
 	);
 
-	void Update(float deltaTime) override;
+	void Update(const float deltaTime) override;
 	void SetDirection(Vector2 direction);
+	void SetIsJumping(const bool isJumping);
 	
 private:
 	Vector2 m_currentDirection;
+	float m_jumpForce;
+	bool m_isJumping;
+	bool m_isGrounded;
 	
-	void Move(float deltaTime);
+	void Move(const float deltaTime);
+	void Jump();
 };

@@ -2,49 +2,49 @@
 
 #include "../Graphics/Graphics.h"
 
-Player::Player(const std::string& textureFilename, const std::string& textureIdentifier, const Vector2 startingPosition) :
-	Entity(textureFilename,
-		textureIdentifier,
-		{ constants::k_spriteSheetCellWith * 2, constants::k_spriteSheetCellWith },
-		startingPosition,
-		{ 1, 1 }
-	),
-	m_currentDirection(Vector2::ZERO){
-}
-
 Player::Player(const std::string& spriteSheetIdentifier, const Vector2 startingPosition) :
 	Entity(spriteSheetIdentifier,
-		Vector2(constants::k_spriteSheetCellWith * 2, constants::k_spriteSheetCellWith),
+		Vector2(constants::k_spriteSheetCellWith, constants::k_spriteSheetCellWith * 2),
 		startingPosition,
-		{ 1, 1 }),
-	m_currentDirection(Vector2::ZERO) {
+		{ Vector2::ZERO }),
+	m_currentDirection(Vector2::ZERO),
+	m_jumpForce(6.f),
+	m_isJumping(false),
+	m_isGrounded(true) {
 }
 
 void Player::Update(const float deltaTime) {
 	Move(deltaTime);
+	if (m_isGrounded && m_isJumping) {
+		Jump();
+		m_isGrounded = false;
+	}
+
+	m_velocity.y += constants::k_gravity * (deltaTime / 1000);
+
+	m_position = m_position + m_velocity;
+
+	if (m_position.y > constants::k_screenHeight - constants::k_spriteSheetCellWith * 2) {
+		m_position.y = constants::k_screenHeight - constants::k_spriteSheetCellWith * 2;
+		m_isGrounded = true;
+		m_isJumping = false;
+	} else if (m_position.y < constants::k_spriteSheetCellWith) {
+		m_position.y = constants::k_spriteSheetCellWith;
+	}
 }
 
 void Player::SetDirection(const Vector2 direction) {
 	m_currentDirection = direction;
 }
 
+void Player::SetIsJumping(const bool isJumping) {
+	m_isJumping = isJumping;
+}
+
 void Player::Move(const float deltaTime) {
-	if (m_currentDirection == Vector2::LEFT) {
-		//if (m_position.x > constants::k_borderWidth) {
-			m_position.x -= m_velocity.x * deltaTime;
-		//}
-	} else if (m_currentDirection == Vector2::RIGHT) {
-		//if (m_position.x < constants::k_screenWidth - m_size.x - constants::k_borderWidth) {
-			m_position.x += m_velocity.x * deltaTime;
-		//}
-	}
-	if (m_currentDirection == Vector2::UP) {
-		//if (m_position.y > constants::k_borderWidth) {
-			m_position.y -= m_velocity.y * deltaTime;
-		//}
-	} else if (m_currentDirection == Vector2::DOWN) {
-		//if (m_position.y < constants::k_screenWidth - m_size.y - constants::k_borderWidth) {
-			m_position.y += m_velocity.y * deltaTime;
-		//}
-	}
+	m_position = m_position + (m_currentDirection * deltaTime);
+}
+
+void Player::Jump() {
+	m_velocity.y = -m_jumpForce;
 }

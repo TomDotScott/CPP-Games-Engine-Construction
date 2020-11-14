@@ -16,7 +16,7 @@ public:
 	bool CreateTexture(const std::string& filename, const std::string& name);
 	void DrawTexture(const std::string& name, Vector2 position);
 
-	bool CreateSpriteSheet(const std::string& filename, unsigned short cellSize);
+	bool CreateSpriteSheet(const std::string& filename);
 	void CreateSprite(const std::string& spriteName, int spriteLocation);
 	void DrawSprite(const std::string& name, Vector2 position);
 
@@ -26,7 +26,6 @@ private:
 
 	std::unordered_map<std::string, int> m_spriteSheetLocations;
 	Texture* m_spriteSheet;
-	unsigned short m_spriteSheetCellSize;
 	
 	Graphics();
 	~Graphics();
