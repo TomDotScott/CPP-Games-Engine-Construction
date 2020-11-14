@@ -41,6 +41,10 @@ void Player::SetIsJumping(const bool isJumping) {
 	m_isJumping = isJumping;
 }
 
+Vector2 Player::GetCurrentDirection() const {
+	return m_currentDirection;
+}
+
 void Player::Move(const float deltaTime) {
 	m_position = m_position + (m_currentDirection * deltaTime);
 }

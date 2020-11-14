@@ -10,7 +10,8 @@ Game::Game() :
 	),
 	m_gameClock(),
 	m_gameScore(0),
-	m_currentSprite(0) {
+	m_currentSprite(0),
+	m_backgroundPosition(Vector2::ZERO) {
 
 	Graphics::GetInstance().CreateTexture("Data/PlatformerBackground.tga", "Background");
 	Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheet.tga");
@@ -105,12 +106,12 @@ void Game::Update() {
 
 void Game::Render() {
 	Graphics::GetInstance().ClearScreen();
-	Graphics::GetInstance().DrawTexture("Background", { 0, 0 });
+	RenderBackground();
 
-	for(int i = 0; i < (constants::k_screenWidth / constants::k_spriteSheetCellWith) + 1; i++) {
-		Graphics::GetInstance().DrawSprite("Grass_Centre", {static_cast<float>(i * constants::k_spriteSheetCellWith), constants::k_screenHeight - constants::k_spriteSheetCellWith });
+	for (int i = 0; i < (constants::k_screenWidth / constants::k_spriteSheetCellWith) + 1; i++) {
+		Graphics::GetInstance().DrawSprite("Grass_Centre", { static_cast<float>(i * constants::k_spriteSheetCellWith), constants::k_screenHeight - constants::k_spriteSheetCellWith });
 	}
-	
+
 	const Vector2 playerPos = m_player.GetPosition();
 	Graphics::GetInstance().DrawSprite("Player_Idle_Top_1", { playerPos.x, playerPos.y - constants::k_spriteSheetCellWith });
 	Graphics::GetInstance().DrawSprite("Player_Idle_Body_1", playerPos);
@@ -119,18 +120,18 @@ void Game::Render() {
 }
 
 void Game::HandleKeyBoardInput() {
-	if(GetKey(EKeyCode::SPACE)) {
+	if (GetKey(EKeyCode::SPACE)) {
 		m_player.SetIsJumping(true);
 	}
 
-	
+
 	Vector2 playerMoveDir = Vector2::ZERO;
 	if (GetKey(EKeyCode::A) || GetKey(EKeyCode::LEFT)) {
 		playerMoveDir = playerMoveDir + Vector2::LEFT;
 	}
 	if (GetKey(EKeyCode::D) || GetKey(EKeyCode::RIGHT)) {
 		playerMoveDir = playerMoveDir + Vector2::RIGHT;
-	} 
+	}
 	m_player.SetDirection(playerMoveDir);
 }
 
@@ -152,6 +153,27 @@ void Game::HandleControllerInput() {
 void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
 	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite);
 	m_currentSprite++;
+}
+
+void Game::RenderBackground() {
+	const Vector2 playerDirection{ m_player.GetCurrentDirection() };
+	if (playerDirection != Vector2::ZERO) {
+		if (playerDirection.x == Vector2::LEFT.x) {
+			m_backgroundPosition.x += 1.f;
+			if (m_backgroundPosition.x < -2 * constants::k_screenHeight) {
+				m_backgroundPosition.x = 0;
+			}
+		} else {
+			m_backgroundPosition.x -= 1.f;
+			if (m_backgroundPosition.x < -constants::k_screenHeight) {
+				m_backgroundPosition.x = 0;
+			}
+
+		}
+	}
+	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x - constants::k_screenHeight, 0 });
+	Graphics::GetInstance().DrawTexture("Background", m_backgroundPosition);
+	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + constants::k_screenHeight, 0 });
 }
 
 float Game::DeltaTime() const {

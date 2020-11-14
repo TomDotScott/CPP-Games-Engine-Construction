@@ -10,6 +10,7 @@ public:
 	void Update(const float deltaTime) override;
 	void SetDirection(Vector2 direction);
 	void SetIsJumping(const bool isJumping);
+	Vector2 GetCurrentDirection() const;
 	
 private:
 	Vector2 m_currentDirection;

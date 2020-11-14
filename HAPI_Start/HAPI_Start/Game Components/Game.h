@@ -20,11 +20,14 @@ private:
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
 	Player m_player;
 	clock_t m_gameClock;
-
+	
 	int m_gameScore;
 	int m_currentSprite;
+
+	Vector2 m_backgroundPosition;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
+	void RenderBackground();
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
