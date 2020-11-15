@@ -30,13 +30,16 @@ private:
 	std::vector<std::vector<std::string>> m_levelData;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
-	void RenderBackground();
-	void RenderChunk(int chunkNum);
+	float DeltaTime() const;
 	bool GetKey(EKeyCode keyCode) const;
+	
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
-	float DeltaTime() const;
+
 	void LoadLevel();
+	void CheckPlayerLevelCollision(const int chunkNum, Vector2 playerPos);
+	void RenderBackground();
+	void RenderChunk(int chunkNum);
 };
 
 enum class EKeyCode {

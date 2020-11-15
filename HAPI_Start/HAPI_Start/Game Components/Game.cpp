@@ -106,6 +106,16 @@ void Game::Update() {
 
 	m_player.Update(DeltaTime());
 
+	const Vector2 playerPos = m_player.GetPosition();
+
+	// See if the player is on the ground
+	const Vector2 worldSpacePlayerCoords{
+		(playerPos.x / static_cast<float>(constants::k_spriteSheetCellWidth)) + static_cast<float>((m_currentChunk * constants::k_chunkWidth)),
+		(playerPos.y / static_cast<float>(constants::k_spriteSheetCellWidth))
+	};
+	
+	CheckPlayerLevelCollision(m_currentChunk, worldSpacePlayerCoords);
+
 	// Reset the clock
 	m_gameClock = clock();
 }
@@ -117,8 +127,28 @@ void Game::Render() {
 	RenderChunk(m_currentChunk);
 	
 	const Vector2 playerPos = m_player.GetPosition();
-	Graphics::GetInstance().DrawSprite("Player_Idle_Top_1", { playerPos.x, playerPos.y - constants::k_spriteSheetCellWith });
+	Graphics::GetInstance().DrawSprite("Player_Idle_Top_1", { playerPos.x, playerPos.y - constants::k_spriteSheetCellWidth });
 	Graphics::GetInstance().DrawSprite("Player_Idle_Body_1", playerPos);
+}
+
+void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
+	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite);
+	m_currentSprite++;
+}
+
+float Game::DeltaTime() const {
+	//CPU "ticks" since the program started.
+	const clock_t programTickCount = clock() - m_gameClock;
+
+	//Conversion rate between ticks and milliseconds.
+	const float ticksToMilliseconds = 1000.0f / CLOCKS_PER_SEC;
+
+	//Convert from ticks to seconds.
+	return programTickCount * ticksToMilliseconds;
+}
+
+bool Game::GetKey(const EKeyCode keyCode) const {
+	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
 }
 
 void Game::HandleKeyBoardInput() {
@@ -151,9 +181,60 @@ void Game::HandleControllerInput() {
 	}
 }
 
-void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
-	Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite);
-	m_currentSprite++;
+void Game::LoadLevel() {
+	std::ifstream file("Data/Level1.csv");
+	while (!file.eof()) {
+		for (int r = 0; r < constants::k_chunkHeight; ++r) {
+			std::vector<std::string> row;
+			std::string line;
+			std::getline(file, line);
+			if (!file.good()) {
+				break;
+			}
+			std::stringstream iss(line);
+			for (int c = 0; c < constants::k_chunkWidth * 11; ++c) {
+				std::string val;
+				std::getline(iss, val, ',');
+				if (!iss.good()) {
+					break;
+				}
+				row.emplace_back(val);
+			}
+			m_levelData.emplace_back(row);
+		}
+	}
+}
+
+void Game::CheckPlayerLevelCollision(const int chunkNum, Vector2 playerPos) {
+	Vector2 difference{ Vector2::ZERO };
+	const int playerX = static_cast<int>(playerPos.x);
+	const int playerY = static_cast<int>(playerPos.y);
+	
+	// Check the bottom of the Player...
+	if (playerPos.y < constants::k_chunkHeight - 1) {
+		// TODO: Make a tile struct with data about collidability... Hard Coding is bad....
+		if (m_levelData[playerY + 1][playerX] == "1" ||
+			m_levelData[playerY + 1][playerX] == "2" ||
+			m_levelData[playerY + 1][playerX] == "3" ||
+			m_levelData[playerY + 1][playerX] == "4" ||
+			m_levelData[playerY + 1][playerX] == "5" ||
+			m_levelData[playerY + 1][playerX] == "6" ||
+			m_levelData[playerY + 1][playerX] == "7" ||
+			m_levelData[playerY + 1][playerX] == "47" ||
+			m_levelData[playerY + 1][playerX] == "48" ||
+			m_levelData[playerY + 1][playerX] == "49" ||
+			m_levelData[playerY + 1][playerX] == "50" ||
+			m_levelData[playerY + 1][playerX] == "51" ||
+			m_levelData[playerY + 1][playerX] == "63") {
+			
+			difference.y -= playerPos.y - static_cast<float>(playerY);
+			m_player.SetIsGrounded(true);
+			m_player.SetIsJumping(false);
+			
+		}else {
+			m_player.SetIsGrounded(false);
+		}
+	}
 }
 
 void Game::RenderBackground() {
@@ -180,7 +261,7 @@ void Game::RenderBackground() {
 void Game::RenderChunk(int chunkNum) {
 	const int colStart = chunkNum * constants::k_chunkWidth;
 	const int colEnd = colStart + constants::k_chunkWidth;
-	
+
 	for (int r = 0; r < constants::k_chunkHeight; ++r) {
 		for (int c = colStart; c < colEnd; ++c) {
 			const std::string currentTile = m_levelData[r][c];
@@ -232,14 +313,14 @@ void Game::RenderChunk(int chunkNum) {
 					tileToDraw = "Spikes";
 				} else if (currentTile == "64") {
 					tileToDraw = "Flag_Pole";
-				}else {
+				} else {
 					HAPI.UserMessage("Unknown Sprite: " + currentTile, "Error has occured");
 				}
 				Graphics::GetInstance().DrawSprite(
 					tileToDraw,
 					{
-						static_cast<float>((c * constants::k_spriteSheetCellWith) - chunkNum * constants::k_screenWidth),
-						static_cast<float>(r * constants::k_spriteSheetCellWith)
+						static_cast<float>((c * constants::k_spriteSheetCellWidth) - chunkNum * constants::k_screenWidth),
+						static_cast<float>(r * constants::k_spriteSheetCellWidth)
 					}
 				);
 			}
@@ -247,41 +328,3 @@ void Game::RenderChunk(int chunkNum) {
 	}
 }
 
-float Game::DeltaTime() const {
-	//CPU "ticks" since the program started.
-	const clock_t programTickCount = clock() - m_gameClock;
-
-	//Conversion rate between ticks and milliseconds.
-	const float ticksToMilliseconds = 1000.0f / CLOCKS_PER_SEC;
-
-	//Convert from ticks to seconds.
-	return programTickCount * ticksToMilliseconds;
-}
-
-void Game::LoadLevel() {
-	std::ifstream file("Data/Level1.csv");
-	while (!file.eof()) {
-		for (int r = 0; r < constants::k_chunkHeight; ++r) {
-			std::vector<std::string> row;
-			std::string line;
-			std::getline(file, line);
-			if (!file.good()) {
-				break;
-			}
-			std::stringstream iss(line);
-			for (int c = 0; c < constants::k_chunkWidth * 11; ++c) {
-				std::string val;
-				std::getline(iss, val, ',');
-				if (!iss.good()) {
-					break;
-				}
-				row.emplace_back(val);
-			}
-			m_levelData.emplace_back(row);
-		}
-	}
-}
-
-bool Game::GetKey(const EKeyCode keyCode) const {
-	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
-}
