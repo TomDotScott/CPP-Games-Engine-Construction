@@ -1,7 +1,7 @@
 ﻿#include "Texture.h"
 #include "../Utilities/Constants.h"
 
-Texture::Texture() : m_textureData(), m_size(constants::k_spriteSheetCellWith, constants::k_spriteSheetCellWith) {
+Texture::Texture() : m_textureData(), m_size(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth) {
 }
 
 Texture::~Texture() {
@@ -31,7 +31,7 @@ void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, 
 	};
 
 	HAPISPACE::BYTE* textureStart{
-		m_textureData + (constants::k_spriteSheetCellWith * constants::k_spriteSheetCellWith * 4) * spriteSheetIndex
+		m_textureData + (constants::k_spriteSheetCellWidth * constants::k_spriteSheetCellWidth * 4) * spriteSheetIndex
 	};
 
 	/*SpriteAlphaBlit(screenStart, textureStart, cellWidth, spritePosition);*/
@@ -153,12 +153,12 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 }
 
 void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const Vector2 position) const {
-	const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellWith * 4 };
+	const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellWidth * 4 };
 
-	const int spriteInc{ static_cast<int>(m_size.x) * 4 - constants::k_spriteSheetCellWith * 4 };
+	const int spriteInc{ static_cast<int>(m_size.x) * 4 - constants::k_spriteSheetCellWidth * 4 };
 
-	for (int y = 0; y < constants::k_spriteSheetCellWith; y++) {
-		for (int x = 0; x < constants::k_spriteSheetCellWith; x++) {
+	for (int y = 0; y < constants::k_spriteSheetCellWidth; y++) {
+		for (int x = 0; x < constants::k_spriteSheetCellWidth; x++) {
 			const HAPISPACE::BYTE a{ spriteData[3] };
 			// Only draw pixels if needed
 			if (a > 0) {
@@ -184,7 +184,7 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	const Vector2 temp = position;
-	const BoundsRectangle spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellWith), static_cast<float>(constants::k_spriteSheetCellWith) });
+	const BoundsRectangle spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellWidth), static_cast<float>(constants::k_spriteSheetCellWidth) });
 
 	const BoundsRectangle screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
 
@@ -215,13 +215,13 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 
 
 			const int spriteOffset{
-				(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellWith) * 4
+				(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellWidth) * 4
 			};
 
 			HAPISPACE::BYTE* spritePtr = spriteData + spriteOffset;
 			
 			const int spriteInc {
-				((constants::k_spriteSheetCellWith - static_cast<int>(clippedRect.GetSize().x))) * 4
+				((constants::k_spriteSheetCellWidth - static_cast<int>(clippedRect.GetSize().x))) * 4
 			};
 
 			// Start blitting...

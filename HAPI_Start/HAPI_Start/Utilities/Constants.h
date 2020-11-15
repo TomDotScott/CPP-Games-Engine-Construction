@@ -5,10 +5,10 @@ namespace constants {
 	constexpr int k_screenWidth = 1280;
 	constexpr int k_screenHeight = 960;
 	
-	constexpr int k_spriteSheetCellWith = 64;
+	constexpr int k_spriteSheetCellWidth = 64;
 
-	constexpr int k_chunkWidth = k_screenWidth / k_spriteSheetCellWith;
-	constexpr int k_chunkHeight = k_screenHeight / k_spriteSheetCellWith;
+	constexpr int k_chunkWidth = k_screenWidth / k_spriteSheetCellWidth;
+	constexpr int k_chunkHeight = k_screenHeight / k_spriteSheetCellWidth;
 	
 	constexpr float k_leftThumbDeadzone = 7849.f;
 	constexpr float k_rightThumbDeadzone = 8689.f;

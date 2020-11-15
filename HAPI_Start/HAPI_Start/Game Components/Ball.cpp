@@ -16,7 +16,7 @@ Ball::Ball(const std::string& textureFilename, const std::string& textureIdentif
 
 Ball::Ball(const std::string& spriteSheetIdentifier, const Vector2 position, const Vector2 velocity) :
 	Entity(spriteSheetIdentifier,
-		Vector2(constants::k_spriteSheetCellWith, constants::k_spriteSheetCellWith),
+		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth),
 		position,
 		velocity,
 		{ 0.1f, 0.1f }),

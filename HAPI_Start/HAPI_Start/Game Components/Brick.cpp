@@ -2,7 +2,7 @@
 
 Brick::Brick(const Vector2 position, const EBrickType type) :
 	Entity(type == EBrickType::eRed ? "RedBrick" : "GreenBrick",
-		Vector2(constants::k_spriteSheetCellWith, constants::k_spriteSheetCellWith),
+		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth),
 		position
 	),
 	m_explosionAnimationHasStarted(false),
