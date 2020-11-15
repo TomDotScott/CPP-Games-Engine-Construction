@@ -8,7 +8,7 @@ Player::Player(const std::string& spriteSheetIdentifier, const Vector2 startingP
 		startingPosition,
 		{ Vector2::ZERO }),
 	m_currentDirection(Vector2::ZERO),
-	m_jumpForce(6.f),
+	m_jumpForce(4.5f),
 	m_isJumping(false),
 	m_isGrounded(true) {
 }
@@ -24,8 +24,8 @@ void Player::Update(const float deltaTime) {
 
 	m_position = m_position + m_velocity;
 
-	if (m_position.y > constants::k_screenHeight - constants::k_spriteSheetCellWith * 2) {
-		m_position.y = constants::k_screenHeight - constants::k_spriteSheetCellWith * 2;
+	if (m_position.y > constants::k_screenHeight - constants::k_spriteSheetCellWith * 3) {
+		m_position.y = constants::k_screenHeight - constants::k_spriteSheetCellWith * 3;
 		m_isGrounded = true;
 		m_isJumping = false;
 	} else if (m_position.y < constants::k_spriteSheetCellWith) {

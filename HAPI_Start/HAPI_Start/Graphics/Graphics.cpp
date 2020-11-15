@@ -8,7 +8,7 @@ Graphics::Graphics() : m_screen(), m_textureBuffer(), m_spriteSheetLocations(), 
 	if (!HAPI.Initialise(width, height, "Nano's Adventure"))
 		return;
 	HAPI.SetShowFPS(true);
-	//HAPI.LimitFrameRate(60);
+	// HAPI.LimitFrameRate(60);
 	m_screen = HAPI.GetScreenPointer();
 }
 

@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "../Graphics/Graphics.h"
+#include <fstream>
+
 Game::Game() :
 	PLAYER_WON(false),
 	PLAYER_LOST(false),
@@ -58,6 +60,7 @@ Game::Game() :
 	CreateSprite("Gem_1");
 	CreateSprite("Gem_2");
 	CreateSprite("Gem_3");
+	CreateSprite("Gem_4");
 	CreateSprite("UI_Heart_Empty");
 	CreateSprite("UI_Heart_Half");
 	CreateSprite("UI_Heart_Full");
@@ -67,6 +70,7 @@ Game::Game() :
 	CreateSprite("Slime_1");
 	CreateSprite("Slime_2");
 	CreateSprite("Slime_Squashed");
+	CreateSprite("Slime_Snail_Shell_Hit");
 	CreateSprite("Snail_1");
 	CreateSprite("Snail_2");
 	CreateSprite("Snail_Shell");
@@ -91,6 +95,8 @@ Game::Game() :
 	CreateSprite("UI_Key_Not_Found");
 	CreateSprite("UI_Key_Found");
 	CreateSprite("Key");
+	m_currentChunk = constants::rand_range(0, 9);
+	LoadLevel();
 }
 
 void Game::Update() {
@@ -106,24 +112,19 @@ void Game::Update() {
 
 void Game::Render() {
 	Graphics::GetInstance().ClearScreen();
+	
 	RenderBackground();
-
-	for (int i = 0; i < (constants::k_screenWidth / constants::k_spriteSheetCellWith) + 1; i++) {
-		Graphics::GetInstance().DrawSprite("Grass_Centre", { static_cast<float>(i * constants::k_spriteSheetCellWith), constants::k_screenHeight - constants::k_spriteSheetCellWith });
-	}
-
+	RenderChunk(m_currentChunk);
+	
 	const Vector2 playerPos = m_player.GetPosition();
 	Graphics::GetInstance().DrawSprite("Player_Idle_Top_1", { playerPos.x, playerPos.y - constants::k_spriteSheetCellWith });
 	Graphics::GetInstance().DrawSprite("Player_Idle_Body_1", playerPos);
-
-
 }
 
 void Game::HandleKeyBoardInput() {
 	if (GetKey(EKeyCode::SPACE)) {
 		m_player.SetIsJumping(true);
 	}
-
 
 	Vector2 playerMoveDir = Vector2::ZERO;
 	if (GetKey(EKeyCode::A) || GetKey(EKeyCode::LEFT)) {
@@ -176,6 +177,76 @@ void Game::RenderBackground() {
 	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + constants::k_screenHeight, 0 });
 }
 
+void Game::RenderChunk(int chunkNum) {
+	const int colStart = chunkNum * constants::k_chunkWidth;
+	const int colEnd = colStart + constants::k_chunkWidth;
+	
+	for (int r = 0; r < constants::k_chunkHeight; ++r) {
+		for (int c = colStart; c < colEnd; ++c) {
+			const std::string currentTile = m_levelData[r][c];
+			if (currentTile != "-1") {
+				std::string tileToDraw;
+				if (currentTile == "0") {
+					tileToDraw = "Dirt";
+				} else if (currentTile == "1") {
+					tileToDraw = "Grass_Left";
+				} else if (currentTile == "2") {
+					tileToDraw = "Grass_Centre";
+				} else if (currentTile == "3") {
+					tileToDraw = "Grass_Right";
+				} else if (currentTile == "4") {
+					tileToDraw = "Stone_Top";
+				} else if (currentTile == "5") {
+					tileToDraw = "Stone_Centre";
+				} else if (currentTile == "6") {
+					tileToDraw = "Stone_Left";
+				} else if (currentTile == "7") {
+					tileToDraw = "Stone_Right";
+				} else if (currentTile == "38") {
+					tileToDraw = "Flag_Up_1";
+				} else if (currentTile == "47") {
+					tileToDraw = "Block_Coin";
+				} else if (currentTile == "48") {
+					tileToDraw = "Block_Boxed_Coin";
+				} else if (currentTile == "49") {
+					tileToDraw = "Block_Crate";
+				} else if (currentTile == "50") {
+					tileToDraw = "Block_Item";
+				} else if (currentTile == "51") {
+					tileToDraw = "Block_Brick";
+				} else if (currentTile == "52") {
+					tileToDraw = "Bush";
+				} else if (currentTile == "55") {
+					tileToDraw = "Door_Open_Mid";
+				} else if (currentTile == "56") {
+					tileToDraw = "Door_Open_Top";
+				} else if (currentTile == "57") {
+					tileToDraw = "Plant";
+				} else if (currentTile == "60") {
+					tileToDraw = "Mushroom1";
+				} else if (currentTile == "61") {
+					tileToDraw = "Mushroom2";
+				} else if (currentTile == "62") {
+					tileToDraw = "Rock";
+				} else if (currentTile == "63") {
+					tileToDraw = "Spikes";
+				} else if (currentTile == "64") {
+					tileToDraw = "Flag_Pole";
+				}else {
+					HAPI.UserMessage("Unknown Sprite: " + currentTile, "Error has occured");
+				}
+				Graphics::GetInstance().DrawSprite(
+					tileToDraw,
+					{
+						static_cast<float>((c * constants::k_spriteSheetCellWith) - chunkNum * constants::k_screenWidth),
+						static_cast<float>(r * constants::k_spriteSheetCellWith)
+					}
+				);
+			}
+		}
+	}
+}
+
 float Game::DeltaTime() const {
 	//CPU "ticks" since the program started.
 	const clock_t programTickCount = clock() - m_gameClock;
@@ -185,6 +256,30 @@ float Game::DeltaTime() const {
 
 	//Convert from ticks to seconds.
 	return programTickCount * ticksToMilliseconds;
+}
+
+void Game::LoadLevel() {
+	std::ifstream file("Data/Level1.csv");
+	while (!file.eof()) {
+		for (int r = 0; r < constants::k_chunkHeight; ++r) {
+			std::vector<std::string> row;
+			std::string line;
+			std::getline(file, line);
+			if (!file.good()) {
+				break;
+			}
+			std::stringstream iss(line);
+			for (int c = 0; c < constants::k_chunkWidth * 11; ++c) {
+				std::string val;
+				std::getline(iss, val, ',');
+				if (!iss.good()) {
+					break;
+				}
+				row.emplace_back(val);
+			}
+			m_levelData.emplace_back(row);
+		}
+	}
 }
 
 bool Game::GetKey(const EKeyCode keyCode) const {

@@ -22,16 +22,21 @@ private:
 	clock_t m_gameClock;
 	
 	int m_gameScore;
+	int m_currentChunk{ 0 };
 	int m_currentSprite;
 
 	Vector2 m_backgroundPosition;
+
+	std::vector<std::vector<std::string>> m_levelData;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	void RenderBackground();
+	void RenderChunk(int chunkNum);
 	bool GetKey(EKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 	float DeltaTime() const;
+	void LoadLevel();
 };
 
 enum class EKeyCode {
