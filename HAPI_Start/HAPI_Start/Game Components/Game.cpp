@@ -113,7 +113,7 @@ void Game::Update() {
 		(playerPos.x / static_cast<float>(constants::k_spriteSheetCellWidth)) + static_cast<float>((m_currentChunk * constants::k_chunkWidth)),
 		(playerPos.y / static_cast<float>(constants::k_spriteSheetCellWidth))
 	};
-	
+
 	CheckPlayerLevelCollision(m_currentChunk, worldSpacePlayerCoords);
 
 	// Reset the clock
@@ -122,10 +122,10 @@ void Game::Update() {
 
 void Game::Render() {
 	Graphics::GetInstance().ClearScreen();
-	
+
 	RenderBackground();
 	RenderChunk(m_currentChunk);
-	
+
 	const Vector2 playerPos = m_player.GetPosition();
 	Graphics::GetInstance().DrawSprite("Player_Idle_Top_1", { playerPos.x, playerPos.y - constants::k_spriteSheetCellWidth });
 	Graphics::GetInstance().DrawSprite("Player_Idle_Body_1", playerPos);
@@ -185,7 +185,7 @@ void Game::LoadLevel() {
 	std::ifstream file("Data/Level1.csv");
 	while (!file.eof()) {
 		for (int r = 0; r < constants::k_chunkHeight; ++r) {
-			std::vector<std::string> row;
+			std::vector<Tile> row;
 			std::string line;
 			std::getline(file, line);
 			if (!file.good()) {
@@ -198,7 +198,95 @@ void Game::LoadLevel() {
 				if (!iss.good()) {
 					break;
 				}
-				row.emplace_back(val);
+
+				const auto tileType = atoi(val.c_str());
+				auto tt = static_cast<ETileType>(tileType);
+				bool canCollide = true;
+				std::string tileIdentifier;
+				switch (tt) {
+				case ETileType::eAir:
+					tileIdentifier = "Air";
+					canCollide = false;
+					break;
+				case ETileType::eDirt:
+					tileIdentifier = "Dirt";
+					break;
+				case ETileType::eGrassLeft:
+					tileIdentifier = "Grass_Left";
+					break;
+				case ETileType::eGrassCentre:
+					tileIdentifier = "Grass_Centre";
+					break;
+				case ETileType::eGrassRight:
+					tileIdentifier = "Grass_Right";
+					break;
+				case ETileType::eStoneTop:
+					tileIdentifier = "Stone_Top";
+					break;
+				case ETileType::eStoneCentre:
+					tileIdentifier = "Stone_Centre";
+					break;
+				case ETileType::eStoneLeft:
+					tileIdentifier = "Stone_Left";
+					break;
+				case ETileType::eStoneRight:
+					tileIdentifier = "Stone_Right";
+					break;
+				case ETileType::eFlag:
+					tileIdentifier = "Flag_Up_1";
+					break;
+				case ETileType::eCoinBlock:
+					tileIdentifier = "Block_Coin";
+					break;
+				case ETileType::eBoxedCoinBlock:
+					tileIdentifier = "Block_Boxed_Coin";
+					break;
+				case ETileType::eCrateBlock:
+					tileIdentifier = "Block_Crate";
+					break;
+				case ETileType::eItemBlock:
+					tileIdentifier = "Block_Item";
+					break;
+				case ETileType::eBrickBlock:
+					tileIdentifier = "Block_Brick";
+					break;
+				case ETileType::eBush:
+					canCollide = false;
+					tileIdentifier = "Bush";
+					break;
+				case ETileType::eOpenDoorMid:
+					tileIdentifier = "Door_Open_Mid";
+					break;
+				case ETileType::eOpenDoorTop:
+					tileIdentifier = "Door_Open_Top";
+					break;
+				case ETileType::ePlant:
+					canCollide = false;
+					tileIdentifier = "Plant";
+					break;
+				case ETileType::eMushroom1:
+					canCollide = false;
+					tileIdentifier = "Mushroom1";
+					break;
+				case ETileType::eMushroom2:
+					canCollide = false;
+					tileIdentifier = "Mushroom2";
+					break;
+				case ETileType::eRock:
+					canCollide = false;
+					tileIdentifier = "Rock";
+					break;
+				case ETileType::eSpikes:
+					tileIdentifier = "Spikes";
+					break;
+				case ETileType::eFlagPole:
+					tileIdentifier = "Flag_Pole";
+					break;
+				default:
+					HAPI.UserMessage("Unknown Tile Type: " + std::to_string(tileType), "Error Occured");
+					break;
+				}				
+				row.emplace_back(tileIdentifier, tt, canCollide);
 			}
 			m_levelData.emplace_back(row);
 		}
@@ -206,32 +294,15 @@ void Game::LoadLevel() {
 }
 
 void Game::CheckPlayerLevelCollision(const int chunkNum, Vector2 playerPos) {
-	Vector2 difference{ Vector2::ZERO };
 	const int playerX = static_cast<int>(playerPos.x);
 	const int playerY = static_cast<int>(playerPos.y);
-	
+
 	// Check the bottom of the Player...
 	if (playerPos.y < constants::k_chunkHeight - 1) {
-		// TODO: Make a tile struct with data about collidability... Hard Coding is bad....
-		if (m_levelData[playerY + 1][playerX] == "1" ||
-			m_levelData[playerY + 1][playerX] == "2" ||
-			m_levelData[playerY + 1][playerX] == "3" ||
-			m_levelData[playerY + 1][playerX] == "4" ||
-			m_levelData[playerY + 1][playerX] == "5" ||
-			m_levelData[playerY + 1][playerX] == "6" ||
-			m_levelData[playerY + 1][playerX] == "7" ||
-			m_levelData[playerY + 1][playerX] == "47" ||
-			m_levelData[playerY + 1][playerX] == "48" ||
-			m_levelData[playerY + 1][playerX] == "49" ||
-			m_levelData[playerY + 1][playerX] == "50" ||
-			m_levelData[playerY + 1][playerX] == "51" ||
-			m_levelData[playerY + 1][playerX] == "63") {
-			
-			difference.y -= playerPos.y - static_cast<float>(playerY);
+		if (m_levelData[playerY + 1][playerX].m_canCollide) {
 			m_player.SetIsGrounded(true);
 			m_player.SetIsJumping(false);
-			
-		}else {
+		} else {
 			m_player.SetIsGrounded(false);
 		}
 	}
@@ -258,66 +329,16 @@ void Game::RenderBackground() {
 	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + constants::k_screenHeight, 0 });
 }
 
-void Game::RenderChunk(int chunkNum) {
+void Game::RenderChunk(const int chunkNum) {
 	const int colStart = chunkNum * constants::k_chunkWidth;
 	const int colEnd = colStart + constants::k_chunkWidth;
 
 	for (int r = 0; r < constants::k_chunkHeight; ++r) {
 		for (int c = colStart; c < colEnd; ++c) {
-			const std::string currentTile = m_levelData[r][c];
-			if (currentTile != "-1") {
-				std::string tileToDraw;
-				if (currentTile == "0") {
-					tileToDraw = "Dirt";
-				} else if (currentTile == "1") {
-					tileToDraw = "Grass_Left";
-				} else if (currentTile == "2") {
-					tileToDraw = "Grass_Centre";
-				} else if (currentTile == "3") {
-					tileToDraw = "Grass_Right";
-				} else if (currentTile == "4") {
-					tileToDraw = "Stone_Top";
-				} else if (currentTile == "5") {
-					tileToDraw = "Stone_Centre";
-				} else if (currentTile == "6") {
-					tileToDraw = "Stone_Left";
-				} else if (currentTile == "7") {
-					tileToDraw = "Stone_Right";
-				} else if (currentTile == "38") {
-					tileToDraw = "Flag_Up_1";
-				} else if (currentTile == "47") {
-					tileToDraw = "Block_Coin";
-				} else if (currentTile == "48") {
-					tileToDraw = "Block_Boxed_Coin";
-				} else if (currentTile == "49") {
-					tileToDraw = "Block_Crate";
-				} else if (currentTile == "50") {
-					tileToDraw = "Block_Item";
-				} else if (currentTile == "51") {
-					tileToDraw = "Block_Brick";
-				} else if (currentTile == "52") {
-					tileToDraw = "Bush";
-				} else if (currentTile == "55") {
-					tileToDraw = "Door_Open_Mid";
-				} else if (currentTile == "56") {
-					tileToDraw = "Door_Open_Top";
-				} else if (currentTile == "57") {
-					tileToDraw = "Plant";
-				} else if (currentTile == "60") {
-					tileToDraw = "Mushroom1";
-				} else if (currentTile == "61") {
-					tileToDraw = "Mushroom2";
-				} else if (currentTile == "62") {
-					tileToDraw = "Rock";
-				} else if (currentTile == "63") {
-					tileToDraw = "Spikes";
-				} else if (currentTile == "64") {
-					tileToDraw = "Flag_Pole";
-				} else {
-					HAPI.UserMessage("Unknown Sprite: " + currentTile, "Error has occured");
-				}
+			const auto currentTile = m_levelData[r][c];
+			if (currentTile.m_type != ETileType::eAir) {
 				Graphics::GetInstance().DrawSprite(
-					tileToDraw,
+					currentTile.m_spriteIdentifier,
 					{
 						static_cast<float>((c * constants::k_spriteSheetCellWidth) - chunkNum * constants::k_screenWidth),
 						static_cast<float>(r * constants::k_spriteSheetCellWidth)
