@@ -8,7 +8,7 @@ Graphics::Graphics() : m_screen(), m_textureBuffer(), m_spriteSheetLocations(), 
 	if (!HAPI.Initialise(width, height, "Nano's Adventure"))
 		return;
 	HAPI.SetShowFPS(true);
-	// HAPI.LimitFrameRate(60);
+	// HAPI.LimitFrameRate(500);
 	m_screen = HAPI.GetScreenPointer();
 }
 
@@ -62,12 +62,14 @@ bool Graphics::CreateSpriteSheet(const std::string& filename) {
 	return true;
 }
 
-void Graphics::CreateSprite(const std::string& spriteName, const int spriteLocation) {
+bool Graphics::CreateSprite(const std::string& spriteName, const int spriteLocation) {
 	if (!(m_spriteSheetLocations.find(spriteName) == m_spriteSheetLocations.end())) {
 		HAPI.UserMessage("A sprite with the name " + spriteName + " already exists.", "Error Occured");
+		return false;
 	} else {
 		m_spriteSheetLocations[spriteName] = spriteLocation;
 	}
+	return true;
 }
 
 void Graphics::DrawTexture(const std::string& name, const Vector2 position) {

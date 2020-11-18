@@ -8,23 +8,24 @@ Player::Player(const std::string& spriteSheetIdentifier, const Vector2 startingP
 		startingPosition,
 		{ Vector2::ZERO }),
 	m_currentDirection(Vector2::ZERO),
-	m_jumpForce(4.5f),
-	m_isJumping(false),
-	m_isGrounded(false) {
+	m_jumpForce(8.f),
+	m_shouldJumpNextFrame(false),
+	CURRENT_STATE(EPlayerState::eJumping) {
 }
 
 void Player::Update(const float deltaTime) {
 	Move(deltaTime);
 
-	if (m_isGrounded) {
+	if(CURRENT_STATE == EPlayerState::eOnGround) {
 		m_velocity.y = 0;
-		if (m_isJumping) {
+		if (m_shouldJumpNextFrame) {
 			Jump();
+			m_shouldJumpNextFrame = false;
 		}
-	} else {
+	}else if(CURRENT_STATE == EPlayerState::eJumping) {
 		m_velocity.y += constants::k_gravity * (deltaTime / 1000);
 	}
-
+	
 	m_position = m_position + m_velocity;
 	// Can't go off the top of the screen
 	if (m_position.y < constants::k_spriteSheetCellWidth) {
@@ -36,16 +37,8 @@ void Player::SetDirection(const Vector2 direction) {
 	m_currentDirection = direction;
 }
 
-void Player::SetIsJumping(const bool isJumping) {
-	m_isJumping = isJumping;
-}
-
-bool Player::GetIsGrounded() const {
-	return m_isGrounded;
-}
-
-void Player::SetIsGrounded(const bool isGrounded) {
-	m_isGrounded = isGrounded;
+void Player::SetShouldJump(const bool shouldJump) {
+	m_shouldJumpNextFrame = shouldJump;
 }
 
 Vector2 Player::GetCurrentDirection() const {
@@ -57,6 +50,6 @@ void Player::Move(const float deltaTime) {
 }
 
 void Player::Jump() {
-	m_isGrounded = false;
+	CURRENT_STATE = EPlayerState::eJumping;
 	m_velocity.y = -m_jumpForce;
 }

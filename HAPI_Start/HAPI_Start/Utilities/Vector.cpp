@@ -57,3 +57,7 @@ bool Vector2::operator!=(Vector2& rhs) const
 {
 	return{ x != rhs.x || y != rhs.y };
 }
+
+std::ostream& operator<<(std::ostream& os, const Vector2& dt) {
+	return os << "X: " << dt.x << " Y: " << dt.y;
+}

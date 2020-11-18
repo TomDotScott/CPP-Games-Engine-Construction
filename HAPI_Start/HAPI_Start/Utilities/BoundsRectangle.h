@@ -3,7 +3,7 @@
 
 class BoundsRectangle {
 public:
-	BoundsRectangle(const Vector2 topLeft, const Vector2 bottomRight);
+	BoundsRectangle(Vector2 topLeft, Vector2 bottomRight);
 	void ClipTo(const BoundsRectangle& other);
 	bool Overlapping(const BoundsRectangle& other) const;
 	bool IsCompletelyInside(const BoundsRectangle& other) const;

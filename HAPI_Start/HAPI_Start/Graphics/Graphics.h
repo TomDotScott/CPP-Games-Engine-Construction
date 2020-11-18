@@ -17,7 +17,7 @@ public:
 	void DrawTexture(const std::string& name, Vector2 position);
 
 	bool CreateSpriteSheet(const std::string& filename);
-	void CreateSprite(const std::string& spriteName, int spriteLocation);
+	bool CreateSprite(const std::string& spriteName, int spriteLocation);
 	void DrawSprite(const std::string& name, Vector2 position);
 
 private:

@@ -24,7 +24,6 @@ private:
 	clock_t m_gameClock;
 	
 	int m_gameScore;
-	int m_currentChunk{ 0 };
 	int m_currentSprite;
 
 	Vector2 m_backgroundPosition;
@@ -38,10 +37,10 @@ private:
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 
-	void LoadLevel();
-	void CheckPlayerLevelCollision(const int chunkNum, Vector2 playerPos);
-	void RenderBackground();
-	void RenderChunk(const int chunkNum);
+	bool Initialise();
+	bool LoadLevel();
+	void CheckPlayerLevelCollision(Vector2 playerPos);
+	void DrawTiles(int playerXOffset);
 };
 
 enum class EKeyCode {
@@ -59,13 +58,11 @@ enum class ETileType {
 };
 
 struct Tile {
-	Tile(std::string spriteIdentifier, const ETileType type, const bool canCollide) :
-		m_spriteIdentifier(std::move(spriteIdentifier)),
+	Tile(const ETileType type, const bool canCollide) :
 		m_type(type),
 		m_canCollide(canCollide) {
 	}
 
-	std::string m_spriteIdentifier;
 	ETileType m_type;
 	bool m_canCollide;
 };

@@ -29,7 +29,7 @@ void Entity::SetPosition(const Vector2 newPos) {
 	m_position = newPos;
 }
 
-bool Entity::CheckCollisions(const BoundsRectangle other) const {
+bool Entity::CheckCollisions(const BoundsRectangle& other) const {
 	if (GetGlobalBounds().Overlapping(other)) {
 		return true;
 	}

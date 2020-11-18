@@ -8,26 +8,26 @@ class Entity {
 public:
 	Entity(const std::string& fileName,
 		const std::string& textureIdentifier,
-		const Vector2 size,
-		const Vector2 position = Vector2::CENTRE,
-		const Vector2 velocity = {},
-		const Vector2 acceleration = {}
+		Vector2 size,
+		Vector2 position = Vector2::CENTRE,
+		Vector2 velocity = {},
+		Vector2 acceleration = {}
 	);
 
 	Entity(const std::string& spriteSheetIdentifier, 
-		const Vector2 size,
-		const Vector2 position = Vector2::CENTRE,
-		const Vector2 velocity = {},
-		const Vector2 acceleration = {}
+		Vector2 size,
+		Vector2 position = Vector2::CENTRE,
+		Vector2 velocity = {},
+		Vector2 acceleration = {}
 	);
 
 	virtual ~Entity() = default;
 
-	virtual void Update(const float deltaTime) = 0;
+	virtual void Update(float deltaTime) = 0;
 
 	BoundsRectangle GetGlobalBounds() const;
 	Vector2 GetPosition() const;
-	void SetPosition(const Vector2 newPos);
+	void SetPosition(Vector2 newPos);
 
 protected:
 	const std::string& m_identifier;
@@ -36,5 +36,5 @@ protected:
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
 
-	bool CheckCollisions(BoundsRectangle other) const;
+	bool CheckCollisions(const BoundsRectangle& other) const;
 };
