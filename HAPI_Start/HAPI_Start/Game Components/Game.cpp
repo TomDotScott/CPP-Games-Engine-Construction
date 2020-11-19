@@ -96,11 +96,14 @@ void Game::HandleKeyBoardInput() {
 	}
 
 	Vector2 playerMoveDir = Vector2::ZERO;
-
 	if (GetKey(EKeyCode::A) || GetKey(EKeyCode::LEFT)) {
-		playerMoveDir = playerMoveDir + Vector2::LEFT;
+		if (m_playerMoveLimit != Vector2::LEFT) {
+			playerMoveDir = playerMoveDir + Vector2::LEFT;
+		}
 	} else if (GetKey(EKeyCode::D) || GetKey(EKeyCode::RIGHT)) {
-		playerMoveDir = playerMoveDir + Vector2::RIGHT;
+		if (m_playerMoveLimit != Vector2::RIGHT) {
+			playerMoveDir = playerMoveDir + Vector2::RIGHT;
+		}
 	}
 
 	m_player.SetDirection(playerMoveDir);
@@ -206,7 +209,7 @@ bool Game::Initialise() {
 	CreateSprite("UI_Key_Not_Found");
 	CreateSprite("UI_Key_Found");
 	CreateSprite("Key");
-	if(!LoadLevel()) {
+	if (!LoadLevel()) {
 		return false;
 	}
 
@@ -215,7 +218,7 @@ bool Game::Initialise() {
 
 bool Game::LoadLevel() {
 	std::ifstream file("Data/Level1.csv");
-	if(!file.is_open()) {
+	if (!file.is_open()) {
 		return false;
 	}
 	while (!file.eof()) {
@@ -255,21 +258,55 @@ bool Game::LoadLevel() {
 }
 
 void Game::CheckPlayerLevelCollision(const Vector2 playerPos) {
-	// Account for player offset when scrolling the level when it is drawn...
-	const int playerX = (static_cast<int>(playerPos.x) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
-	const int playerY = static_cast<int>(playerPos.y) / constants::k_spriteSheetCellWidth;
-
-	std::cout << "World... " << playerX << " " << playerY << std::endl;
-	std::cout << "Player... " << playerPos.x << " " << playerPos.y << std::endl;
-
+	// Player X is midpoint of the square
+	// Add half the screen's width to account for level movement on screen
+	int playerXTile = ((static_cast<int>(playerPos.x) + (constants::k_spriteSheetCellWidth / 2)) / constants::k_spriteSheetCellWidth) +
+		constants::k_maxTilesHorizontal / 2;
+	const int playerYTile = static_cast<int>(playerPos.y) / constants::k_spriteSheetCellWidth;
 
 	// Check the bottom of the Player...
-	if (playerY < constants::k_maxTilesVertical - 1) {
-		if (m_levelData[playerY + 1][playerX].m_canCollide) {
+	if (playerYTile < constants::k_maxTilesVertical - 1) {
+		if (m_levelData[playerYTile - 1][playerXTile].m_canCollide) {
+			// Reach the peak of the jump
+			if (m_player.GetPosition().y <= static_cast<float>(((playerYTile - 1) * constants::k_spriteSheetCellWidth) +
+				constants::k_spriteSheetCellWidth)) {
+				m_player.SetVelocity({ m_player.GetVelocity().x });
+			}
+
+			/*Tile& currentTile = m_levelData[playerYTile - 1][playerXTile];
+			switch (currentTile.m_type) {
+			case ETileType::eCrateBlock:
+			case ETileType::eCoinBlock:
+				currentTile.m_type = ETileType::eAir;
+				currentTile.m_canCollide = false;
+				break;
+			case ETileType::eBoxedCoinBlock:
+				currentTile.m_type = ETileType::eCoinBlock;
+			case ETileType::eItemBlock:
+				currentTile.m_type = ETileType::eBrickBlock;
+				break;
+			default:;
+			}*/
+
+		} else if (m_levelData[playerYTile + 1][playerXTile].m_canCollide) {
 			m_player.CURRENT_STATE = EPlayerState::eOnGround;
+			m_player.SetPosition({ playerPos.x, playerPos.y - (playerPos.y - static_cast<float>(playerYTile) * constants::k_spriteSheetCellWidth) });
 		} else {
 			m_player.CURRENT_STATE = EPlayerState::eJumping;
 		}
+	}
+
+	playerXTile = ((static_cast<int>(playerPos.x)) / constants::k_spriteSheetCellWidth) +
+		constants::k_maxTilesHorizontal / 2;
+	
+	// Check the right of the player
+	m_playerMoveLimit = m_levelData[playerYTile][playerXTile + 1].m_canCollide ? Vector2::RIGHT : Vector2::ZERO;
+
+	playerXTile = ((static_cast<int>(playerPos.x) + constants::k_spriteSheetCellWidth) / constants::k_spriteSheetCellWidth) +
+		constants::k_maxTilesHorizontal / 2;
+	if (m_playerMoveLimit == Vector2::ZERO) {
+		// Check the left of the player
+		m_playerMoveLimit = m_levelData[playerYTile][playerXTile - 1].m_canCollide ? Vector2::LEFT : Vector2::ZERO;
 	}
 }
 
@@ -282,7 +319,7 @@ void Game::DrawTiles(const int playerXOffset) {
 					static_cast<float>((c * constants::k_spriteSheetCellWidth) - playerXOffset),
 					static_cast<float>(r * constants::k_spriteSheetCellWidth)
 				};
-				if (tilePos.x >= 0 && tilePos.x <= constants::k_screenWidth) {
+				if (tilePos.x > 0 && tilePos.x <= constants::k_screenWidth) {
 					std::string spriteIdentifier;
 					switch (currentTile.m_type) {
 					case ETileType::eAir:

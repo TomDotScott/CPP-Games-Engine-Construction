@@ -29,6 +29,14 @@ void Entity::SetPosition(const Vector2 newPos) {
 	m_position = newPos;
 }
 
+Vector2 Entity::GetVelocity() const {
+	return m_velocity;
+}
+
+void Entity::SetVelocity(const Vector2 newVel) {
+	m_velocity = newVel;
+}
+
 bool Entity::CheckCollisions(const BoundsRectangle& other) const {
 	if (GetGlobalBounds().Overlapping(other)) {
 		return true;

@@ -29,6 +29,8 @@ private:
 	Vector2 m_backgroundPosition;
 
 	std::vector<std::vector<Tile>> m_levelData;
+
+	Vector2 m_playerMoveLimit;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;

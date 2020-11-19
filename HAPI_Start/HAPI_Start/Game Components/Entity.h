@@ -28,6 +28,8 @@ public:
 	BoundsRectangle GetGlobalBounds() const;
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2 newPos);
+	Vector2 GetVelocity() const;
+	void SetVelocity(Vector2 newVel);
 
 protected:
 	const std::string& m_identifier;
