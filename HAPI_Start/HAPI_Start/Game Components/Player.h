@@ -2,16 +2,15 @@
 #include "Entity.h"
 
 enum class EPlayerState {
-	eOnGround, eJumping
+	eIdle, eWalking, eJumping, eClimbing
 };
 
 class Player final : public Entity {
 public:
-	Player(const std::string& spriteSheetIdentifier,
-		Vector2 startingPosition
-	);
+	explicit Player(Vector2 startingPosition);
 
 	void Update(float deltaTime) override;
+	void Render() override;
 	void SetDirection(Vector2 direction);
 	void SetShouldJump(bool shouldJump);
 	Vector2 GetCurrentDirection() const;
@@ -25,4 +24,5 @@ private:
 	
 	void Move(float deltaTime);
 	void Jump();
+	std::string GetTopIdentifier();
 };

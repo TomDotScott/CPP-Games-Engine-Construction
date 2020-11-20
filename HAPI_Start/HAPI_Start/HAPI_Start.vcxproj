@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game Components\Ball.cpp" />
-    <ClCompile Include="Game Components\Brick.cpp" />
+    <ClCompile Include="Game Components\Animation.cpp" />
+    <ClCompile Include="Game Components\Animator.cpp" />
     <ClCompile Include="Game Components\Entity.cpp" />
     <ClCompile Include="Game Components\Game.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
@@ -37,8 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Design Patterns\Singleton.h" />
-    <ClInclude Include="Game Components\Ball.h" />
-    <ClInclude Include="Game Components\Brick.h" />
+    <ClInclude Include="Game Components\Animation.h" />
+    <ClInclude Include="Game Components\Animator.h" />
     <ClInclude Include="Utilities\BoundsRectangle.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entity.h" />

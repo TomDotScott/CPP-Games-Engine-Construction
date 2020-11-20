@@ -2,8 +2,6 @@
 #include <ctime>
 #include <utility>
 #include <HAPI_lib.h>
-#include "Ball.h"
-#include "Brick.h"
 #include "Player.h"
 
 enum class EKeyCode;

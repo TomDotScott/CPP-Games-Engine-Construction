@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Ball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game Components\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,7 +39,10 @@
     <ClCompile Include="Utilities\BoundsRectangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Brick.cpp">
+    <ClCompile Include="Game Components\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,9 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HAPI\HAPI_Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game Components\Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Components\Game.h">
@@ -86,7 +83,10 @@
     <ClInclude Include="Utilities\BoundsRectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\Brick.h">
+    <ClInclude Include="Game Components\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Animator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

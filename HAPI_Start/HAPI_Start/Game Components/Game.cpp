@@ -7,9 +7,7 @@ Game::Game() :
 	PLAYER_LOST(false),
 	m_keyboardData(HAPI.GetKeyboardData()),
 	m_controllerData(HAPI.GetControllerData(0)),
-	m_player("Player_Idle_Body_1",
-		{ Vector2::CENTRE }
-	),
+	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
 	m_gameScore(0),
 	m_currentSprite(0),
@@ -49,21 +47,10 @@ void Game::Render() {
 	Graphics::GetInstance().DrawTexture("Background", m_backgroundPosition);
 	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + constants::k_screenHeight, 0 });
 	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + 2 * constants::k_screenHeight, 0 });
-	const Vector2 playerPos = m_player.GetPosition();
 
-	DrawTiles(static_cast<int>(playerPos.x));
+	DrawTiles(static_cast<int>(m_player.GetPosition().x));
 
-	Graphics::GetInstance().DrawSprite(
-		"Player_Idle_Body_1",
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, playerPos.y
-		}
-	);
-
-	Graphics::GetInstance().DrawSprite(
-		"Player_Idle_Top_1",
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, playerPos.y - constants::k_spriteSheetCellWidth
-		}
-	);
+	m_player.Render();
 }
 
 void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
@@ -146,8 +133,8 @@ bool Game::Initialise() {
 	CreateSprite("Player_Walk_Body_1");
 	CreateSprite("Player_Walk_Top_2");
 	CreateSprite("Player_Walk_Body_2");
-	CreateSprite("Player_Jump_Top");
-	CreateSprite("Player_Jump_Body");
+	CreateSprite("Player_Jump_Top_1");
+	CreateSprite("Player_Jump_Body_1");
 	CreateSprite("Player_Idle_Top_1");
 	CreateSprite("Player_Idle_Body_1");
 	CreateSprite("Player_Idle_Top_2");
@@ -289,7 +276,7 @@ void Game::CheckPlayerLevelCollision(const Vector2 playerPos) {
 			}*/
 
 		} else if (m_levelData[playerYTile + 1][playerXTile].m_canCollide) {
-			m_player.CURRENT_STATE = EPlayerState::eOnGround;
+			m_player.CURRENT_STATE = EPlayerState::eWalking;
 			m_player.SetPosition({ playerPos.x, playerPos.y - (playerPos.y - static_cast<float>(playerYTile) * constants::k_spriteSheetCellWidth) });
 		} else {
 			m_player.CURRENT_STATE = EPlayerState::eJumping;
@@ -311,13 +298,13 @@ void Game::CheckPlayerLevelCollision(const Vector2 playerPos) {
 }
 
 void Game::DrawTiles(const int playerXOffset) {
-	for (size_t r = 0; r < m_levelData.size(); r++) {
-		for (size_t c = 0; c < m_levelData[r].size(); c++) {
-			const auto currentTile = m_levelData[r][c];
+	for (size_t y = 0; y < m_levelData.size(); y++) {
+		for (size_t x = 0; x < m_levelData[y].size(); x++) {
+			const auto currentTile = m_levelData[y][x];
 			if (currentTile.m_type != ETileType::eAir) {
 				const Vector2 tilePos = {
-					static_cast<float>((c * constants::k_spriteSheetCellWidth) - playerXOffset),
-					static_cast<float>(r * constants::k_spriteSheetCellWidth)
+					static_cast<float>((x * constants::k_spriteSheetCellWidth) - playerXOffset),
+					static_cast<float>(y * constants::k_spriteSheetCellWidth)
 				};
 				if (tilePos.x > 0 && tilePos.x <= constants::k_screenWidth) {
 					std::string spriteIdentifier;
