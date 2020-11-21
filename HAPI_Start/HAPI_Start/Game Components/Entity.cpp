@@ -24,6 +24,18 @@ void Entity::SetVelocity(const Vector2 newVel) {
 	m_velocity = newVel;
 }
 
+Vector2 Entity::GetCurrentDirection() const {
+	return m_currentDirection;
+}
+
+void Entity::SetDirection(const Vector2 direction) {
+	m_currentDirection = direction;
+}
+
+void Entity::Move(const float deltaTime) {
+	m_position = m_position + (m_currentDirection * deltaTime);
+}
+
 bool Entity::CheckCollisions(const BoundsRectangle& other) const {
 	if (GetGlobalBounds().Overlapping(other)) {
 		return true;
@@ -31,9 +43,17 @@ bool Entity::CheckCollisions(const BoundsRectangle& other) const {
 	return false;
 }
 
-void Entity::AddAnimation(std::vector<std::string>& animation) {
-	Animation newAnimation{ animation };
+void Entity::AddAnimation(std::vector<std::string>& animation, const float duration) {
+	Animation newAnimation{ animation, duration };
 	m_animator.AddAnimation(newAnimation);
+}
+
+void Entity::Render() {
+	Graphics::GetInstance().DrawSprite(
+		m_animator.GetCurrentFrameIdentifier(),
+		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
+		}
+	);
 }
 
 BoundsRectangle Entity::GetGlobalBounds() const {

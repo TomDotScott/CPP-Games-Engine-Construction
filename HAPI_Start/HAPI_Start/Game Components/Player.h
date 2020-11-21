@@ -11,18 +11,16 @@ public:
 
 	void Update(float deltaTime) override;
 	void Render() override;
-	void SetDirection(Vector2 direction);
 	void SetShouldJump(bool shouldJump);
-	Vector2 GetCurrentDirection() const;
 
-	EPlayerState CURRENT_STATE;
+	EPlayerState GetCurrentPlayerState() const;
+	void SetPlayerState(EPlayerState state);
 	
 private:
-	Vector2 m_currentDirection;
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
-	
-	void Move(float deltaTime);
+	EPlayerState m_currentState;
+
 	void Jump();
 	std::string GetTopIdentifier();
 };

@@ -9,8 +9,7 @@ enum class EAnimationState {
 class Animation {
 	friend class Animator;
 public:
-	explicit Animation(std::vector<std::string>& frames);
-	explicit Animation(std::vector<std::string>& frames, float duration);
+	explicit Animation(std::vector<std::string>& frames, float duration = 100.f);
 private:
 	std::vector<std::string> m_frames;
 	unsigned m_currentFrame;
