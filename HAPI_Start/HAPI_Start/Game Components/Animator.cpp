@@ -15,3 +15,7 @@ std::string Animator::GetCurrentFrameIdentifier() {
 	Animation& currentAnimation = m_animations[m_animationIndex];
 	return currentAnimation.m_frames[currentAnimation.m_currentFrame];
 }
+
+EAnimationState Animator::GetCurrentAnimationState() const {
+	return m_animations[m_animationIndex].m_state;
+}

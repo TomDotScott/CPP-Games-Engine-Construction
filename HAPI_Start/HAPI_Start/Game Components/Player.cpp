@@ -4,16 +4,17 @@
 
 Player::Player(const Vector2 startingPosition) :
 	Entity(Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 12),
-	       startingPosition,
-	       { Vector2::ZERO }),
+		Direction::eNone,
+		startingPosition,
+		{ Vector2::ZERO }),
 	m_jumpForce(8.f),
 	m_shouldJumpNextFrame(false),
-	m_currentState(EPlayerState::eJumping) {
+	m_currentPlayerState(EPlayerState::eJumping) {
 
 	// Create the animations
 	// Idle Animation
 	std::vector<std::string> idle{ "Player_Idle_Body_1", "Player_Idle_Body_2" };
-	AddAnimation(idle, 1000.f);
+	AddAnimation(idle, true, 1000.f);
 
 	// Walk Animation
 	std::vector<std::string> walk{ "Player_Walk_Body_1", "Player_Walk_Body_2" };
@@ -31,13 +32,13 @@ Player::Player(const Vector2 startingPosition) :
 void Player::Update(const float deltaTime) {
 	Move(deltaTime);
 
-	if (m_currentState == EPlayerState::eWalking) {
+	if (m_currentPlayerState == EPlayerState::eWalking) {
 		m_velocity.y = 0;
 		if (m_shouldJumpNextFrame) {
 			Jump();
 			m_shouldJumpNextFrame = false;
 		}
-	} else if (m_currentState == EPlayerState::eJumping) {
+	} else if (m_currentPlayerState == EPlayerState::eJumping) {
 		m_velocity.y += constants::k_gravity * (deltaTime / 1000);
 	}
 
@@ -48,11 +49,11 @@ void Player::Update(const float deltaTime) {
 		m_position.y = constants::k_spriteSheetCellWidth;
 	}
 
-	if (m_currentDirection == Vector2::ZERO && m_currentState != EPlayerState::eJumping && !m_shouldJumpNextFrame) {
-		m_currentState = EPlayerState::eIdle;
+	if (m_currentDirection == Direction::eNone && m_currentPlayerState != EPlayerState::eJumping && !m_shouldJumpNextFrame) {
+		m_currentPlayerState = EPlayerState::eIdle;
 	}
-	
-	m_animator.SetAnimationIndex(static_cast<int>(m_currentState));
+
+	m_animator.SetAnimationIndex(static_cast<int>(m_currentPlayerState));
 	m_animator.Update(deltaTime);
 }
 
@@ -60,7 +61,7 @@ void Player::Render() {
 	Graphics::GetInstance().DrawSprite(
 		GetTopIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellWidth
-		}, 
+		},
 		true
 	);
 
@@ -73,11 +74,11 @@ void Player::Render() {
 }
 
 EPlayerState Player::GetCurrentPlayerState() const {
-	return m_currentState;
+	return m_currentPlayerState;
 }
 
 void Player::SetPlayerState(const EPlayerState state) {
-	m_currentState = state;
+	m_currentPlayerState = state;
 }
 
 void Player::SetShouldJump(const bool shouldJump) {
@@ -85,7 +86,7 @@ void Player::SetShouldJump(const bool shouldJump) {
 }
 
 void Player::Jump() {
-	m_currentState = EPlayerState::eJumping;
+	m_currentPlayerState = EPlayerState::eJumping;
 	m_velocity.y = -m_jumpForce;
 }
 

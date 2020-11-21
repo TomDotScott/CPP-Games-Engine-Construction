@@ -1,11 +1,12 @@
 ﻿#include "Entity.h"
 #include "../Graphics/Graphics.h"
 
-Entity::Entity(const Vector2 size, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
+Entity::Entity(const Vector2 size, const Direction direction, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
-	m_acceleration(acceleration) {
+	m_acceleration(acceleration),
+	m_currentDirection(direction) {
 }
 
 Vector2 Entity::GetPosition() const {
@@ -24,16 +25,20 @@ void Entity::SetVelocity(const Vector2 newVel) {
 	m_velocity = newVel;
 }
 
-Vector2 Entity::GetCurrentDirection() const {
+Direction Entity::GetCurrentDirection() const {
 	return m_currentDirection;
 }
 
-void Entity::SetDirection(const Vector2 direction) {
+void Entity::SetDirection(const Direction direction) {
 	m_currentDirection = direction;
 }
 
 void Entity::Move(const float deltaTime) {
-	m_position = m_position + (m_currentDirection * deltaTime);
+	if (m_currentDirection == Direction::eRight) {
+		m_position = m_position + (Vector2::RIGHT * deltaTime);
+	} else if (m_currentDirection == Direction::eLeft) {
+		m_position = m_position + (Vector2::LEFT * deltaTime);
+	}
 }
 
 bool Entity::CheckCollisions(const BoundsRectangle& other) const {
@@ -43,8 +48,8 @@ bool Entity::CheckCollisions(const BoundsRectangle& other) const {
 	return false;
 }
 
-void Entity::AddAnimation(std::vector<std::string>& animation, const float duration) {
-	Animation newAnimation{ animation, duration };
+void Entity::AddAnimation(std::vector<std::string>& animation, const bool looping, const float duration) {
+	Animation newAnimation{ animation, looping, duration };
 	m_animator.AddAnimation(newAnimation);
 }
 

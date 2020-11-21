@@ -3,6 +3,7 @@
 #include <utility>
 #include <HAPI_lib.h>
 #include "Player.h"
+#include "Enemy.h"
 
 enum class EKeyCode;
 struct Tile;
@@ -29,6 +30,8 @@ private:
 	std::vector<std::vector<Tile>> m_levelData;
 
 	Vector2 m_playerMoveLimit;
+
+	std::vector<Enemy> m_enemies;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;
@@ -39,12 +42,13 @@ private:
 
 	bool Initialise();
 	bool LoadLevel();
-	void CheckPlayerLevelCollision(Vector2 playerPos);
+	void CheckPlayerLevelCollisions(Vector2 playerPos);
+	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void DrawTiles(int playerXOffset);
 };
 
 enum class EKeyCode {
-	None = 0, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
+	NONE = -1, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
 };
 
 enum class ETileType {

@@ -19,7 +19,7 @@ public:
 private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
-	EPlayerState m_currentState;
+	EPlayerState m_currentPlayerState;
 
 	void Jump();
 	std::string GetTopIdentifier();

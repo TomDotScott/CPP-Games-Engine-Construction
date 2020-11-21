@@ -5,9 +5,14 @@
 #include "../Utilities/Vector.h"
 #include "Animator.h"
 
+enum class Direction {
+	eNone, eLeft, eRight
+};
+
 class Entity {
 public:
 	explicit Entity(Vector2 size,
+		Direction = Direction::eLeft,
 		Vector2 position = Vector2::CENTRE,
 		Vector2 velocity = {},
 		Vector2 acceleration = {}
@@ -17,7 +22,8 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render();
-	
+	bool CheckCollisions(const BoundsRectangle& other) const;
+
 	BoundsRectangle GetGlobalBounds() const;
 	
 	Vector2 GetPosition() const;
@@ -26,8 +32,8 @@ public:
 	Vector2 GetVelocity() const;
 	void SetVelocity(Vector2 newVel);
 
-	Vector2 GetCurrentDirection() const;
-	void SetDirection(Vector2 direction);
+	Direction GetCurrentDirection() const;
+	void SetDirection(Direction direction);
 
 protected:
 	Animator m_animator;
@@ -35,9 +41,8 @@ protected:
 	Vector2 m_position;
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
-	Vector2 m_currentDirection;
+	Direction m_currentDirection;
 
 	virtual void Move(float deltaTime);
-	bool CheckCollisions(const BoundsRectangle& other) const;
-	void AddAnimation(std::vector<std::string>& animation, float duration = 100.f);
+	void AddAnimation(std::vector<std::string>& animation, bool looping = true, float duration = 100.f);
 };
