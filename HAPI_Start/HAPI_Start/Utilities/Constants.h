@@ -2,7 +2,6 @@
 #include <cstdlib>
 
 namespace constants {
-	// Screen Info
 	constexpr int k_screenWidth = 1280;
 	constexpr int k_screenHeight = 960;
 	
@@ -22,7 +21,4 @@ namespace constants {
 	inline int rand_range(const int min, const int max) {
 		return min + (rand() % (max - min + 1));
 	}
-
-	// Sprite Sheet Identifiers
-	// extern const std::string BLACK_COIN;
 }

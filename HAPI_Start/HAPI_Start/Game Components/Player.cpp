@@ -76,20 +76,16 @@ void Player::Render() {
 
 void Player::CheckEntityCollisions(const CollisionBoxes& enemyCollisionBoxes) {
 	// Check the global boxes
-	if(m_currentCollisionBoxes.m_globalBounds.Overlapping(enemyCollisionBoxes.m_globalBounds)) {
-		// If touching the left...
-		if(m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(enemyCollisionBoxes.m_rightCollisionBox)) {
+	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(enemyCollisionBoxes.m_globalBounds)) {
+		// If touching the left or right...
+		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(enemyCollisionBoxes.m_rightCollisionBox) ||
+			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(enemyCollisionBoxes.m_leftCollisionBox)) {
 			// Kill the player
-			std::cout << "I hit someone on my left" << std::endl;
-		}
-		// If touching the right...
-		if (m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(enemyCollisionBoxes.m_leftCollisionBox)) {
-			// Kill the player
-			std::cout << "I hit someone on my right" << std::endl;
+
 
 		}
 		// If touching the bottom...
-		if(GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(enemyCollisionBoxes.m_topCollisionBox)) {
+		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(enemyCollisionBoxes.m_topCollisionBox)) {
 			// Jump
 			std::cout << "I hit someone on my bottom" << std::endl;
 			Jump(m_jumpForce / 2);
@@ -109,8 +105,20 @@ void Player::SetShouldJump(const bool shouldJump) {
 	m_shouldJumpNextFrame = shouldJump;
 }
 
-CollisionBoxes Player::GetCurrentCollisionBoxes() const {
-	return m_currentCollisionBoxes;
+Direction Player::GetMoveDirectionLimit() const {
+	return m_moveDirectionLimit;
+}
+
+void Player::SetMoveDirectionLimit(const Direction direction) {
+	m_moveDirectionLimit = direction;
+}
+
+void Player::Move(const float deltaTime) {
+	if (m_currentDirection == Direction::eRight && m_moveDirectionLimit != Direction::eRight) {
+		m_position = m_position + (Vector2::RIGHT * deltaTime);
+	} else if (m_currentDirection == Direction::eLeft && m_moveDirectionLimit != Direction::eLeft) {
+		m_position = m_position + (Vector2::LEFT * deltaTime);
+	}
 }
 
 void Player::Jump(const float jumpForce) {

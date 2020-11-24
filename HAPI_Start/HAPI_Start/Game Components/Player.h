@@ -13,8 +13,9 @@ public:
 	void Render() override;
 	void CheckEntityCollisions(const CollisionBoxes& enemyCollisionBoxes) override;
 	void SetShouldJump(bool shouldJump);
-	
-	CollisionBoxes GetCurrentCollisionBoxes() const;
+
+	Direction GetMoveDirectionLimit() const;
+	void SetMoveDirectionLimit(Direction direction);
 	
 	EPlayerState GetCurrentPlayerState() const;
 	void SetPlayerState(EPlayerState state);
@@ -23,7 +24,9 @@ private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
 	EPlayerState m_currentPlayerState;
-	
+	Direction m_moveDirectionLimit;
+
+	void Move(float deltaTime) override;
 	void Jump(float jumpForce);
 	std::string GetTopIdentifier();
 	CollisionBoxes GenerateCollisionBoxes() override;

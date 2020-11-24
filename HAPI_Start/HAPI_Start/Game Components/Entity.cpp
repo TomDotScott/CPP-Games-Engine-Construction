@@ -6,7 +6,12 @@ Entity::Entity(const Vector2 size, const Direction direction, const Vector2 posi
 	m_position(position),
 	m_velocity(velocity),
 	m_acceleration(acceleration),
-	m_currentDirection(direction) {
+	m_currentDirection(direction),
+	m_currentEntityState(EntityState::eAlive) {
+}
+
+CollisionBoxes Entity::GetCurrentCollisionBoxes() const {
+	return m_currentCollisionBoxes;
 }
 
 Vector2 Entity::GetPosition() const {
@@ -33,12 +38,11 @@ void Entity::SetDirection(const Direction direction) {
 	m_currentDirection = direction;
 }
 
-void Entity::Move(const float deltaTime) {
-	if (m_currentDirection == Direction::eRight) {
-		m_position = m_position + (Vector2::RIGHT * deltaTime);
-	} else if (m_currentDirection == Direction::eLeft) {
-		m_position = m_position + (Vector2::LEFT * deltaTime);
-	}
+EntityState Entity::GetCurrentEntityState() const {
+	return m_currentEntityState;
+}
+void Entity::SetEntityState(const EntityState state) {
+	m_currentEntityState = state;
 }
 
 void Entity::AddAnimation(std::vector<std::string>& animation, const bool looping, const float duration) {
@@ -52,11 +56,4 @@ void Entity::Render() {
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
 		}
 	);
-}
-
-BoundsRectangle Entity::GetGlobalBounds() const {
-	return {
-		m_position,
-		{ m_position.x + static_cast<float>(m_size.x), m_position.y + static_cast<float>(m_size.y)}
-	};
 }

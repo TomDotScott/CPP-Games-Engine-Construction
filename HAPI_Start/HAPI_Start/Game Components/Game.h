@@ -26,10 +26,9 @@ private:
 	int m_currentSprite;
 
 	Vector2 m_backgroundPosition;
-
+	Direction m_backgroundMoveDir;
+	
 	std::vector<std::vector<Tile>> m_levelData;
-
-	Vector2 m_playerMoveLimit;
 
 	std::vector<Enemy> m_enemies;
 	
@@ -43,6 +42,7 @@ private:
 	bool Initialise();
 	bool LoadLevel();
 	void CheckPlayerLevelCollisions(Vector2 playerPos);
+	void CheckPlayerLevelCollisions(CollisionBoxes playerCollisionBoxes);
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void DrawTiles(int playerXOffset);
 };

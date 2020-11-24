@@ -7,7 +7,6 @@ Enemy::Enemy(const Vector2 startingPosition, const bool canAvoidEdges) :
 		Direction::eLeft,
 		startingPosition, { 1, 1 }
 	),
-	m_currentEnemyState(EEnemyState::eAlive),
 	m_canAvoidEdges(canAvoidEdges),
 	m_isFalling(false) {
 
@@ -20,7 +19,7 @@ Enemy::Enemy(const Vector2 startingPosition, const bool canAvoidEdges) :
 }
 
 void Enemy::Update(const float deltaTime) {
-	if (m_currentEnemyState == EEnemyState::eAlive) {
+	if (m_currentEntityState == EntityState::eAlive) {
 		Move(deltaTime / 10);
 
 		if (m_isFalling) {
@@ -28,7 +27,7 @@ void Enemy::Update(const float deltaTime) {
 			m_position = m_position + m_velocity;
 		}
 	}
-	m_animator.SetAnimationIndex(static_cast<int>(m_currentEnemyState));
+	m_animator.SetAnimationIndex(static_cast<int>(m_currentEntityState));
 	m_animator.Update(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
@@ -54,16 +53,21 @@ void Enemy::SetIsFalling(const bool isFalling) {
 	m_isFalling = isFalling;
 }
 
-void Enemy::SetEnemyState(const EEnemyState state) {
-	m_currentEnemyState = state;
-}
-
 void Enemy::CheckEntityCollisions(const CollisionBoxes& other) {
 	if(m_currentCollisionBoxes.m_globalBounds.Overlapping(other.m_globalBounds)) {
 		// If player's feet are on the top of the enemy, squash it
 		if(m_currentCollisionBoxes.m_topCollisionBox.Overlapping(other.m_bottomCollisionBox)) {
-			m_currentEnemyState = EEnemyState::eDead;
+			m_currentEntityState = EntityState::eDead;
+			m_animator.SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
 		}
+	}
+}
+
+void Enemy::Move(const float deltaTime) {
+	if (m_currentDirection == Direction::eRight) {
+		m_position = m_position + (Vector2::RIGHT * deltaTime);
+	} else if (m_currentDirection == Direction::eLeft) {
+		m_position = m_position + (Vector2::LEFT * deltaTime);
 	}
 }
 

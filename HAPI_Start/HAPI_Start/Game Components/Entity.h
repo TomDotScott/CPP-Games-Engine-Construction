@@ -5,6 +5,10 @@
 #include "../Utilities/Vector.h"
 #include "Animator.h"
 
+enum class EntityState {
+	eAlive, eDead
+};
+
 enum class Direction {
 	eNone, eLeft, eRight
 };
@@ -34,11 +38,12 @@ public:
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render();
 	virtual void CheckEntityCollisions(const CollisionBoxes& other) = 0;
+	
 	// Different per entity and per animation frame...
 	virtual CollisionBoxes GenerateCollisionBoxes() = 0;
 	
-	BoundsRectangle GetGlobalBounds() const;
-	
+	CollisionBoxes GetCurrentCollisionBoxes() const;
+
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2 newPos);
 	
@@ -47,6 +52,9 @@ public:
 
 	Direction GetCurrentDirection() const;
 	void SetDirection(Direction direction);
+
+	EntityState GetCurrentEntityState() const;
+	void SetEntityState(EntityState state);
 	
 protected:
 	Animator m_animator;
@@ -55,9 +63,10 @@ protected:
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
 	Direction m_currentDirection;
+	EntityState m_currentEntityState;
 	CollisionBoxes m_currentCollisionBoxes;
 
-	virtual void Move(float deltaTime);
+	virtual void Move(float deltaTime) = 0;
 
 	void AddAnimation(std::vector<std::string>& animation, bool looping = true, float duration = 100.f);
 };

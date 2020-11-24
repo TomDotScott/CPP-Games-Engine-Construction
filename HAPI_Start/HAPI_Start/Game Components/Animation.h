@@ -3,7 +3,7 @@
 #include <vector>
 
 enum class EAnimationState {
-	eStarted, eEnded, ePaused 
+	eStarted, ePaused, eEnded
 };
 
 class Animation {
