@@ -3,7 +3,7 @@
 #include "../Graphics/Graphics.h"
 
 Player::Player(const Vector2 startingPosition) :
-	Entity(Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 12),
+	Entity(Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 13),
 		Direction::eNone,
 		startingPosition,
 		{ Vector2::ZERO }),
@@ -35,7 +35,7 @@ void Player::Update(const float deltaTime) {
 	if (m_currentPlayerState == EPlayerState::eWalking) {
 		m_velocity.y = 0;
 		if (m_shouldJumpNextFrame) {
-			Jump();
+			Jump(m_jumpForce);
 			m_shouldJumpNextFrame = false;
 		}
 	} else if (m_currentPlayerState == EPlayerState::eJumping) {
@@ -55,6 +55,7 @@ void Player::Update(const float deltaTime) {
 
 	m_animator.SetAnimationIndex(static_cast<int>(m_currentPlayerState));
 	m_animator.Update(deltaTime);
+	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
 void Player::Render() {
@@ -73,6 +74,29 @@ void Player::Render() {
 	);
 }
 
+void Player::CheckEntityCollisions(const CollisionBoxes& enemyCollisionBoxes) {
+	// Check the global boxes
+	if(m_currentCollisionBoxes.m_globalBounds.Overlapping(enemyCollisionBoxes.m_globalBounds)) {
+		// If touching the left...
+		if(m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(enemyCollisionBoxes.m_rightCollisionBox)) {
+			// Kill the player
+			std::cout << "I hit someone on my left" << std::endl;
+		}
+		// If touching the right...
+		if (m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(enemyCollisionBoxes.m_leftCollisionBox)) {
+			// Kill the player
+			std::cout << "I hit someone on my right" << std::endl;
+
+		}
+		// If touching the bottom...
+		if(GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(enemyCollisionBoxes.m_topCollisionBox)) {
+			// Jump
+			std::cout << "I hit someone on my bottom" << std::endl;
+			Jump(m_jumpForce / 2);
+		}
+	}
+}
+
 EPlayerState Player::GetCurrentPlayerState() const {
 	return m_currentPlayerState;
 }
@@ -85,9 +109,13 @@ void Player::SetShouldJump(const bool shouldJump) {
 	m_shouldJumpNextFrame = shouldJump;
 }
 
-void Player::Jump() {
+CollisionBoxes Player::GetCurrentCollisionBoxes() const {
+	return m_currentCollisionBoxes;
+}
+
+void Player::Jump(const float jumpForce) {
 	m_currentPlayerState = EPlayerState::eJumping;
-	m_velocity.y = -m_jumpForce;
+	m_velocity.y = -jumpForce;
 }
 
 // The animations are just for the body but the character is made up of
@@ -103,4 +131,22 @@ std::string Player::GetTopIdentifier() {
 	// Add "Top_x"
 	currentFramePlayerTopIdentifier.append("Top_");
 	return currentFramePlayerTopIdentifier += frameNo;
+}
+
+CollisionBoxes Player::GenerateCollisionBoxes() {
+	auto entityCollisionBox = BoundsRectangle({ 0, 0 }, m_size);
+	entityCollisionBox.Translate(m_position);
+
+	auto topBottomCollisionBox = BoundsRectangle({ 16, 0 }, { 46, 8 });
+	topBottomCollisionBox.Translate(m_position);
+
+	auto leftRightCollisionBox = BoundsRectangle({ 5, 8 }, { 31, 68 });
+	leftRightCollisionBox.Translate(m_position);
+
+	return{ entityCollisionBox,
+		topBottomCollisionBox,
+		leftRightCollisionBox,
+		leftRightCollisionBox.Translate({26, 0}),
+		topBottomCollisionBox.Translate({0, 68})
+	};
 }

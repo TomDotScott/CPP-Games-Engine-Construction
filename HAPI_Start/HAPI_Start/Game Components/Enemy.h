@@ -13,9 +13,11 @@ public:
 	bool CanAvoidEdges() const;
 	void SetIsFalling(bool isFalling);
 	void SetEnemyState(EEnemyState state);
+	void CheckEntityCollisions(const CollisionBoxes& other) override;
 	
 private:
 	EEnemyState m_currentEnemyState;
 	bool m_canAvoidEdges;
 	bool m_isFalling;
+	CollisionBoxes GenerateCollisionBoxes() override;
 };

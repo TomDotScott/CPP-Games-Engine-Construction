@@ -83,7 +83,7 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 	BoundsRectangle clippedRect(textureBounds);
 
 	//Translate to screen space
-	clippedRect.Translate(temp.x, temp.y);
+	clippedRect.Translate(temp);
 
 	// If the object is onscreen...
 	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
@@ -95,7 +95,7 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 			//Clip against screen
 			clippedRect.ClipTo(screenBounds);
 
-			clippedRect.Translate(-temp.x, -temp.y);
+			clippedRect.Translate(temp * -1);
 
 			//Clamping to negative
 			position.x = std::max(0.f, temp.x);
@@ -190,7 +190,7 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 	BoundsRectangle clippedRect(spriteBounds);
 
 	//Translate to screen space
-	clippedRect.Translate(temp.x, temp.y);
+	clippedRect.Translate(temp);
 
 	// If the object is onscreen...
 	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
@@ -202,7 +202,7 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 			//Clip against screen
 			clippedRect.ClipTo(screenBounds);
 
-			clippedRect.Translate(-temp.x, -temp.y);
+			clippedRect.Translate(temp * -1);
 
 			//Clamping to negative
 			position.x = std::max(0.f, temp.x);

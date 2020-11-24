@@ -41,13 +41,6 @@ void Entity::Move(const float deltaTime) {
 	}
 }
 
-bool Entity::CheckCollisions(const BoundsRectangle& other) const {
-	if (GetGlobalBounds().Overlapping(other)) {
-		return true;
-	}
-	return false;
-}
-
 void Entity::AddAnimation(std::vector<std::string>& animation, const bool looping, const float duration) {
 	Animation newAnimation{ animation, looping, duration };
 	m_animator.AddAnimation(newAnimation);

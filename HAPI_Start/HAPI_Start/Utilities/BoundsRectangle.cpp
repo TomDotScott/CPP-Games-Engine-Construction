@@ -34,9 +34,10 @@ bool BoundsRectangle::IsCompletelyOutside(const BoundsRectangle& other) const {
 		(BOTTOM_RIGHT.x > other.BOTTOM_RIGHT.x&& BOTTOM_RIGHT.y > other.BOTTOM_RIGHT.y);
 }
 
-void BoundsRectangle::Translate(const float dx, const float dy) {
-	TOP_LEFT = { TOP_LEFT.x + dx, TOP_LEFT.y + dy };
-	BOTTOM_RIGHT = { BOTTOM_RIGHT.x + dx, BOTTOM_RIGHT.y + dy };
+BoundsRectangle BoundsRectangle::Translate(const Vector2 dxy) {
+	TOP_LEFT = { TOP_LEFT.x + dxy.x, TOP_LEFT.y + dxy.y };
+	BOTTOM_RIGHT = { BOTTOM_RIGHT.x + dxy.x, BOTTOM_RIGHT.y + dxy.y };
+	return { TOP_LEFT, BOTTOM_RIGHT };
 }
 
 Vector2 BoundsRectangle::GetSize() const {

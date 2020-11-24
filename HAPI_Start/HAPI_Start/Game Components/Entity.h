@@ -9,6 +9,17 @@ enum class Direction {
 	eNone, eLeft, eRight
 };
 
+// Every entity will have 4 collision areas as well as
+// an overall rectangle called the GlobalBounds
+struct CollisionBoxes {
+	CollisionBoxes() = default;
+	BoundsRectangle m_globalBounds;
+	BoundsRectangle m_topCollisionBox;
+	BoundsRectangle m_leftCollisionBox;
+	BoundsRectangle m_rightCollisionBox;
+	BoundsRectangle m_bottomCollisionBox;
+};
+
 class Entity {
 public:
 	explicit Entity(Vector2 size,
@@ -22,8 +33,10 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render();
-	bool CheckCollisions(const BoundsRectangle& other) const;
-
+	virtual void CheckEntityCollisions(const CollisionBoxes& other) = 0;
+	// Different per entity and per animation frame...
+	virtual CollisionBoxes GenerateCollisionBoxes() = 0;
+	
 	BoundsRectangle GetGlobalBounds() const;
 	
 	Vector2 GetPosition() const;
@@ -34,7 +47,7 @@ public:
 
 	Direction GetCurrentDirection() const;
 	void SetDirection(Direction direction);
-
+	
 protected:
 	Animator m_animator;
 	Vector2 m_size;
@@ -42,7 +55,9 @@ protected:
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
 	Direction m_currentDirection;
+	CollisionBoxes m_currentCollisionBoxes;
 
 	virtual void Move(float deltaTime);
+
 	void AddAnimation(std::vector<std::string>& animation, bool looping = true, float duration = 100.f);
 };

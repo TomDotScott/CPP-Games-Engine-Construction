@@ -25,8 +25,6 @@ void Game::Update() {
 	HandleControllerInput();
 
 	m_player.Update(deltaTime);
-
-	std::cout << m_player.GetPosition() << std::endl;
 	
 	const float playerOffset = m_player.GetPosition().x;
 	for (auto& enemy : m_enemies) {
@@ -34,11 +32,7 @@ void Game::Update() {
 		if (enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset < constants::k_screenWidth) {
 			enemy.Update(deltaTime);
 			CheckEnemyLevelCollisions(enemy);
-
-			// Check collisions against the player
-			if(enemy.CheckCollisions(m_player.GetGlobalBounds())) {
-				enemy.SetEnemyState(EEnemyState::eDead);
-			}
+			enemy.CheckEntityCollisions(m_player.GetCurrentCollisionBoxes());
 		}
 	}
 

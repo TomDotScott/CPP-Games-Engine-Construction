@@ -3,7 +3,7 @@
 
 Enemy::Enemy(const Vector2 startingPosition, const bool canAvoidEdges) :
 	Entity(
-		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth),
+		Vector2(constants::k_spriteSheetCellWidth, static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f),
 		Direction::eLeft,
 		startingPosition, { 1, 1 }
 	),
@@ -30,6 +30,7 @@ void Enemy::Update(const float deltaTime) {
 	}
 	m_animator.SetAnimationIndex(static_cast<int>(m_currentEnemyState));
 	m_animator.Update(deltaTime);
+	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
 void Enemy::Render(const float playerOffset) {
@@ -55,4 +56,34 @@ void Enemy::SetIsFalling(const bool isFalling) {
 
 void Enemy::SetEnemyState(const EEnemyState state) {
 	m_currentEnemyState = state;
+}
+
+void Enemy::CheckEntityCollisions(const CollisionBoxes& other) {
+	if(m_currentCollisionBoxes.m_globalBounds.Overlapping(other.m_globalBounds)) {
+		// If player's feet are on the top of the enemy, squash it
+		if(m_currentCollisionBoxes.m_topCollisionBox.Overlapping(other.m_bottomCollisionBox)) {
+			m_currentEnemyState = EEnemyState::eDead;
+		}
+	}
+}
+
+CollisionBoxes Enemy::GenerateCollisionBoxes() {
+	auto entityCollisionBox = BoundsRectangle(Vector2::ZERO, m_size);
+	entityCollisionBox.Translate(m_position);
+
+	auto topCollisionBox = BoundsRectangle({ 21.f, 5.f }, { 43.f, 9.f });
+	topCollisionBox.Translate(m_position);
+
+	auto bottomCollisionBox = BoundsRectangle({6.f, 28.f}, {58.f, 32.f});
+	bottomCollisionBox.Translate(m_position);
+	
+	auto leftRightCollisionBox = BoundsRectangle({ 6.f, 9.f }, { 32.f, 28.f });
+	leftRightCollisionBox.Translate(m_position);
+
+	return{ entityCollisionBox,
+		topCollisionBox,
+		leftRightCollisionBox,
+		leftRightCollisionBox.Translate({26, 0}),
+		bottomCollisionBox
+	};
 }
