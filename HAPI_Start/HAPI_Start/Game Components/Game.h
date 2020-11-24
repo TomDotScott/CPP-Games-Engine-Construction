@@ -30,6 +30,7 @@ private:
 	
 	std::vector<std::vector<Tile>> m_levelData;
 
+	std::vector<Vector2> m_enemyLocations;
 	std::vector<Enemy> m_enemies;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
@@ -41,7 +42,6 @@ private:
 
 	bool Initialise();
 	bool LoadLevel();
-	void CheckPlayerLevelCollisions(Vector2 playerPos);
 	void CheckPlayerLevelCollisions(CollisionBoxes playerCollisionBoxes);
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void DrawTiles(int playerXOffset);

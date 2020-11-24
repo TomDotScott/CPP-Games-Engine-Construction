@@ -225,23 +225,11 @@ bool Game::Initialise() {
 		return false;
 	}
 
-	// TODO: Read enemy starting positions from a file and initialise all enemies from that.	
-	m_enemies.emplace_back(Vector2(1408, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(2688, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(3968, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(5568, constants::k_screenHeight - 7 * constants::k_spriteSheetCellWidth));
-	m_enemies.emplace_back(Vector2(5376, constants::k_screenHeight - 7 * constants::k_spriteSheetCellWidth));
-	m_enemies.emplace_back(Vector2(6080, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(6144, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(7232, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(7552, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(7872, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(8128, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(8320, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(8512, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(11136, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
-	m_enemies.emplace_back(Vector2(10880, constants::k_screenHeight - 3 * constants::k_spriteSheetCellWidth), true);
+	for (auto& enemyLocation : m_enemyLocations) {
+		m_enemies.emplace_back(enemyLocation, enemyLocation.y == 768.f ? true : false);
+	}
 
+	m_player.SetPosition(Vector2::CENTRE);
 
 	return true;
 }
@@ -268,17 +256,27 @@ bool Game::LoadLevel() {
 				}
 
 				const auto tileString = atoi(val.c_str());
-				const auto tileType = static_cast<ETileType>(tileString);
 
-				bool canCollide = true;
+				if(tileString == 65) {
+					m_enemyLocations.emplace_back(
+						c * constants::k_spriteSheetCellWidth - 10 * constants::k_spriteSheetCellWidth, 
+						r * constants::k_spriteSheetCellWidth
+					);
+					row.emplace_back(ETileType::eAir, false);
+				} else {
 
-				if (tileType == ETileType::eAir || tileType == ETileType::ePlant ||
-					tileType == ETileType::eRock || tileType == ETileType::eBush ||
-					tileType == ETileType::eMushroom1 || tileType == ETileType::eMushroom2) {
-					canCollide = false;
+					const auto tileType = static_cast<ETileType>(tileString);
+
+					bool canCollide = true;
+
+					if (tileType == ETileType::eAir || tileType == ETileType::ePlant ||
+						tileType == ETileType::eRock || tileType == ETileType::eBush ||
+						tileType == ETileType::eMushroom1 || tileType == ETileType::eMushroom2) {
+						canCollide = false;
+					}
+
+					row.emplace_back(tileType, canCollide);
 				}
-
-				row.emplace_back(tileType, canCollide);
 			}
 			m_levelData.emplace_back(row);
 		}
@@ -363,7 +361,6 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 	if (m_levelData[feetY][feetX].m_canCollide) {
 		// Work out the amount of overlap in the Y direction
 		const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
-		std::cout << yOverlap << std::endl;
 		if(abs(yOverlap) > 16.f) {
 			m_player.SetPosition({ m_player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellWidth });
 		}

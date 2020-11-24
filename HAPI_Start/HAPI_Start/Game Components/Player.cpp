@@ -80,14 +80,12 @@ void Player::CheckEntityCollisions(const CollisionBoxes& enemyCollisionBoxes) {
 		// If touching the left or right...
 		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(enemyCollisionBoxes.m_rightCollisionBox) ||
 			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(enemyCollisionBoxes.m_leftCollisionBox)) {
-			// Kill the player
-
+			// TODO: Kill the player
 
 		}
 		// If touching the bottom...
 		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(enemyCollisionBoxes.m_topCollisionBox)) {
 			// Jump
-			std::cout << "I hit someone on my bottom" << std::endl;
 			Jump(m_jumpForce / 2);
 		}
 	}
