@@ -1,13 +1,13 @@
 ﻿#include "Entity.h"
 #include "../Graphics/Graphics.h"
 
-Entity::Entity(const Vector2 size, const Direction direction, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
+Entity::Entity(const Vector2 size, const e_EDirection direction, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
 	m_acceleration(acceleration),
 	m_currentDirection(direction),
-	m_currentEntityState(EntityState::eAlive),
+	m_currentEntityState(e_EntityState::eAlive),
 	m_currentCollisionBoxes() {
 
 }
@@ -32,19 +32,23 @@ void Entity::SetVelocity(const Vector2 newVel) {
 	m_velocity = newVel;
 }
 
-Direction Entity::GetCurrentDirection() const {
+e_EDirection Entity::GetCurrentDirection() const {
 	return m_currentDirection;
 }
 
-void Entity::SetDirection(const Direction direction) {
+void Entity::SetDirection(const e_EDirection direction) {
 	m_currentDirection = direction;
 }
 
-EntityState Entity::GetCurrentEntityState() const {
+e_EntityState Entity::GetCurrentEntityState() const {
 	return m_currentEntityState;
 }
-void Entity::SetEntityState(const EntityState state) {
+void Entity::SetEntityState(const e_EntityState state) {
 	m_currentEntityState = state;
+}
+
+e_EntityType Entity::GetEntityType() const {
+	return m_entityType;
 }
 
 void Entity::AddAnimation(std::vector<std::string>& animation, const bool looping, const float duration) {

@@ -45,10 +45,13 @@
     <ClCompile Include="Game Components\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Enemy.cpp">
+    <ClCompile Include="Game Components\Enemies\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Slime.cpp">
+    <ClCompile Include="Game Components\Enemies\Slime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Enemies\Snail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,10 +98,13 @@
     <ClInclude Include="Game Components\Animator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\Enemy.h">
+    <ClInclude Include="Game Components\Enemies\Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\Slime.h">
+    <ClInclude Include="Game Components\Enemies\Slime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Enemies\Snail.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

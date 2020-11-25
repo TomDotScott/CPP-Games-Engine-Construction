@@ -11,11 +11,11 @@ public:
 
 	void Update(float deltaTime) override;
 	void Render() override;
-	void CheckEntityCollisions(const CollisionBoxes& enemyCollisionBoxes) override;
+	void CheckEntityCollisions(Entity* other) override;
 	void SetShouldJump(bool shouldJump);
 
-	Direction GetMoveDirectionLimit() const;
-	void SetMoveDirectionLimit(Direction direction);
+	e_EDirection GetMoveDirectionLimit() const;
+	void SetMoveDirectionLimit(e_EDirection direction);
 	
 	EPlayerState GetCurrentPlayerState() const;
 	void SetPlayerState(EPlayerState state);
@@ -24,7 +24,7 @@ private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
 	EPlayerState m_currentPlayerState;
-	Direction m_moveDirectionLimit;
+	e_EDirection m_moveDirectionLimit;
 
 	void Move(float deltaTime) override;
 	void Jump(float jumpForce);

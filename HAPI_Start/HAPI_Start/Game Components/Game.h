@@ -1,10 +1,12 @@
 #pragma once
 #include <ctime>
 #include <HAPI_lib.h>
-#include "Player.h"
-#include "Slime.h"
 
-enum class EKeyCode;
+#include "Enemies/Slime.h"
+#include "Enemies/Snail.h"
+#include "Player.h"
+
+enum class e_KeyCode;
 struct Tile;
 
 class Game {
@@ -25,16 +27,17 @@ private:
 	int m_currentSprite;
 
 	Vector2 m_backgroundPosition;
-	Direction m_backgroundMoveDir;
+	e_EDirection m_backgroundMoveDir;
 	
 	std::vector<std::vector<Tile>> m_levelData;
 
 	std::vector<Vector2> m_enemyLocations;
-	std::vector<Slime> m_enemies;
+	std::vector<Slime> m_slimes;
+	std::vector<Snail> m_snails;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;
-	bool GetKey(EKeyCode keyCode) const;
+	bool GetKey(e_KeyCode keyCode) const;
 	
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
@@ -43,14 +46,35 @@ private:
 	bool LoadLevel();
 	void CheckPlayerLevelCollisions(CollisionBoxes playerCollisionBoxes);
 	void CheckEnemyLevelCollisions(Enemy* enemy);
+	template<typename T>
+	void UpdateEntities(std::vector<T>& entityContainer, float deltaTime);
 	void DrawTiles(int playerXOffset);
 };
 
-enum class EKeyCode {
+template <typename T>
+void Game::UpdateEntities(std::vector<T>& entityContainer, const float deltaTime) {
+	// Only work on snails and slimes...
+	if (dynamic_cast<Snail*>(&entityContainer[0]) || dynamic_cast<Slime*>(&entityContainer[0])) {
+		const float playerOffset = m_player.GetPosition().x;
+		for (auto& enemy : entityContainer) {
+			// Only update enemies if they're onscreen and alive
+			if ((enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset < constants::k_screenWidth)) {
+				enemy.Update(deltaTime);
+				if (enemy.GetCurrentEntityState() != e_EntityState::eDead) {
+					CheckEnemyLevelCollisions(&enemy);
+					m_player.CheckEntityCollisions(&enemy);
+					enemy.CheckEntityCollisions(&m_player);
+				}
+			}
+		}
+	}
+}
+
+enum class e_KeyCode {
 	NONE = -1, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
 };
 
-enum class ETileType {
+enum class e_TileType {
 	eAir = -1, eDirt = 0, eGrassLeft = 1, eGrassCentre = 2,
 	eGrassRight = 3, eStoneTop = 4, eStoneCentre = 5,
 	eStoneLeft = 6, eStoneRight = 7, eFlag = 38,
@@ -61,11 +85,11 @@ enum class ETileType {
 };
 
 struct Tile {
-	Tile(const ETileType type, const bool canCollide) :
+	Tile(const e_TileType type, const bool canCollide) :
 		m_type(type),
 		m_canCollide(canCollide) {
 	}
 
-	ETileType m_type;
+	e_TileType m_type;
 	bool m_canCollide;
 };

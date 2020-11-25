@@ -12,10 +12,10 @@ Game::Game() :
 	m_gameScore(0),
 	m_currentSprite(0),
 	m_backgroundPosition(Vector2::ZERO),
-	m_backgroundMoveDir(Direction::eNone) {
+	m_backgroundMoveDir(e_EDirection::eNone) {
 	if (!Initialise()) {
 		HAPI.Close();
-	}
+	}	
 }
 
 void Game::Update() {
@@ -27,31 +27,21 @@ void Game::Update() {
 
 	m_player.Update(deltaTime);
 
-	const float playerOffset = m_player.GetPosition().x;
-	for (auto& enemy : m_enemies) {
-		// Only update enemies if they're onscreen and alive
-		if ((enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset < constants::k_screenWidth)) {
-			enemy.Update(deltaTime);
-			if (enemy.GetCurrentEntityState() != EntityState::eDead) {
-				CheckEnemyLevelCollisions(&enemy);
-				m_player.CheckEntityCollisions(enemy.GetCurrentCollisionBoxes());
-				enemy.CheckEntityCollisions(m_player.GetCurrentCollisionBoxes());
-			}
-		}
-	}
+	UpdateEntities(m_slimes, deltaTime);
+	UpdateEntities(m_snails, deltaTime);
 
 	CheckPlayerLevelCollisions(m_player.GetCurrentCollisionBoxes());
 
 	// Scroll the background
-	if (m_player.GetCurrentDirection() == Direction::eRight && m_player.GetMoveDirectionLimit() != Direction::eRight) {
+	if (m_player.GetCurrentDirection() == e_EDirection::eRight && m_player.GetMoveDirectionLimit() != e_EDirection::eRight) {
 		m_backgroundPosition.x -= 1.f;
-		m_backgroundMoveDir = Direction::eLeft;
+		m_backgroundMoveDir = e_EDirection::eLeft;
 		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth) {
 			m_backgroundPosition.x = 0;
 		}
-	} else if (m_player.GetCurrentDirection() == Direction::eLeft && m_player.GetMoveDirectionLimit() != Direction::eLeft) {
+	} else if (m_player.GetCurrentDirection() == e_EDirection::eLeft && m_player.GetMoveDirectionLimit() != e_EDirection::eLeft) {
 		m_backgroundPosition.x += 1.f;
-		m_backgroundMoveDir = Direction::eRight;
+		m_backgroundMoveDir = e_EDirection::eRight;
 		if (m_backgroundPosition.x > constants::k_backgroundTileWidth) {
 			m_backgroundPosition.x = 0;
 		}
@@ -75,8 +65,12 @@ void Game::Render() {
 
 	DrawTiles(static_cast<int>(playerXOffset));
 
-	for (auto& enemy : m_enemies) {
-		enemy.Render(playerXOffset);
+	for (auto& slime : m_slimes) {
+		slime.Render(playerXOffset);
+	}
+
+	for (auto& snail : m_snails) {
+		snail.Render(playerXOffset);
 	}
 
 	m_player.Render();
@@ -90,32 +84,29 @@ void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
 }
 
 float Game::DeltaTime() const {
-	//CPU "ticks" since the program started.
 	const clock_t programTickCount = clock() - m_gameClock;
 
-	//Conversion rate between ticks and milliseconds.
-	const float ticksToMilliseconds = 1000.0f / CLOCKS_PER_SEC;
+	const float ticksToMilliseconds = 1000.f / CLOCKS_PER_SEC;
 
-	//Convert from ticks to seconds.
 	return programTickCount * ticksToMilliseconds;
 }
 
-bool Game::GetKey(const EKeyCode keyCode) const {
+bool Game::GetKey(const e_KeyCode keyCode) const {
 	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
 }
 
 void Game::HandleKeyBoardInput() {
-	if (GetKey(EKeyCode::SPACE)) {
+	if (GetKey(e_KeyCode::SPACE)) {
 		if (m_player.GetCurrentPlayerState() != EPlayerState::eJumping) {
 			m_player.SetShouldJump(true);
 		}
 	}
 
-	Direction playerMoveDir = Direction::eNone;
-	if (GetKey(EKeyCode::A) || GetKey(EKeyCode::LEFT)) {
-		playerMoveDir = Direction::eLeft;
-	} else if (GetKey(EKeyCode::D) || GetKey(EKeyCode::RIGHT)) {
-		playerMoveDir = Direction::eRight;
+	e_EDirection playerMoveDir = e_EDirection::eNone;
+	if (GetKey(e_KeyCode::A) || GetKey(e_KeyCode::LEFT)) {
+		playerMoveDir = e_EDirection::eLeft;
+	} else if (GetKey(e_KeyCode::D) || GetKey(e_KeyCode::RIGHT)) {
+		playerMoveDir = e_EDirection::eRight;
 	}
 
 	m_player.SetDirection(playerMoveDir);
@@ -127,11 +118,11 @@ void Game::HandleControllerInput() {
 	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
 		leftStickVector.Normalised();
 		if (leftStickVector.x > 0) {
-			m_player.SetDirection(Direction::eRight);
+			m_player.SetDirection(e_EDirection::eRight);
 		} else if (leftStickVector.x < 0) {
-			m_player.SetDirection(Direction::eLeft);
+			m_player.SetDirection(e_EDirection::eLeft);
 		} else {
-			m_player.SetDirection(Direction::eNone);
+			m_player.SetDirection(e_EDirection::eNone);
 		}
 	}
 }
@@ -226,8 +217,10 @@ bool Game::Initialise() {
 	}
 
 	for (auto& enemyLocation : m_enemyLocations) {
-		m_enemies.emplace_back(enemyLocation, enemyLocation.y == 768.f ? true : false);
+		m_slimes.emplace_back(enemyLocation, enemyLocation.y == 768.f ? true : false);
 	}
+
+	m_snails.emplace_back(Vector2(1400, 768));
 
 	m_player.SetPosition(Vector2::CENTRE);
 
@@ -257,21 +250,21 @@ bool Game::LoadLevel() {
 
 				const auto tileString = atoi(val.c_str());
 
-				if(tileString == 65) {
+				if (tileString == 65) {
 					m_enemyLocations.emplace_back(
-						c * constants::k_spriteSheetCellWidth - 10 * constants::k_spriteSheetCellWidth, 
-						r * constants::k_spriteSheetCellWidth
+						static_cast<float>(c * constants::k_spriteSheetCellWidth - 10 * constants::k_spriteSheetCellWidth),
+						static_cast<float>(r * constants::k_spriteSheetCellWidth)
 					);
-					row.emplace_back(ETileType::eAir, false);
+					row.emplace_back(e_TileType::eAir, false);
 				} else {
 
-					const auto tileType = static_cast<ETileType>(tileString);
+					const auto tileType = static_cast<e_TileType>(tileString);
 
 					bool canCollide = true;
 
-					if (tileType == ETileType::eAir || tileType == ETileType::ePlant ||
-						tileType == ETileType::eRock || tileType == ETileType::eBush ||
-						tileType == ETileType::eMushroom1 || tileType == ETileType::eMushroom2) {
+					if (tileType == e_TileType::eAir || tileType == e_TileType::ePlant ||
+						tileType == e_TileType::eRock || tileType == e_TileType::eBush ||
+						tileType == e_TileType::eMushroom1 || tileType == e_TileType::eMushroom2) {
 						canCollide = false;
 					}
 
@@ -297,15 +290,15 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 
 			Tile& currentTile = m_levelData[headY][headX];
 			switch (currentTile.m_type) {
-			case ETileType::eCrateBlock:
-			case ETileType::eCoinBlock:
-				currentTile.m_type = ETileType::eAir;
+			case e_TileType::eCrateBlock:
+			case e_TileType::eCoinBlock:
+				currentTile.m_type = e_TileType::eAir;
 				currentTile.m_canCollide = false;
 				break;
-			case ETileType::eBoxedCoinBlock:
-				currentTile.m_type = ETileType::eCoinBlock;
-			case ETileType::eItemBlock:
-				currentTile.m_type = ETileType::eBrickBlock;
+			case e_TileType::eBoxedCoinBlock:
+				currentTile.m_type = e_TileType::eCoinBlock;
+			case e_TileType::eItemBlock:
+				currentTile.m_type = e_TileType::eBrickBlock;
 				break;
 			default:;
 			}
@@ -327,7 +320,7 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
 		if (abs(xOverlap) > 32.f) {
-			m_player.SetMoveDirectionLimit(Direction::eLeft);
+			m_player.SetMoveDirectionLimit(e_EDirection::eLeft);
 			hasCollided = true;
 		}
 	}
@@ -343,13 +336,13 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
 		if (abs(xOverlap) > 8.f) {
-			m_player.SetMoveDirectionLimit(Direction::eRight);
+			m_player.SetMoveDirectionLimit(e_EDirection::eRight);
 			hasCollided = true;
 		}
 	}
 
 	if (!hasCollided) {
-		m_player.SetMoveDirectionLimit(Direction::eNone);
+		m_player.SetMoveDirectionLimit(e_EDirection::eNone);
 	}
 
 
@@ -361,7 +354,7 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 	if (m_levelData[feetY][feetX].m_canCollide) {
 		// Work out the amount of overlap in the Y direction
 		const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
-		if(abs(yOverlap) > 16.f) {
+		if (abs(yOverlap) > 16.f) {
 			m_player.SetPosition({ m_player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellWidth });
 		}
 		m_player.SetPlayerState(EPlayerState::eWalking);
@@ -384,25 +377,16 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
 		}
 
 		// Check if there is a block to the left
-		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == Direction::eLeft) {
-			enemy->SetDirection(Direction::eRight);
-		}
-		// Check if there is a block to the right
-		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == Direction::eRight) {
-			enemy->SetDirection(Direction::eLeft);
+		if ((m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_EDirection::eLeft) ||
+			m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_EDirection::eRight) {
+			enemy->SetVelocity({ -enemy->GetVelocity().x, enemy->GetVelocity().y });
 		}
 
 		// If the enemy can stay on platforms...
-		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == ETileType::eAir && enemy->GetCurrentDirection() == Direction::eLeft) {
+		if ((m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_EDirection::eLeft) ||
+			m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_EDirection::eRight) {
 			if (enemy->CanAvoidEdges()) {
-				enemy->SetDirection(Direction::eRight);
-			} else {
-				enemy->SetIsFalling(true);
-			}
-		}
-		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == ETileType::eAir && enemy->GetCurrentDirection() == Direction::eRight) {
-			if (enemy->CanAvoidEdges()) {
-				enemy->SetDirection(Direction::eLeft);
+				enemy->SetVelocity({ -enemy->GetVelocity().x, enemy->GetVelocity().y });
 			} else {
 				enemy->SetIsFalling(true);
 			}
@@ -414,7 +398,7 @@ void Game::DrawTiles(const int playerXOffset) {
 	for (size_t y = 0; y < m_levelData.size(); y++) {
 		for (size_t x = 0; x < m_levelData[y].size(); x++) {
 			const auto currentTile = m_levelData[y][x];
-			if (currentTile.m_type != ETileType::eAir) {
+			if (currentTile.m_type != e_TileType::eAir) {
 				const Vector2 tilePos = {
 					static_cast<float>((x * constants::k_spriteSheetCellWidth) - playerXOffset),
 					static_cast<float>(y * constants::k_spriteSheetCellWidth)
@@ -422,76 +406,76 @@ void Game::DrawTiles(const int playerXOffset) {
 				if (tilePos.x > 0 && tilePos.x <= constants::k_screenWidth) {
 					std::string spriteIdentifier;
 					switch (currentTile.m_type) {
-					case ETileType::eAir:
+					case e_TileType::eAir:
 						spriteIdentifier = "Air";
 						break;
-					case ETileType::eDirt:
+					case e_TileType::eDirt:
 						spriteIdentifier = "Dirt";
 						break;
-					case ETileType::eGrassLeft:
+					case e_TileType::eGrassLeft:
 						spriteIdentifier = "Grass_Left";
 						break;
-					case ETileType::eGrassCentre:
+					case e_TileType::eGrassCentre:
 						spriteIdentifier = "Grass_Centre";
 						break;
-					case ETileType::eGrassRight:
+					case e_TileType::eGrassRight:
 						spriteIdentifier = "Grass_Right";
 						break;
-					case ETileType::eStoneTop:
+					case e_TileType::eStoneTop:
 						spriteIdentifier = "Stone_Top";
 						break;
-					case ETileType::eStoneCentre:
+					case e_TileType::eStoneCentre:
 						spriteIdentifier = "Stone_Centre";
 						break;
-					case ETileType::eStoneLeft:
+					case e_TileType::eStoneLeft:
 						spriteIdentifier = "Stone_Left";
 						break;
-					case ETileType::eStoneRight:
+					case e_TileType::eStoneRight:
 						spriteIdentifier = "Stone_Right";
 						break;
-					case ETileType::eFlag:
+					case e_TileType::eFlag:
 						spriteIdentifier = "Flag_Up_1";
 						break;
-					case ETileType::eCoinBlock:
+					case e_TileType::eCoinBlock:
 						spriteIdentifier = "Block_Coin";
 						break;
-					case ETileType::eBoxedCoinBlock:
+					case e_TileType::eBoxedCoinBlock:
 						spriteIdentifier = "Block_Boxed_Coin";
 						break;
-					case ETileType::eCrateBlock:
+					case e_TileType::eCrateBlock:
 						spriteIdentifier = "Block_Crate";
 						break;
-					case ETileType::eItemBlock:
+					case e_TileType::eItemBlock:
 						spriteIdentifier = "Block_Item";
 						break;
-					case ETileType::eBrickBlock:
+					case e_TileType::eBrickBlock:
 						spriteIdentifier = "Block_Brick";
 						break;
-					case ETileType::eBush:
+					case e_TileType::eBush:
 						spriteIdentifier = "Bush";
 						break;
-					case ETileType::eOpenDoorMid:
+					case e_TileType::eOpenDoorMid:
 						spriteIdentifier = "Door_Open_Mid";
 						break;
-					case ETileType::eOpenDoorTop:
+					case e_TileType::eOpenDoorTop:
 						spriteIdentifier = "Door_Open_Top";
 						break;
-					case ETileType::ePlant:
+					case e_TileType::ePlant:
 						spriteIdentifier = "Plant";
 						break;
-					case ETileType::eMushroom1:
+					case e_TileType::eMushroom1:
 						spriteIdentifier = "Mushroom1";
 						break;
-					case ETileType::eMushroom2:
+					case e_TileType::eMushroom2:
 						spriteIdentifier = "Mushroom2";
 						break;
-					case ETileType::eRock:
+					case e_TileType::eRock:
 						spriteIdentifier = "Rock";
 						break;
-					case ETileType::eSpikes:
+					case e_TileType::eSpikes:
 						spriteIdentifier = "Spikes";
 						break;
-					case ETileType::eFlagPole:
+					case e_TileType::eFlagPole:
 						spriteIdentifier = "Flag_Pole";
 						break;
 					}

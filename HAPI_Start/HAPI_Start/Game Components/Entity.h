@@ -5,12 +5,16 @@
 #include "../Utilities/Vector.h"
 #include "Animator.h"
 
-enum class EntityState {
+enum class e_EntityState {
 	eAlive, eDead
 };
 
-enum class Direction {
+enum class e_EDirection {
 	eNone, eLeft, eRight
+};
+
+enum class e_EntityType {
+	eNone, ePlayer, eSlime, eSnail
 };
 
 // Every entity will have 4 collision areas as well as
@@ -27,7 +31,7 @@ struct CollisionBoxes {
 class Entity {
 public:
 	explicit Entity(Vector2 size,
-		Direction = Direction::eLeft,
+		e_EDirection = e_EDirection::eLeft,
 		Vector2 position = Vector2::CENTRE,
 		Vector2 velocity = {},
 		Vector2 acceleration = {}
@@ -37,7 +41,7 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render();
-	virtual void CheckEntityCollisions(const CollisionBoxes& other) = 0;
+	virtual void CheckEntityCollisions(Entity* other) = 0;
 	
 	// Different per entity and per animation frame...
 	virtual CollisionBoxes GenerateCollisionBoxes() = 0;
@@ -50,11 +54,13 @@ public:
 	Vector2 GetVelocity() const;
 	void SetVelocity(Vector2 newVel);
 
-	Direction GetCurrentDirection() const;
-	void SetDirection(Direction direction);
+	e_EDirection GetCurrentDirection() const;
+	void SetDirection(e_EDirection direction);
 
-	EntityState GetCurrentEntityState() const;
-	void SetEntityState(EntityState state);
+	e_EntityState GetCurrentEntityState() const;
+	void SetEntityState(e_EntityState state);
+
+	e_EntityType GetEntityType() const;
 	
 protected:
 	Animator m_animator;
@@ -62,10 +68,11 @@ protected:
 	Vector2 m_position;
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
-	Direction m_currentDirection;
-	EntityState m_currentEntityState;
+	e_EDirection m_currentDirection;
+	e_EntityState m_currentEntityState;
+	e_EntityType m_entityType;
 	CollisionBoxes m_currentCollisionBoxes;
-
+	
 	virtual void Move(float deltaTime) = 0;
 
 	void AddAnimation(std::vector<std::string>& animation, bool looping = true, float duration = 100.f);

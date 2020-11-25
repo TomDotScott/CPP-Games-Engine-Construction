@@ -21,10 +21,11 @@
   <ItemGroup>
     <ClCompile Include="Game Components\Animation.cpp" />
     <ClCompile Include="Game Components\Animator.cpp" />
-    <ClCompile Include="Game Components\Enemy.cpp" />
+    <ClCompile Include="Game Components\Enemies\Enemy.cpp" />
+    <ClCompile Include="Game Components\Enemies\Snail.cpp" />
     <ClCompile Include="Game Components\Entity.cpp" />
     <ClCompile Include="Game Components\Game.cpp" />
-    <ClCompile Include="Game Components\Slime.cpp" />
+    <ClCompile Include="Game Components\Enemies\Slime.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -41,8 +42,9 @@
     <ClInclude Include="Design Patterns\Singleton.h" />
     <ClInclude Include="Game Components\Animation.h" />
     <ClInclude Include="Game Components\Animator.h" />
-    <ClInclude Include="Game Components\Enemy.h" />
-    <ClInclude Include="Game Components\Slime.h" />
+    <ClInclude Include="Game Components\Enemies\Enemy.h" />
+    <ClInclude Include="Game Components\Enemies\Slime.h" />
+    <ClInclude Include="Game Components\Enemies\Snail.h" />
     <ClInclude Include="Utilities\BoundsRectangle.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entity.h" />
