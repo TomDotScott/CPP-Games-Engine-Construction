@@ -3,16 +3,17 @@
 
 class Enemy : public Entity {
 public:
-	explicit Enemy(Vector2 startingPosition, bool canAvoidEdges = false);
-	void Update(float deltaTime) override;
-	void Render(float playerOffset);
+	explicit Enemy(Vector2 startingPosition, Vector2 size, Direction startDir, bool canAvoidEdges = false);
+	virtual void Update(float deltaTime) override = 0;
+	virtual void Render(float playerOffset);
 	bool CanAvoidEdges() const;
 	void SetIsFalling(bool isFalling);
 	void CheckEntityCollisions(const CollisionBoxes& other) override;
 	
-private:
+protected:
 	bool m_canAvoidEdges;
 	bool m_isFalling;
-	void Move(float deltaTime) override;
-	CollisionBoxes GenerateCollisionBoxes() override;
+	
+	virtual void Move(float deltaTime) override;
+	virtual CollisionBoxes GenerateCollisionBoxes() override = 0;
 };

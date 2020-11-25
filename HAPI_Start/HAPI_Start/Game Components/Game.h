@@ -1,9 +1,8 @@
 #pragma once
 #include <ctime>
-#include <utility>
 #include <HAPI_lib.h>
 #include "Player.h"
-#include "Enemy.h"
+#include "Slime.h"
 
 enum class EKeyCode;
 struct Tile;
@@ -31,7 +30,7 @@ private:
 	std::vector<std::vector<Tile>> m_levelData;
 
 	std::vector<Vector2> m_enemyLocations;
-	std::vector<Enemy> m_enemies;
+	std::vector<Slime> m_enemies;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;
@@ -43,7 +42,7 @@ private:
 	bool Initialise();
 	bool LoadLevel();
 	void CheckPlayerLevelCollisions(CollisionBoxes playerCollisionBoxes);
-	void CheckEnemyLevelCollisions(Enemy& enemy);
+	void CheckEnemyLevelCollisions(Enemy* enemy);
 	void DrawTiles(int playerXOffset);
 };
 

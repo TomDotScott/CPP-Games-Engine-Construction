@@ -48,6 +48,9 @@
     <ClCompile Include="Game Components\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game Components\Slime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HAPI\HAPI_InputCodes.h">
@@ -93,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Components\Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Slime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,9 @@ Entity::Entity(const Vector2 size, const Direction direction, const Vector2 posi
 	m_velocity(velocity),
 	m_acceleration(acceleration),
 	m_currentDirection(direction),
-	m_currentEntityState(EntityState::eAlive) {
+	m_currentEntityState(EntityState::eAlive),
+	m_currentCollisionBoxes() {
+
 }
 
 CollisionBoxes Entity::GetCurrentCollisionBoxes() const {

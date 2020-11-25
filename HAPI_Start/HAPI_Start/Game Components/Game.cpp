@@ -33,7 +33,7 @@ void Game::Update() {
 		if ((enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset < constants::k_screenWidth)) {
 			enemy.Update(deltaTime);
 			if (enemy.GetCurrentEntityState() != EntityState::eDead) {
-				CheckEnemyLevelCollisions(enemy);
+				CheckEnemyLevelCollisions(&enemy);
 				m_player.CheckEntityCollisions(enemy.GetCurrentCollisionBoxes());
 				enemy.CheckEntityCollisions(m_player.GetCurrentCollisionBoxes());
 			}
@@ -370,8 +370,8 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 	}
 }
 
-void Game::CheckEnemyLevelCollisions(Enemy& enemy) {
-	const auto enemyPos = enemy.GetPosition();
+void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
+	const auto enemyPos = enemy->GetPosition();
 
 	const int enemyXTile = ((static_cast<int>(enemyPos.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 
@@ -380,31 +380,31 @@ void Game::CheckEnemyLevelCollisions(Enemy& enemy) {
 	if (enemyYTile > 0 && enemyYTile < constants::k_maxTilesVertical) {
 		// Stop falling if there is a walkable block below
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide) {
-			enemy.SetIsFalling(false);
+			enemy->SetIsFalling(false);
 		}
 
 		// Check if there is a block to the left
-		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy.GetCurrentDirection() == Direction::eLeft) {
-			enemy.SetDirection(Direction::eRight);
+		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == Direction::eLeft) {
+			enemy->SetDirection(Direction::eRight);
 		}
 		// Check if there is a block to the right
-		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy.GetCurrentDirection() == Direction::eRight) {
-			enemy.SetDirection(Direction::eLeft);
+		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == Direction::eRight) {
+			enemy->SetDirection(Direction::eLeft);
 		}
 
 		// If the enemy can stay on platforms...
-		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == ETileType::eAir && enemy.GetCurrentDirection() == Direction::eLeft) {
-			if (enemy.CanAvoidEdges()) {
-				enemy.SetDirection(Direction::eRight);
+		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == ETileType::eAir && enemy->GetCurrentDirection() == Direction::eLeft) {
+			if (enemy->CanAvoidEdges()) {
+				enemy->SetDirection(Direction::eRight);
 			} else {
-				enemy.SetIsFalling(true);
+				enemy->SetIsFalling(true);
 			}
 		}
-		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == ETileType::eAir && enemy.GetCurrentDirection() == Direction::eRight) {
-			if (enemy.CanAvoidEdges()) {
-				enemy.SetDirection(Direction::eLeft);
+		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == ETileType::eAir && enemy->GetCurrentDirection() == Direction::eRight) {
+			if (enemy->CanAvoidEdges()) {
+				enemy->SetDirection(Direction::eLeft);
 			} else {
-				enemy.SetIsFalling(true);
+				enemy->SetIsFalling(true);
 			}
 		}
 	}
