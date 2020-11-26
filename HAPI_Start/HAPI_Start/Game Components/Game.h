@@ -58,12 +58,21 @@ void Game::UpdateEntities(std::vector<T>& entityContainer, const float deltaTime
 		const float playerOffset = m_player.GetPosition().x;
 		for (auto& enemy : entityContainer) {
 			// Only update enemies if they're onscreen and alive
-			if ((enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset < constants::k_screenWidth)) {
+			if ((enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset < constants::k_screenWidth) &&
+				(enemy.GetPosition().x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset > 0)) {
 				enemy.Update(deltaTime);
+				CheckEnemyLevelCollisions(&enemy);
 				if (enemy.GetCurrentEntityState() != e_EntityState::eDead) {
-					CheckEnemyLevelCollisions(&enemy);
 					m_player.CheckEntityCollisions(&enemy);
 					enemy.CheckEntityCollisions(&m_player);
+					// Check for snail shell collisions
+					for (auto& snail : m_snails) {
+						if (snail.GetSnailState() == e_SnailState::eSliding) {
+							if (&snail != dynamic_cast<Snail*>(&enemy)) {
+								enemy.CheckSnailShellCollisions(snail.GetCurrentCollisionBoxes());
+							}
+						}
+					}
 				}
 			}
 		}

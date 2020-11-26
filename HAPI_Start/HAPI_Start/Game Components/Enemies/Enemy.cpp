@@ -33,6 +33,16 @@ void Enemy::SetIsFalling(const bool isFalling) {
 	m_isFalling = isFalling;
 }
 
+void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes) {
+	if(m_currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds)) {
+		if(m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
+			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox)) {
+			m_currentEntityState = e_EntityState::eSnailShellHit;
+			m_animator.SetAnimationIndex(static_cast<int>(m_currentEntityState));
+		}
+	}
+}
+
 void Enemy::Move(const float deltaTime) {
 	m_position = m_position + m_velocity * (deltaTime / 1000.f);
 }

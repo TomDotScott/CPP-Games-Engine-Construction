@@ -8,6 +8,7 @@ public:
 	bool CanAvoidEdges() const;
 	void SetIsFalling(bool isFalling);
 	virtual void CheckEntityCollisions(Entity* other) override = 0;
+	void CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes);
 	
 protected:
 	bool m_canAvoidEdges;

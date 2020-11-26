@@ -38,6 +38,7 @@ void Snail::CheckEntityCollisions(Entity* other) {
 				// If not in shell...
 				switch (m_snailState) {
 				case e_SnailState::eWalking:
+					m_inShellDuration = 0.f;
 					m_snailState = e_SnailState::eSquashed;
 					m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
 					break;
@@ -61,6 +62,10 @@ void Snail::CheckEntityCollisions(Entity* other) {
 			}
 		}
 	}
+}
+
+e_SnailState Snail::GetSnailState() const {
+	return m_snailState;
 }
 
 void Snail::Move(const float deltaTime) {

@@ -6,7 +6,7 @@
 #include "Animator.h"
 
 enum class e_EntityState {
-	eAlive, eDead
+	eAlive, eDead, eSnailShellHit
 };
 
 enum class e_Direction {

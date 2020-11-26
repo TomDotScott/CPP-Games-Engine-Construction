@@ -13,7 +13,7 @@ public:
 	explicit Snail(Vector2 startingPos);
 	void Update(float deltaTime) override;
 	void CheckEntityCollisions(Entity* other) override;
-	
+	e_SnailState GetSnailState() const;
 protected:
 	void Move(float deltaTime) override;
 	CollisionBoxes GenerateCollisionBoxes() override;

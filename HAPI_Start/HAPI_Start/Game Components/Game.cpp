@@ -397,6 +397,7 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eLeft) {
 			if (enemy->CanAvoidEdges()) {
 				enemy->SetDirection(e_Direction::eRight);
+				enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 			} else {
 				enemy->SetIsFalling(true);
 			}
@@ -404,6 +405,7 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
 		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eRight) {
 			if (enemy->CanAvoidEdges()) {
 				enemy->SetDirection(e_Direction::eLeft);
+				enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 			} else {
 				enemy->SetIsFalling(true);
 			}

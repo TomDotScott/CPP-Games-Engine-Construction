@@ -11,6 +11,8 @@ Slime::Slime(const Vector2 startingPosition, const bool canAvoidEdges) :
 	AddAnimation(walk, true, 500.f);
 	std::vector<std::string> dead{ "Slime_Squashed" };
 	AddAnimation(dead, false, 2000.f);
+	std::vector<std::string> snailShell{ "Slime_Snail_Shell_Hit" };
+	AddAnimation(snailShell, false, 1000.f);
 }
 
 void Slime::Update(const float deltaTime) {
