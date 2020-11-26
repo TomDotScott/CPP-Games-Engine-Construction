@@ -1,7 +1,7 @@
 #pragma once
 #include <ctime>
 #include <HAPI_lib.h>
-
+#include <unordered_map>
 #include "Enemies/Slime.h"
 #include "Enemies/Snail.h"
 #include "Player.h"
@@ -27,11 +27,11 @@ private:
 	int m_currentSprite;
 
 	Vector2 m_backgroundPosition;
-	e_EDirection m_backgroundMoveDir;
+	e_Direction m_backgroundMoveDir;
 	
 	std::vector<std::vector<Tile>> m_levelData;
 
-	std::vector<Vector2> m_enemyLocations;
+	std::vector<std::pair<e_EntityType, Vector2>> m_enemyLocations;
 	std::vector<Slime> m_slimes;
 	std::vector<Snail> m_snails;
 	

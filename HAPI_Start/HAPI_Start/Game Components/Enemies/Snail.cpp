@@ -2,7 +2,7 @@
 Snail::Snail(const Vector2 startingPos) :
 	Enemy(startingPos,
 	      Vector2(constants::k_spriteSheetCellWidth, 36),
-	      e_EDirection::eLeft,
+	      e_Direction::eLeft,
 	      true),
 	m_speedMultiplier(0.5f),
 	m_inShellDuration(0.f),

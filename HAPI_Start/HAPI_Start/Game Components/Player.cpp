@@ -4,7 +4,7 @@
 
 Player::Player(const Vector2 startingPosition) :
 	Entity(Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 13),
-		e_EDirection::eNone,
+		e_Direction::eNone,
 		startingPosition,
 		{ Vector2::ZERO }),
 	m_jumpForce(8.f),
@@ -51,7 +51,7 @@ void Player::Update(const float deltaTime) {
 		m_position.y = constants::k_spriteSheetCellWidth;
 	}
 
-	if (m_currentDirection == e_EDirection::eNone && m_currentPlayerState != EPlayerState::eJumping && !m_shouldJumpNextFrame) {
+	if (m_currentDirection == e_Direction::eNone && m_currentPlayerState != EPlayerState::eJumping && !m_shouldJumpNextFrame) {
 		m_currentPlayerState = EPlayerState::eIdle;
 	}
 
@@ -108,18 +108,18 @@ void Player::SetShouldJump(const bool shouldJump) {
 	m_shouldJumpNextFrame = shouldJump;
 }
 
-e_EDirection Player::GetMoveDirectionLimit() const {
+e_Direction Player::GetMoveDirectionLimit() const {
 	return m_moveDirectionLimit;
 }
 
-void Player::SetMoveDirectionLimit(const e_EDirection direction) {
+void Player::SetMoveDirectionLimit(const e_Direction direction) {
 	m_moveDirectionLimit = direction;
 }
 
 void Player::Move(const float deltaTime) {
-	if (m_currentDirection == e_EDirection::eRight && m_moveDirectionLimit != e_EDirection::eRight) {
+	if (m_currentDirection == e_Direction::eRight && m_moveDirectionLimit != e_Direction::eRight) {
 		m_position = m_position + (Vector2::RIGHT * deltaTime);
-	} else if (m_currentDirection == e_EDirection::eLeft && m_moveDirectionLimit != e_EDirection::eLeft) {
+	} else if (m_currentDirection == e_Direction::eLeft && m_moveDirectionLimit != e_Direction::eLeft) {
 		m_position = m_position + (Vector2::LEFT * deltaTime);
 	}
 }

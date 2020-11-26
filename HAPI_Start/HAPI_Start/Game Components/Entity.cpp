@@ -1,7 +1,7 @@
 ﻿#include "Entity.h"
 #include "../Graphics/Graphics.h"
 
-Entity::Entity(const Vector2 size, const e_EDirection direction, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
+Entity::Entity(const Vector2 size, const e_Direction direction, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
@@ -32,11 +32,11 @@ void Entity::SetVelocity(const Vector2 newVel) {
 	m_velocity = newVel;
 }
 
-e_EDirection Entity::GetCurrentDirection() const {
+e_Direction Entity::GetCurrentDirection() const {
 	return m_currentDirection;
 }
 
-void Entity::SetDirection(const e_EDirection direction) {
+void Entity::SetDirection(const e_Direction direction) {
 	m_currentDirection = direction;
 }
 

@@ -2,7 +2,7 @@
 Slime::Slime(const Vector2 startingPosition, const bool canAvoidEdges) :
 	Enemy(startingPosition,
 		{ static_cast<float>(constants::k_spriteSheetCellWidth), static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f },
-		e_EDirection::eLeft,
+		e_Direction::eLeft,
 		canAvoidEdges) {
 	m_entityType = e_EntityType::eSlime;
 	// Create the Animations

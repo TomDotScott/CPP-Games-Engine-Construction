@@ -9,12 +9,12 @@ enum class e_EntityState {
 	eAlive, eDead
 };
 
-enum class e_EDirection {
+enum class e_Direction {
 	eNone, eLeft, eRight
 };
 
 enum class e_EntityType {
-	eNone, ePlayer, eSlime, eSnail
+	eNone, ePlayer, eSlime = 65, eSnail = 66
 };
 
 // Every entity will have 4 collision areas as well as
@@ -31,7 +31,7 @@ struct CollisionBoxes {
 class Entity {
 public:
 	explicit Entity(Vector2 size,
-		e_EDirection = e_EDirection::eLeft,
+		e_Direction = e_Direction::eLeft,
 		Vector2 position = Vector2::CENTRE,
 		Vector2 velocity = {},
 		Vector2 acceleration = {}
@@ -54,8 +54,8 @@ public:
 	Vector2 GetVelocity() const;
 	void SetVelocity(Vector2 newVel);
 
-	e_EDirection GetCurrentDirection() const;
-	void SetDirection(e_EDirection direction);
+	e_Direction GetCurrentDirection() const;
+	void SetDirection(e_Direction direction);
 
 	e_EntityState GetCurrentEntityState() const;
 	void SetEntityState(e_EntityState state);
@@ -68,7 +68,7 @@ protected:
 	Vector2 m_position;
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
-	e_EDirection m_currentDirection;
+	e_Direction m_currentDirection;
 	e_EntityState m_currentEntityState;
 	e_EntityType m_entityType;
 	CollisionBoxes m_currentCollisionBoxes;

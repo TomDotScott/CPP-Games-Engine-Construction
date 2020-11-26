@@ -12,7 +12,7 @@ Game::Game() :
 	m_gameScore(0),
 	m_currentSprite(0),
 	m_backgroundPosition(Vector2::ZERO),
-	m_backgroundMoveDir(e_EDirection::eNone) {
+	m_backgroundMoveDir(e_Direction::eNone) {
 	if (!Initialise()) {
 		HAPI.Close();
 	}	
@@ -33,15 +33,15 @@ void Game::Update() {
 	CheckPlayerLevelCollisions(m_player.GetCurrentCollisionBoxes());
 
 	// Scroll the background
-	if (m_player.GetCurrentDirection() == e_EDirection::eRight && m_player.GetMoveDirectionLimit() != e_EDirection::eRight) {
+	if (m_player.GetCurrentDirection() == e_Direction::eRight && m_player.GetMoveDirectionLimit() != e_Direction::eRight) {
 		m_backgroundPosition.x -= 1.f;
-		m_backgroundMoveDir = e_EDirection::eLeft;
+		m_backgroundMoveDir = e_Direction::eLeft;
 		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth) {
 			m_backgroundPosition.x = 0;
 		}
-	} else if (m_player.GetCurrentDirection() == e_EDirection::eLeft && m_player.GetMoveDirectionLimit() != e_EDirection::eLeft) {
+	} else if (m_player.GetCurrentDirection() == e_Direction::eLeft && m_player.GetMoveDirectionLimit() != e_Direction::eLeft) {
 		m_backgroundPosition.x += 1.f;
-		m_backgroundMoveDir = e_EDirection::eRight;
+		m_backgroundMoveDir = e_Direction::eRight;
 		if (m_backgroundPosition.x > constants::k_backgroundTileWidth) {
 			m_backgroundPosition.x = 0;
 		}
@@ -102,11 +102,11 @@ void Game::HandleKeyBoardInput() {
 		}
 	}
 
-	e_EDirection playerMoveDir = e_EDirection::eNone;
+	e_Direction playerMoveDir = e_Direction::eNone;
 	if (GetKey(e_KeyCode::A) || GetKey(e_KeyCode::LEFT)) {
-		playerMoveDir = e_EDirection::eLeft;
+		playerMoveDir = e_Direction::eLeft;
 	} else if (GetKey(e_KeyCode::D) || GetKey(e_KeyCode::RIGHT)) {
-		playerMoveDir = e_EDirection::eRight;
+		playerMoveDir = e_Direction::eRight;
 	}
 
 	m_player.SetDirection(playerMoveDir);
@@ -118,11 +118,11 @@ void Game::HandleControllerInput() {
 	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
 		leftStickVector.Normalised();
 		if (leftStickVector.x > 0) {
-			m_player.SetDirection(e_EDirection::eRight);
+			m_player.SetDirection(e_Direction::eRight);
 		} else if (leftStickVector.x < 0) {
-			m_player.SetDirection(e_EDirection::eLeft);
+			m_player.SetDirection(e_Direction::eLeft);
 		} else {
-			m_player.SetDirection(e_EDirection::eNone);
+			m_player.SetDirection(e_Direction::eNone);
 		}
 	}
 }
@@ -217,7 +217,11 @@ bool Game::Initialise() {
 	}
 
 	for (auto& enemyLocation : m_enemyLocations) {
-		m_slimes.emplace_back(enemyLocation, enemyLocation.y == 768.f ? true : false);
+		if (enemyLocation.first == e_EntityType::eSlime) {
+			m_slimes.emplace_back(enemyLocation.second, enemyLocation.second.y == 768.f ? true : false);
+		}else {
+			m_snails.emplace_back(enemyLocation.second);
+		}
 	}
 
 	m_snails.emplace_back(Vector2(1400, 768));
@@ -250,11 +254,12 @@ bool Game::LoadLevel() {
 
 				const auto tileString = atoi(val.c_str());
 
-				if (tileString == 65) {
-					m_enemyLocations.emplace_back(
+				if (tileString == 65 || tileString == 66) {
+					m_enemyLocations.push_back({ static_cast<const e_EntityType>(tileString), {
 						static_cast<float>(c * constants::k_spriteSheetCellWidth - 10 * constants::k_spriteSheetCellWidth),
-						static_cast<float>(r * constants::k_spriteSheetCellWidth)
-					);
+							static_cast<float>(r * constants::k_spriteSheetCellWidth)
+						} });
+					
 					row.emplace_back(e_TileType::eAir, false);
 				} else {
 
@@ -320,7 +325,7 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
 		if (abs(xOverlap) > 32.f) {
-			m_player.SetMoveDirectionLimit(e_EDirection::eLeft);
+			m_player.SetMoveDirectionLimit(e_Direction::eLeft);
 			hasCollided = true;
 		}
 	}
@@ -336,13 +341,13 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
 		if (abs(xOverlap) > 8.f) {
-			m_player.SetMoveDirectionLimit(e_EDirection::eRight);
+			m_player.SetMoveDirectionLimit(e_Direction::eRight);
 			hasCollided = true;
 		}
 	}
 
 	if (!hasCollided) {
-		m_player.SetMoveDirectionLimit(e_EDirection::eNone);
+		m_player.SetMoveDirectionLimit(e_Direction::eNone);
 	}
 
 
@@ -377,16 +382,28 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
 		}
 
 		// Check if there is a block to the left
-		if ((m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_EDirection::eLeft) ||
-			m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_EDirection::eRight) {
-			enemy->SetVelocity({ -enemy->GetVelocity().x, enemy->GetVelocity().y });
+		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eLeft) {
+			enemy->SetDirection(e_Direction::eRight);
+			enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
+		}
+		
+		// Check if there is a block to the right
+		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eRight) {
+			enemy->SetDirection(e_Direction::eLeft);
+			enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 		}
 
 		// If the enemy can stay on platforms...
-		if ((m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_EDirection::eLeft) ||
-			m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_EDirection::eRight) {
+		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eLeft) {
 			if (enemy->CanAvoidEdges()) {
-				enemy->SetVelocity({ -enemy->GetVelocity().x, enemy->GetVelocity().y });
+				enemy->SetDirection(e_Direction::eRight);
+			} else {
+				enemy->SetIsFalling(true);
+			}
+		}
+		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eRight) {
+			if (enemy->CanAvoidEdges()) {
+				enemy->SetDirection(e_Direction::eLeft);
 			} else {
 				enemy->SetIsFalling(true);
 			}

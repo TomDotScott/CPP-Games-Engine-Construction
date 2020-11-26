@@ -1,7 +1,7 @@
 ﻿#include "Enemy.h"
 #include "../Graphics/Graphics.h"
 
-Enemy::Enemy(const Vector2 startingPosition, const Vector2 size, const e_EDirection startDir, const bool canAvoidEdges) :
+Enemy::Enemy(const Vector2 startingPosition, const Vector2 size, const e_Direction startDir, const bool canAvoidEdges) :
 	Entity(
 		size,
 		startDir,
