@@ -10,11 +10,11 @@ enum class e_EntityState {
 };
 
 enum class e_Direction {
-	eNone, eLeft, eRight
+	eNone = -1, eLeft, eRight
 };
 
 enum class e_EntityType {
-	eNone, ePlayer, eSlime = 65, eSnail = 66
+	eNone = -1, ePlayer, eSlime = 65, eSnail = 66
 };
 
 // Every entity will have 4 collision areas as well as

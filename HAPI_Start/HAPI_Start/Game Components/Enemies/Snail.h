@@ -5,7 +5,7 @@
 // If it is jumped on when in it's shell, it's shell can slide
 // If not, after some time, it can get back up and walk again
 enum class e_SnailState {
-	eWalking, eSquashed, eSliding
+	eWalking, eSquashed, eSliding, eShellHit, eCracking
 };
 
 class Snail final : public Enemy{
@@ -13,7 +13,9 @@ public:
 	explicit Snail(Vector2 startingPos);
 	void Update(float deltaTime) override;
 	void CheckEntityCollisions(Entity* other) override;
+	void CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes) override;
 	e_SnailState GetSnailState() const;
+	void Squash() override;
 protected:
 	void Move(float deltaTime) override;
 	CollisionBoxes GenerateCollisionBoxes() override;

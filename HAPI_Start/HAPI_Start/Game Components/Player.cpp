@@ -9,10 +9,11 @@ Player::Player(const Vector2 startingPosition) :
 		{ Vector2::ZERO }),
 	m_jumpForce(8.f),
 	m_shouldJumpNextFrame(false),
-	m_currentPlayerState(EPlayerState::eJumping) {
+	m_currentPlayerState(EPlayerState::eJumping),
+	m_moveDirectionLimit(e_Direction::eNone) {
 
 	m_entityType = e_EntityType::ePlayer;
-	
+
 	// Create the animations
 	// Idle Animation
 	std::vector<std::string> idle{ "Player_Idle_Body_1", "Player_Idle_Body_2" };
@@ -87,7 +88,7 @@ void Player::CheckEntityCollisions(Entity* other) {
 
 		}
 		// If touching the bottom...
-		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) && 
+		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
 			(other->GetEntityType() == e_EntityType::eSnail || other->GetEntityType() == e_EntityType::eSlime)
 			) {
 			// Jump

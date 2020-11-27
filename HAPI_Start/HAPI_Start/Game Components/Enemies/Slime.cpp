@@ -17,14 +17,12 @@ Slime::Slime(const Vector2 startingPosition, const bool canAvoidEdges) :
 
 void Slime::Update(const float deltaTime) {
 	if (m_currentEntityState == e_EntityState::eAlive) {
-		Move(deltaTime);
-
 		if (m_isFalling) {
-			m_velocity.y += constants::k_gravity * (deltaTime / 1000.f);
-			m_position = m_position + m_velocity;
+			m_velocity.y += constants::k_gravity * (deltaTime / 10.f);
 		}
+		Move(deltaTime);
 	}
-	
+
 	m_animator.Update(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
@@ -38,6 +36,11 @@ void Slime::CheckEntityCollisions(Entity* other) {
 			m_animator.SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
 		}
 	}
+}
+
+void Slime::Squash() {
+	m_currentEntityState = e_EntityState::eDead;
+	m_animator.SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
 }
 
 CollisionBoxes Slime::GenerateCollisionBoxes() {

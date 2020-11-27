@@ -12,7 +12,13 @@ Snail::Snail(const Vector2 startingPos) :
 	std::vector<std::string> walk{ "Snail_1", "Snail_2" };
 	AddAnimation(walk, true, 500.f);
 	std::vector<std::string> squashed{ "Snail_Shell" };
-	AddAnimation(squashed, true, 0.1f);
+	AddAnimation(squashed, true);
+	// For sliding
+	AddAnimation(squashed, true);
+	std::vector<std::string> shellHit{ "Snail_Snail_Shell_Hit" };
+	AddAnimation(shellHit, false, 1000.f);
+	std::vector<std::string> shellCrack{ "Snail_Shell", "Snail_Shell_Crack_1", "Snail_Shell_Crack_2" , "Snail_Shell_Crack_3" };
+	AddAnimation(shellCrack, false, 50.f);
 }
 
 void Snail::Update(const float deltaTime) {
@@ -23,6 +29,7 @@ void Snail::Update(const float deltaTime) {
 			m_inShellDuration += deltaTime;
 		} else {
 			m_snailState = e_SnailState::eWalking;
+			m_canAvoidEdges = true;
 			m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
 		}
 	}
@@ -40,18 +47,17 @@ void Snail::CheckEntityCollisions(Entity* other) {
 				case e_SnailState::eWalking:
 					m_inShellDuration = 0.f;
 					m_snailState = e_SnailState::eSquashed;
-					m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
 					break;
 				case e_SnailState::eSquashed:
 					m_snailState = e_SnailState::eSliding;
 					m_speedMultiplier = 4.f;
+					m_canAvoidEdges = false;
 					// Work out to go left or right
 					if(otherEntColBox.m_bottomCollisionBox.TOP_LEFT.x < m_currentCollisionBoxes.m_rightCollisionBox.TOP_LEFT.x) {
-						m_velocity.x = abs(m_velocity.x);
+						SetDirection(e_Direction::eRight);
 					}else {
-						m_velocity.x = -abs(m_velocity.x);
+						SetDirection(e_Direction::eLeft);
 					}
-					
 					break;
 				case e_SnailState::eSliding:
 					m_snailState = e_SnailState::eSquashed;
@@ -59,7 +65,18 @@ void Snail::CheckEntityCollisions(Entity* other) {
 					break;
 				default:;
 				}
+				m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
 			}
+		}
+	}
+}
+
+void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes) {
+	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds)) {
+		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
+			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox)) {
+			m_snailState = e_SnailState::eShellHit;
+			m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
 		}
 	}
 }
@@ -68,7 +85,16 @@ e_SnailState Snail::GetSnailState() const {
 	return m_snailState;
 }
 
+void Snail::Squash() {
+	m_snailState = e_SnailState::eCracking;
+	m_currentEntityState = e_EntityState::eDead;
+	m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
+}
+
 void Snail::Move(const float deltaTime) {
+	if(m_isFalling) {
+		m_velocity.y += constants::k_gravity * deltaTime;
+	}
 	m_position = m_position + m_velocity * (deltaTime / 1000.f) * m_speedMultiplier;
 }
 

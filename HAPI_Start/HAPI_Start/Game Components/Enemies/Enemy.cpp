@@ -30,6 +30,9 @@ bool Enemy::CanAvoidEdges() const {
 }
 
 void Enemy::SetIsFalling(const bool isFalling) {
+	if(!isFalling) {
+		m_velocity.y = 0.f;
+	}
 	m_isFalling = isFalling;
 }
 

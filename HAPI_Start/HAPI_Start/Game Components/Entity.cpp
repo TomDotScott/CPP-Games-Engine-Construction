@@ -8,6 +8,7 @@ Entity::Entity(const Vector2 size, const e_Direction direction, const Vector2 po
 	m_acceleration(acceleration),
 	m_currentDirection(direction),
 	m_currentEntityState(e_EntityState::eAlive),
+	m_entityType(e_EntityType::eNone),
 	m_currentCollisionBoxes() {
 
 }
@@ -38,6 +39,11 @@ e_Direction Entity::GetCurrentDirection() const {
 
 void Entity::SetDirection(const e_Direction direction) {
 	m_currentDirection = direction;
+	if (direction == e_Direction::eRight) {
+		m_velocity.x = abs(m_velocity.x);
+	} else {
+		m_velocity.x = -abs(m_velocity.x);
+	}
 }
 
 e_EntityState Entity::GetCurrentEntityState() const {

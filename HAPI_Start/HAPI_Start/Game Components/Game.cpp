@@ -190,7 +190,11 @@ bool Game::Initialise() {
 	CreateSprite("Slime_Snail_Shell_Hit");
 	CreateSprite("Snail_1");
 	CreateSprite("Snail_2");
+	CreateSprite("Snail_Snail_Shell_Hit");
 	CreateSprite("Snail_Shell");
+	CreateSprite("Snail_Shell_Crack_1");
+	CreateSprite("Snail_Shell_Crack_2");
+	CreateSprite("Snail_Shell_Crack_3");
 	CreateSprite("Block_Item");
 	CreateSprite("Block_Boxed_Coin");
 	CreateSprite("Block_Coin");
@@ -378,26 +382,26 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
 	if (enemyYTile > 0 && enemyYTile < constants::k_maxTilesVertical) {
 		// Stop falling if there is a walkable block below
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide) {
+			if(m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eSpikes) {
+				enemy->Squash();
+			}
 			enemy->SetIsFalling(false);
 		}
 
 		// Check if there is a block to the left
 		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eLeft) {
 			enemy->SetDirection(e_Direction::eRight);
-			enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 		}
 		
 		// Check if there is a block to the right
 		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eRight) {
 			enemy->SetDirection(e_Direction::eLeft);
-			enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 		}
 
 		// If the enemy can stay on platforms...
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eLeft) {
 			if (enemy->CanAvoidEdges()) {
 				enemy->SetDirection(e_Direction::eRight);
-				enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 			} else {
 				enemy->SetIsFalling(true);
 			}
@@ -405,7 +409,6 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
 		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eRight) {
 			if (enemy->CanAvoidEdges()) {
 				enemy->SetDirection(e_Direction::eLeft);
-				enemy->SetVelocity({ enemy->GetVelocity().x * -1, enemy->GetVelocity().y });
 			} else {
 				enemy->SetIsFalling(true);
 			}
