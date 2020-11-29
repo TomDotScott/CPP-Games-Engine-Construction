@@ -126,7 +126,7 @@ void Game::HandleKeyBoardInput()
 {
 	if (GetKey(e_KeyCode::SPACE))
 	{
-		if (m_player.GetCurrentPlayerState() != EPlayerState::eJumping)
+		if (m_player.GetCurrentPlayerState() != e_PlayerState::eJumping)
 		{
 			m_player.SetShouldJump(true);
 		}
@@ -445,10 +445,10 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 		{
 			m_player.SetPosition({ m_player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellWidth });
 		}
-		m_player.SetPlayerState(EPlayerState::eWalking);
+		m_player.SetPlayerState(e_PlayerState::eWalking);
 	} else
 	{
-		m_player.SetPlayerState(EPlayerState::eJumping);
+		m_player.SetPlayerState(e_PlayerState::eJumping);
 	}
 }
 

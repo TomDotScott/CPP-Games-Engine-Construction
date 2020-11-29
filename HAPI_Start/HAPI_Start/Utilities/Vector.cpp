@@ -1,6 +1,5 @@
 #include "Vector.h"
 #include <cmath>
-
 #include "Constants.h"
 
 Vector2::Vector2(const float x, const float y) :
@@ -9,15 +8,15 @@ Vector2::Vector2(const float x, const float y) :
 {
 }
 
-void Vector2::Limit(Vector2 _max)
+void Vector2::Limit(const Vector2 max)
 {
-	if (x > _max.x)
+	if (x > max.x)
 	{
-		x = _max.x;
+		x = max.x;
 	}
-	if (y > _max.y)
+	if (y > max.y)
 	{
-		y = _max.y;
+		y = max.y;
 	}
 }
 

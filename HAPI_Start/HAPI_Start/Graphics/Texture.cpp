@@ -1,17 +1,21 @@
 ﻿#include "Texture.h"
 #include "../Utilities/Constants.h"
 
-Texture::Texture() : m_textureData(), m_size(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth) {
+Texture::Texture() : m_textureData(), m_size(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth)
+{
 }
 
-Texture::~Texture() {
+Texture::~Texture()
+{
 	delete[] m_textureData;
 }
 
-bool Texture::Initialise(const std::string& fileName) {
+bool Texture::Initialise(const std::string& fileName)
+{
 	int textureWidth{ 0 };
 	int textureHeight{ 0 };
-	if (!HAPI.LoadTexture(fileName, &m_textureData, textureWidth, textureHeight)) {
+	if (!HAPI.LoadTexture(fileName, &m_textureData, textureWidth, textureHeight))
+	{
 		const std::string message{ "The file: " + fileName + " was not located. Check the file path or the filename." };
 		HAPI.UserMessage(message, "File not found");
 		return false;
@@ -21,11 +25,13 @@ bool Texture::Initialise(const std::string& fileName) {
 	return true;
 }
 
-void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePosition) const {
+void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePosition) const
+{
 	TextureClipBlit(screen, texturePosition);
 }
 
-void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const Vector2 spritePosition, const bool flipped) const {
+void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const Vector2 spritePosition, const bool flipped) const
+{
 	HAPISPACE::BYTE* screenStart{
 		screen + (static_cast<int>(spritePosition.x) + static_cast<int>(spritePosition.y) * constants::k_screenWidth) * 4
 	};
@@ -37,11 +43,13 @@ void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, 
 	SpriteClipBlit(screenStart, spriteStart, spriteSheetIndex, spritePosition, flipped);
 }
 
-Vector2 Texture::GetSize() const {
+Vector2 Texture::GetSize() const
+{
 	return{ m_size };
 }
 
-void Texture::TextureAlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const {
+void Texture::TextureAlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const
+{
 	HAPISPACE::BYTE* screenStart{
 		screen + (static_cast<int>(position.y) * constants::k_screenWidth + static_cast<int>(position.x)) * 4
 	};
@@ -49,15 +57,20 @@ void Texture::TextureAlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) 
 
 	const int increment{ constants::k_screenWidth * 4 - static_cast<int>(m_size.x) * 4 };
 
-	for (int y = 0; y < static_cast<int>(m_size.y); y++) {
-		for (int x = 0; x < static_cast<int>(m_size.x); x++) {
+	for (int y = 0; y < static_cast<int>(m_size.y); y++)
+	{
+		for (int x = 0; x < static_cast<int>(m_size.x); x++)
+		{
 			const HAPISPACE::BYTE a{ textureStart[3] };
 			// Only draw pixels if needed
-			if (a > 0) {
+			if (a > 0)
+			{
 				// Fast blit if no alpha
-				if (a == 255) {
+				if (a == 255)
+				{
 					memcpy(screenStart, textureStart, 4);
-				} else {
+				} else
+				{
 					// Blend with background
 					screenStart[0] = screenStart[0] + ((a * (textureStart[2] - screenStart[0])) >> 8);
 					screenStart[1] = screenStart[1] + ((a * (textureStart[1] - screenStart[1])) >> 8);
@@ -71,7 +84,8 @@ void Texture::TextureAlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) 
 	}
 }
 
-void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
+void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const
+{
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	Vector2 temp = position;
@@ -86,11 +100,14 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 	clippedRect.Translate(temp);
 
 	// If the object is onscreen...
-	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
+	if (!clippedRect.IsCompletelyOutside(screenBounds))
+	{
 		// If the object is completely onscreen then alphablit...
-		if (clippedRect.IsCompletelyInside(screenBounds)) {
+		if (clippedRect.IsCompletelyInside(screenBounds))
+		{
 			TextureAlphaBlit(screen, position);
-		} else {
+		} else
+		{
 			// we must be offscreen...
 			//Clip against screen
 			clippedRect.ClipTo(screenBounds);
@@ -124,13 +141,17 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 			};
 
 			// Start blitting...
-			for (int y = 0; y < clippedRect.GetSize().y; y++) {
-				for (int x = 0; x < clippedRect.GetSize().x; x++) {
+			for (int y = 0; y < clippedRect.GetSize().y; y++)
+			{
+				for (int x = 0; x < clippedRect.GetSize().x; x++)
+				{
 					const HAPISPACE::BYTE alpha = texPtr[3];
 					// Fully opaque
-					if (alpha == 255) {
+					if (alpha == 255)
+					{
 						memcpy(screenPtr, texPtr, 4);
-					} else if (alpha > 0) { // Has alpha channel
+					} else if (alpha > 0)
+					{ // Has alpha channel
 						const HAPISPACE::BYTE red = texPtr[0];
 						const HAPISPACE::BYTE green = texPtr[1];
 						const HAPISPACE::BYTE blue = texPtr[2];
@@ -150,20 +171,26 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const {
 	}
 }
 
-void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const Vector2 position, const bool flipped) const {
+void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const Vector2 position, const bool flipped) const
+{
 	const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellWidth * 4 };
 
 	const int spriteInc{ static_cast<int>(m_size.x) * 4 - constants::k_spriteSheetCellWidth * 4 };
 
-	for (int y = 0; y < constants::k_spriteSheetCellWidth; y++) {
-		for (int x = 0; x < constants::k_spriteSheetCellWidth; x++) {
+	for (int y = 0; y < constants::k_spriteSheetCellWidth; y++)
+	{
+		for (int x = 0; x < constants::k_spriteSheetCellWidth; x++)
+		{
 			const HAPISPACE::BYTE a{ spriteData[3] };
 			// Only draw pixels if needed
-			if (a > 0) {
+			if (a > 0)
+			{
 				// Fast blit if no alpha
-				if (a == 255) {
+				if (a == 255)
+				{
 					memcpy(screenStart, spriteData, 4);
-				} else {
+				} else
+				{
 					// Blend with background
 					screenStart[0] = screenStart[0] + ((a * (spriteData[2] - screenStart[0])) >> 8);
 					screenStart[1] = screenStart[1] + ((a * (spriteData[1] - screenStart[1])) >> 8);
@@ -178,7 +205,8 @@ void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spr
 	}
 }
 
-void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, Vector2 position, const bool flipped) const {
+void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, Vector2 position, const bool flipped) const
+{
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	const Vector2 temp = position;
@@ -193,11 +221,14 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 	clippedRect.Translate(temp);
 
 	// If the object is onscreen...
-	if (!clippedRect.IsCompletelyOutside(screenBounds)) {
+	if (!clippedRect.IsCompletelyOutside(screenBounds))
+	{
 		// If the object is completely onscreen then alphablit...
-		if (clippedRect.IsCompletelyInside(screenBounds)) {
+		if (clippedRect.IsCompletelyInside(screenBounds))
+		{
 			SpriteAlphaBlit(screenStart, spriteData, position, flipped);
-		} else {
+		} else
+		{
 			// we must be offscreen...
 			//Clip against screen
 			clippedRect.ClipTo(screenBounds);
@@ -223,13 +254,17 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 			};
 
 			// Start blitting...
-			for (int y = 0; y < clippedRect.GetSize().y; y++) {
-				for (int x = 0; x < clippedRect.GetSize().x; x++) {
+			for (int y = 0; y < clippedRect.GetSize().y; y++)
+			{
+				for (int x = 0; x < clippedRect.GetSize().x; x++)
+				{
 					const HAPISPACE::BYTE alpha = spritePtr[3];
 					// Fully opaque
-					if (alpha == 255) {
+					if (alpha == 255)
+					{
 						memcpy(screenStart, spritePtr, 4);
-					} else if (alpha > 0) { // Has alpha channel
+					} else if (alpha > 0)
+					{ // Has alpha channel
 						const HAPISPACE::BYTE red = spritePtr[0];
 						const HAPISPACE::BYTE green = spritePtr[1];
 						const HAPISPACE::BYTE blue = spritePtr[2];

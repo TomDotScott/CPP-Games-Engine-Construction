@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Entity.h"
 
-enum class EPlayerState
+enum class e_PlayerState
 {
 	eIdle, eWalking, eJumping, eClimbing
 };
@@ -19,13 +19,13 @@ public:
 	e_Direction GetMoveDirectionLimit() const;
 	void SetMoveDirectionLimit(e_Direction direction);
 
-	EPlayerState GetCurrentPlayerState() const;
-	void SetPlayerState(EPlayerState state);
+	e_PlayerState GetCurrentPlayerState() const;
+	void SetPlayerState(e_PlayerState state);
 
 private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
-	EPlayerState m_currentPlayerState;
+	e_PlayerState m_currentPlayerState;
 	e_Direction m_moveDirectionLimit;
 
 	void Move(float deltaTime) override;

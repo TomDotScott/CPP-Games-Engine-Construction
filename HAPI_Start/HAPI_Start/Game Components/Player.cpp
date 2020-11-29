@@ -9,7 +9,7 @@ Player::Player(const Vector2 startingPosition) :
 		{ Vector2::ZERO }),
 	m_jumpForce(8.f),
 	m_shouldJumpNextFrame(false),
-	m_currentPlayerState(EPlayerState::eJumping),
+	m_currentPlayerState(e_PlayerState::eJumping),
 	m_moveDirectionLimit(e_Direction::eNone)
 {
 
@@ -37,7 +37,7 @@ void Player::Update(const float deltaTime)
 {
 	Move(deltaTime);
 
-	if (m_currentPlayerState == EPlayerState::eWalking)
+	if (m_currentPlayerState == e_PlayerState::eWalking)
 	{
 		m_velocity.y = 0;
 		if (m_shouldJumpNextFrame)
@@ -45,7 +45,7 @@ void Player::Update(const float deltaTime)
 			Jump(m_jumpForce);
 			m_shouldJumpNextFrame = false;
 		}
-	} else if (m_currentPlayerState == EPlayerState::eJumping)
+	} else if (m_currentPlayerState == e_PlayerState::eJumping)
 	{
 		m_velocity.y += constants::k_gravity * (deltaTime / 1000);
 	}
@@ -58,9 +58,9 @@ void Player::Update(const float deltaTime)
 		m_position.y = constants::k_spriteSheetCellWidth;
 	}
 
-	if (m_currentDirection == e_Direction::eNone && m_currentPlayerState != EPlayerState::eJumping && !m_shouldJumpNextFrame)
+	if (m_currentDirection == e_Direction::eNone && m_currentPlayerState != e_PlayerState::eJumping && !m_shouldJumpNextFrame)
 	{
-		m_currentPlayerState = EPlayerState::eIdle;
+		m_currentPlayerState = e_PlayerState::eIdle;
 	}
 
 	m_animator.SetAnimationIndex(static_cast<int>(m_currentPlayerState));
@@ -109,12 +109,12 @@ void Player::CheckEntityCollisions(Entity* other)
 	}
 }
 
-EPlayerState Player::GetCurrentPlayerState() const
+e_PlayerState Player::GetCurrentPlayerState() const
 {
 	return m_currentPlayerState;
 }
 
-void Player::SetPlayerState(const EPlayerState state)
+void Player::SetPlayerState(const e_PlayerState state)
 {
 	m_currentPlayerState = state;
 }
@@ -147,7 +147,7 @@ void Player::Move(const float deltaTime)
 
 void Player::Jump(const float jumpForce)
 {
-	m_currentPlayerState = EPlayerState::eJumping;
+	m_currentPlayerState = e_PlayerState::eJumping;
 	m_velocity.y = -jumpForce;
 }
 
