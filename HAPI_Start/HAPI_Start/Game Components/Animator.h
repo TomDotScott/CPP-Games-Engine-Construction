@@ -9,7 +9,7 @@ public:
 	void Update(float deltaTime);
 	void SetAnimationIndex(int animationIndex);
 	std::string GetCurrentFrameIdentifier();
-	EAnimationState GetCurrentAnimationState() const;
+	e_AnimationState GetCurrentAnimationState() const;
 	
 private:
 	std::vector<Animation> m_animations;

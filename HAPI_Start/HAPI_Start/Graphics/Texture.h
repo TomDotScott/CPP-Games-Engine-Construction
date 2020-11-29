@@ -3,7 +3,8 @@
 #include "../Utilities/BoundsRectangle.h"
 #include "../Utilities/Vector.h"
 
-class Texture {
+class Texture
+{
 public:
 	Texture();
 	~Texture();
@@ -20,5 +21,5 @@ private:
 	void TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
 	void SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, Vector2 position, bool flipped) const;
 	void SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, int spriteSheetIndex, Vector2 position, bool flipped) const;
-	
+
 };

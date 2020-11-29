@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "Vector.h"
 
-class BoundsRectangle {
+class BoundsRectangle
+{
 public:
 	BoundsRectangle() = default;
 	BoundsRectangle(Vector2 topLeft, Vector2 bottomRight);
@@ -13,5 +14,5 @@ public:
 	Vector2 GetSize() const;
 
 	Vector2 TOP_LEFT;
-	Vector2 BOTTOM_RIGHT;	
+	Vector2 BOTTOM_RIGHT;
 };

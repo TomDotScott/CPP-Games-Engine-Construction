@@ -4,7 +4,8 @@
 #include "../Design Patterns/Singleton.h"
 #include "Texture.h"
 
-class Graphics : public Singleton<Graphics> {
+class Graphics : public Singleton<Graphics>
+{
 	friend class Singleton<Graphics>;
 public:
 	void ClearScreen(HAPISPACE::HAPI_TColour col) const;
@@ -26,7 +27,7 @@ private:
 
 	std::unordered_map<std::string, int> m_spriteSheetLocations;
 	Texture* m_spriteSheet;
-	
+
 	Graphics();
 	~Graphics();
 };

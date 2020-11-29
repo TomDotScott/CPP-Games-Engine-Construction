@@ -10,7 +10,8 @@ Player::Player(const Vector2 startingPosition) :
 	m_jumpForce(8.f),
 	m_shouldJumpNextFrame(false),
 	m_currentPlayerState(EPlayerState::eJumping),
-	m_moveDirectionLimit(e_Direction::eNone) {
+	m_moveDirectionLimit(e_Direction::eNone)
+{
 
 	m_entityType = e_EntityType::ePlayer;
 
@@ -32,27 +33,33 @@ Player::Player(const Vector2 startingPosition) :
 	AddAnimation(climb);
 }
 
-void Player::Update(const float deltaTime) {
+void Player::Update(const float deltaTime)
+{
 	Move(deltaTime);
 
-	if (m_currentPlayerState == EPlayerState::eWalking) {
+	if (m_currentPlayerState == EPlayerState::eWalking)
+	{
 		m_velocity.y = 0;
-		if (m_shouldJumpNextFrame) {
+		if (m_shouldJumpNextFrame)
+		{
 			Jump(m_jumpForce);
 			m_shouldJumpNextFrame = false;
 		}
-	} else if (m_currentPlayerState == EPlayerState::eJumping) {
+	} else if (m_currentPlayerState == EPlayerState::eJumping)
+	{
 		m_velocity.y += constants::k_gravity * (deltaTime / 1000);
 	}
 
 	m_position = m_position + m_velocity;
 
 	// Can't go off the top of the screen
-	if (m_position.y < constants::k_spriteSheetCellWidth) {
+	if (m_position.y < constants::k_spriteSheetCellWidth)
+	{
 		m_position.y = constants::k_spriteSheetCellWidth;
 	}
 
-	if (m_currentDirection == e_Direction::eNone && m_currentPlayerState != EPlayerState::eJumping && !m_shouldJumpNextFrame) {
+	if (m_currentDirection == e_Direction::eNone && m_currentPlayerState != EPlayerState::eJumping && !m_shouldJumpNextFrame)
+	{
 		m_currentPlayerState = EPlayerState::eIdle;
 	}
 
@@ -61,7 +68,8 @@ void Player::Update(const float deltaTime) {
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
-void Player::Render() {
+void Player::Render()
+{
 	Graphics::GetInstance().DrawSprite(
 		GetTopIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellWidth
@@ -77,55 +85,68 @@ void Player::Render() {
 	);
 }
 
-void Player::CheckEntityCollisions(Entity* other) {
+void Player::CheckEntityCollisions(Entity* other)
+{
 	const auto otherEntColBox = other->GetCurrentCollisionBoxes();
 	// Check the global boxes
-	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds)) {
+	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+	{
 		// If touching the left or right...
 		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox)) {
+			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+		{
 			// TODO: Kill the player
 
 		}
 		// If touching the bottom...
 		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
 			(other->GetEntityType() == e_EntityType::eSnail || other->GetEntityType() == e_EntityType::eSlime)
-			) {
+			)
+		{
 			// Jump
 			Jump(m_jumpForce / 2);
 		}
 	}
 }
 
-EPlayerState Player::GetCurrentPlayerState() const {
+EPlayerState Player::GetCurrentPlayerState() const
+{
 	return m_currentPlayerState;
 }
 
-void Player::SetPlayerState(const EPlayerState state) {
+void Player::SetPlayerState(const EPlayerState state)
+{
 	m_currentPlayerState = state;
 }
 
-void Player::SetShouldJump(const bool shouldJump) {
+void Player::SetShouldJump(const bool shouldJump)
+{
 	m_shouldJumpNextFrame = shouldJump;
 }
 
-e_Direction Player::GetMoveDirectionLimit() const {
+e_Direction Player::GetMoveDirectionLimit() const
+{
 	return m_moveDirectionLimit;
 }
 
-void Player::SetMoveDirectionLimit(const e_Direction direction) {
+void Player::SetMoveDirectionLimit(const e_Direction direction)
+{
 	m_moveDirectionLimit = direction;
 }
 
-void Player::Move(const float deltaTime) {
-	if (m_currentDirection == e_Direction::eRight && m_moveDirectionLimit != e_Direction::eRight) {
+void Player::Move(const float deltaTime)
+{
+	if (m_currentDirection == e_Direction::eRight && m_moveDirectionLimit != e_Direction::eRight)
+	{
 		m_position = m_position + (Vector2::RIGHT * deltaTime);
-	} else if (m_currentDirection == e_Direction::eLeft && m_moveDirectionLimit != e_Direction::eLeft) {
+	} else if (m_currentDirection == e_Direction::eLeft && m_moveDirectionLimit != e_Direction::eLeft)
+	{
 		m_position = m_position + (Vector2::LEFT * deltaTime);
 	}
 }
 
-void Player::Jump(const float jumpForce) {
+void Player::Jump(const float jumpForce)
+{
 	m_currentPlayerState = EPlayerState::eJumping;
 	m_velocity.y = -jumpForce;
 }
@@ -133,7 +154,8 @@ void Player::Jump(const float jumpForce) {
 // The animations are just for the body but the character is made up of
 // 2 sprites, with one for the head. In order to render the appropriate top,
 // we need to edit the string identifier for the sprite to remove the "Bottom"
-std::string Player::GetTopIdentifier() {
+std::string Player::GetTopIdentifier()
+{
 	std::string currentFramePlayerTopIdentifier = m_animator.GetCurrentFrameIdentifier();
 
 	// Store the frame no to add back to the end
@@ -145,7 +167,8 @@ std::string Player::GetTopIdentifier() {
 	return currentFramePlayerTopIdentifier += frameNo;
 }
 
-CollisionBoxes Player::GenerateCollisionBoxes() {
+CollisionBoxes Player::GenerateCollisionBoxes()
+{
 	auto entityCollisionBox = BoundsRectangle({ 0, 0 }, m_size);
 	entityCollisionBox.Translate(m_position);
 

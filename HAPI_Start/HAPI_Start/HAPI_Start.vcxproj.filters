@@ -54,7 +54,7 @@
     <ClCompile Include="Game Components\Enemies\Snail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Coin.cpp">
+    <ClCompile Include="Game Components\Coin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,7 +110,7 @@
     <ClInclude Include="Game Components\Enemies\Snail.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Coin.h">
+    <ClInclude Include="Game Components\Coin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

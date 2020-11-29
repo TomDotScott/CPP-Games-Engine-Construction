@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include "Entity.h"
 
-enum class EPlayerState {
+enum class EPlayerState
+{
 	eIdle, eWalking, eJumping, eClimbing
 };
 
-class Player final : public Entity {
+class Player final : public Entity
+{
 public:
 	explicit Player(Vector2 startingPosition);
 
@@ -16,7 +18,7 @@ public:
 
 	e_Direction GetMoveDirectionLimit() const;
 	void SetMoveDirectionLimit(e_Direction direction);
-	
+
 	EPlayerState GetCurrentPlayerState() const;
 	void SetPlayerState(EPlayerState state);
 

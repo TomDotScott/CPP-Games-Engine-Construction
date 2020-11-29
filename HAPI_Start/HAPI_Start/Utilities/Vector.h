@@ -3,9 +3,9 @@
 
 class Vector2 {
 public:
-	Vector2(const float _x = 0.f, const float _y = 0.f);
+	Vector2(const float x = 0.f, const float y = 0.f);
 
-	void Limit(Vector2 _max);
+	void Limit(Vector2 max);
 
 	float Magnitude() const;
 

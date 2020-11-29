@@ -12,13 +12,16 @@ Game::Game() :
 	m_gameScore(0),
 	m_currentSprite(0),
 	m_backgroundPosition(Vector2::ZERO),
-	m_backgroundMoveDir(e_Direction::eNone) {
-	if (!Initialise()) {
+	m_backgroundMoveDir(e_Direction::eNone)
+{
+	if (!Initialise())
+	{
 		HAPI.Close();
 	}
 }
 
-void Game::Update() {
+void Game::Update()
+{
 	const float deltaTime = DeltaTime();
 
 	HandleKeyBoardInput();
@@ -26,7 +29,8 @@ void Game::Update() {
 
 	m_player.Update(deltaTime);
 
-	for (auto& coin : m_coins) {
+	for (auto& coin : m_coins)
+	{
 		coin.Update(deltaTime);
 		m_player.CheckEntityCollisions(&coin);
 		coin.CheckEntityCollisions(&m_player);
@@ -38,16 +42,20 @@ void Game::Update() {
 	CheckPlayerLevelCollisions(m_player.GetCurrentCollisionBoxes());
 
 	// Scroll the background
-	if (m_player.GetCurrentDirection() == e_Direction::eRight && m_player.GetMoveDirectionLimit() != e_Direction::eRight) {
+	if (m_player.GetCurrentDirection() == e_Direction::eRight && m_player.GetMoveDirectionLimit() != e_Direction::eRight)
+	{
 		m_backgroundPosition.x -= 1.f;
 		m_backgroundMoveDir = e_Direction::eLeft;
-		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth) {
+		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth)
+		{
 			m_backgroundPosition.x = 0;
 		}
-	} else if (m_player.GetCurrentDirection() == e_Direction::eLeft && m_player.GetMoveDirectionLimit() != e_Direction::eLeft) {
+	} else if (m_player.GetCurrentDirection() == e_Direction::eLeft && m_player.GetMoveDirectionLimit() != e_Direction::eLeft)
+	{
 		m_backgroundPosition.x += 1.f;
 		m_backgroundMoveDir = e_Direction::eRight;
-		if (m_backgroundPosition.x > constants::k_backgroundTileWidth) {
+		if (m_backgroundPosition.x > constants::k_backgroundTileWidth)
+		{
 			m_backgroundPosition.x = 0;
 		}
 	}
@@ -56,7 +64,8 @@ void Game::Update() {
 	m_gameClock = clock();
 }
 
-void Game::Render() {
+void Game::Render()
+{
 	Graphics::GetInstance().ClearScreen();
 
 	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
@@ -69,31 +78,38 @@ void Game::Render() {
 
 	DrawTiles(playerXOffset);
 
-	for (auto& coin : m_coins) {
-		if (coin.GetIsVisible()) {
+	for (auto& coin : m_coins)
+	{
+		if (coin.GetIsVisible())
+		{
 			coin.Render(playerXOffset);
 		}
 	}
 
-	for (auto& slime : m_slimes) {
+	for (auto& slime : m_slimes)
+	{
 		slime.Render(playerXOffset);
 	}
 
-	for (auto& snail : m_snails) {
+	for (auto& snail : m_snails)
+	{
 		snail.Render(playerXOffset);
 	}
 
 	m_player.Render();
 }
 
-void Game::CreateSprite(const std::string& spriteSheetIdentifier) {
-	if (!Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite)) {
+void Game::CreateSprite(const std::string& spriteSheetIdentifier)
+{
+	if (!Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite))
+	{
 		HAPI.Close();
 	}
 	m_currentSprite++;
 }
 
-float Game::DeltaTime() const {
+float Game::DeltaTime() const
+{
 	const clock_t programTickCount = clock() - m_gameClock;
 
 	const float ticksToMilliseconds = 1000.f / CLOCKS_PER_SEC;
@@ -101,47 +117,61 @@ float Game::DeltaTime() const {
 	return programTickCount * ticksToMilliseconds;
 }
 
-bool Game::GetKey(const e_KeyCode keyCode) const {
+bool Game::GetKey(const e_KeyCode keyCode) const
+{
 	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
 }
 
-void Game::HandleKeyBoardInput() {
-	if (GetKey(e_KeyCode::SPACE)) {
-		if (m_player.GetCurrentPlayerState() != EPlayerState::eJumping) {
+void Game::HandleKeyBoardInput()
+{
+	if (GetKey(e_KeyCode::SPACE))
+	{
+		if (m_player.GetCurrentPlayerState() != EPlayerState::eJumping)
+		{
 			m_player.SetShouldJump(true);
 		}
 	}
 
 	e_Direction playerMoveDir = e_Direction::eNone;
-	if (GetKey(e_KeyCode::A) || GetKey(e_KeyCode::LEFT)) {
+	if (GetKey(e_KeyCode::A) || GetKey(e_KeyCode::LEFT))
+	{
 		playerMoveDir = e_Direction::eLeft;
-	} else if (GetKey(e_KeyCode::D) || GetKey(e_KeyCode::RIGHT)) {
+	} else if (GetKey(e_KeyCode::D) || GetKey(e_KeyCode::RIGHT))
+	{
 		playerMoveDir = e_Direction::eRight;
 	}
 
 	m_player.SetDirection(playerMoveDir);
 }
 
-void Game::HandleControllerInput() {
+void Game::HandleControllerInput()
+{
 	//Player One Controls 
 	Vector2 leftStickVector{ static_cast<float>(m_controllerData.analogueButtons[2]), static_cast<float>(m_controllerData.analogueButtons[3]) };
-	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone) {
+	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone)
+	{
 		leftStickVector.Normalised();
-		if (leftStickVector.x > 0) {
+		if (leftStickVector.x > 0)
+		{
 			m_player.SetDirection(e_Direction::eRight);
-		} else if (leftStickVector.x < 0) {
+		} else if (leftStickVector.x < 0)
+		{
 			m_player.SetDirection(e_Direction::eLeft);
-		} else {
+		} else
+		{
 			m_player.SetDirection(e_Direction::eNone);
 		}
 	}
 }
 
-bool Game::Initialise() {
-	if (!Graphics::GetInstance().CreateTexture("Data/PlatformerBackground.tga", "Background")) {
+bool Game::Initialise()
+{
+	if (!Graphics::GetInstance().CreateTexture("Data/PlatformerBackground.tga", "Background"))
+	{
 		return false;
 	}
-	if (!Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheet.tga")) {
+	if (!Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheet.tga"))
+	{
 		return false;
 	}
 
@@ -231,12 +261,15 @@ bool Game::Initialise() {
 	CreateSprite("UI_Key_Not_Found");
 	CreateSprite("UI_Key_Found");
 	CreateSprite("Key");
-	if (!LoadLevel()) {
+	if (!LoadLevel())
+	{
 		return false;
 	}
 
-	for (auto& enemyLocation : m_entityLocations) {
-		switch (enemyLocation.first) {
+	for (auto& enemyLocation : m_entityLocations)
+	{
+		switch (enemyLocation.first)
+		{
 		case e_EntityType::eCoin:
 			m_coins.emplace_back(enemyLocation.second, true);
 			break;
@@ -257,24 +290,31 @@ bool Game::Initialise() {
 	return true;
 }
 
-bool Game::LoadLevel() {
+bool Game::LoadLevel()
+{
 	std::ifstream file("Data/Level1.csv");
-	if (!file.is_open()) {
+	if (!file.is_open())
+	{
 		return false;
 	}
-	while (!file.eof()) {
-		for (int r = 0; r < constants::k_maxTilesVertical; ++r) {
+	while (!file.eof())
+	{
+		for (int r = 0; r < constants::k_maxTilesVertical; ++r)
+		{
 			std::vector<Tile> row;
 			std::string line;
 			std::getline(file, line);
-			if (!file.good()) {
+			if (!file.good())
+			{
 				break;
 			}
 			std::stringstream iss(line);
-			for (int c = 0; c < constants::k_maxTilesHorizontal * 11; ++c) {
+			for (int c = 0; c < constants::k_maxTilesHorizontal * 11; ++c)
+			{
 				std::string val;
 				std::getline(iss, val, ',');
-				if (!iss.good()) {
+				if (!iss.good())
+				{
 					break;
 				}
 
@@ -289,16 +329,19 @@ bool Game::LoadLevel() {
 
 				if (tileType == e_TileType::eSlime ||
 					tileType == e_TileType::eCoin ||
-					tileType == e_TileType::eSnail) {
+					tileType == e_TileType::eSnail)
+				{
 					m_entityLocations.push_back({ static_cast<const e_EntityType>(tileString), tilePosition });
 					row.emplace_back(e_TileType::eAir, tilePosition, false);
-				} else {
+				} else
+				{
 					bool canCollide = true;
 
 					if (tileType == e_TileType::eAir || tileType == e_TileType::ePlant ||
 						tileType == e_TileType::eRock || tileType == e_TileType::eBush ||
 						tileType == e_TileType::eMushroom1 || tileType == e_TileType::eMushroom2 ||
-						tileType == e_TileType::eRightArrow) {
+						tileType == e_TileType::eRightArrow)
+					{
 						canCollide = false;
 					}
 
@@ -311,19 +354,23 @@ bool Game::LoadLevel() {
 	return true;
 }
 
-void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes) {
+void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
+{
 	/* TOP COLLISIONS */
-	if (m_player.GetPosition().y > static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f) {
+	if (m_player.GetPosition().y > static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f)
+	{
 		const int headX = ((static_cast<int>(playerCollisionBoxes.m_topCollisionBox.TOP_LEFT.x)) /
 			constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 
 		const int headY = static_cast<int>(playerCollisionBoxes.m_topCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellWidth;
 
-		if (m_levelData[headY][headX].m_canCollide) {
+		if (m_levelData[headY][headX].m_canCollide)
+		{
 			m_player.SetVelocity({ m_player.GetVelocity().x });
 
 			Tile& currentTile = m_levelData[headY][headX];
-			switch (currentTile.m_type) {
+			switch (currentTile.m_type)
+			{
 			case e_TileType::eCrateBlock:
 			case e_TileType::eCoinBlock:
 				currentTile.m_type = e_TileType::eAir;
@@ -348,12 +395,14 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 		constants::k_maxTilesHorizontal / 2;
 	int playerYTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellWidth);
 
-	if (m_levelData[playerYTile][playerXTile].m_canCollide) {
+	if (m_levelData[playerYTile][playerXTile].m_canCollide)
+	{
 		// Work out the amount of overlap in the X direction
 		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x -
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
-		if (abs(xOverlap) > 32.f) {
+		if (abs(xOverlap) > 32.f)
+		{
 			m_player.SetMoveDirectionLimit(e_Direction::eLeft);
 			hasCollided = true;
 		}
@@ -364,18 +413,21 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 		constants::k_maxTilesHorizontal / 2;
 	playerYTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellWidth);
 
-	if (m_levelData[playerYTile][playerXTile].m_canCollide) {
+	if (m_levelData[playerYTile][playerXTile].m_canCollide)
+	{
 		// Work out the amount of overlap in the X direction
 		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x -
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
-		if (abs(xOverlap) > 8.f) {
+		if (abs(xOverlap) > 8.f)
+		{
 			m_player.SetMoveDirectionLimit(e_Direction::eRight);
 			hasCollided = true;
 		}
 	}
 
-	if (!hasCollided) {
+	if (!hasCollided)
+	{
 		m_player.SetMoveDirectionLimit(e_Direction::eNone);
 	}
 
@@ -385,73 +437,94 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 		constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 	const int feetY = static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellWidth;
 
-	if (m_levelData[feetY][feetX].m_canCollide) {
+	if (m_levelData[feetY][feetX].m_canCollide)
+	{
 		// Work out the amount of overlap in the Y direction
 		const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
-		if (abs(yOverlap) > 16.f) {
+		if (abs(yOverlap) > 16.f)
+		{
 			m_player.SetPosition({ m_player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellWidth });
 		}
 		m_player.SetPlayerState(EPlayerState::eWalking);
-	} else {
+	} else
+	{
 		m_player.SetPlayerState(EPlayerState::eJumping);
 	}
 }
 
-void Game::CheckEnemyLevelCollisions(Enemy* enemy) {
+void Game::CheckEnemyLevelCollisions(Enemy* enemy)
+{
 	const auto enemyPos = enemy->GetPosition();
 
 	const int enemyXTile = ((static_cast<int>(enemyPos.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 
 	const int enemyYTile = static_cast<int>(enemyPos.y) / constants::k_spriteSheetCellWidth;
 
-	if (enemyYTile > 0 && enemyYTile < constants::k_maxTilesVertical) {
+	if (enemyYTile > 0 && enemyYTile < constants::k_maxTilesVertical)
+	{
 		// Stop falling if there is a walkable block below
-		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide) {
-			if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eSpikes) {
+		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide)
+		{
+			if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eSpikes)
+			{
 				enemy->Squash();
 			}
 			enemy->SetIsFalling(false);
 		}
 
 		// Check if there is a block to the left
-		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eLeft) {
+		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eLeft)
+		{
 			enemy->SetDirection(e_Direction::eRight);
 		}
 
 		// Check if there is a block to the right
-		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eRight) {
+		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eRight)
+		{
 			enemy->SetDirection(e_Direction::eLeft);
 		}
 
 		// If the enemy can stay on platforms...
-		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eLeft) {
-			if (enemy->CanAvoidEdges()) {
+		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eLeft)
+		{
+			if (enemy->CanAvoidEdges())
+			{
 				enemy->SetDirection(e_Direction::eRight);
-			} else {
+			} else
+			{
 				enemy->SetIsFalling(true);
 			}
 		}
-		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eRight) {
-			if (enemy->CanAvoidEdges()) {
+		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eRight)
+		{
+			if (enemy->CanAvoidEdges())
+			{
 				enemy->SetDirection(e_Direction::eLeft);
-			} else {
+			} else
+			{
 				enemy->SetIsFalling(true);
 			}
 		}
 	}
 }
 
-void Game::DrawTiles(const float playerXOffset) {
-	for (auto& row : m_levelData) {
-		for (const auto& currentTile : row) {
-			if (currentTile.m_type != e_TileType::eAir) {
+void Game::DrawTiles(const float playerXOffset)
+{
+	for (auto& row : m_levelData)
+	{
+		for (const auto& currentTile : row)
+		{
+			if (currentTile.m_type != e_TileType::eAir)
+			{
 				const Vector2 tilePos = {
 					currentTile.m_position.x - playerXOffset + static_cast<float>(constants::k_screenWidth) / 2.f,
 					currentTile.m_position.y
 				};
-				if (tilePos.x > -constants::k_spriteSheetCellWidth && tilePos.x <= constants::k_screenWidth) {
+				if (tilePos.x > -constants::k_spriteSheetCellWidth && tilePos.x <= constants::k_screenWidth)
+				{
 					std::string spriteIdentifier;
-					switch (currentTile.m_type) {
+					switch (currentTile.m_type)
+					{
 					case e_TileType::eAir:
 						spriteIdentifier = "Air";
 						break;
