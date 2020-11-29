@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Game Components\Animation.cpp" />
     <ClCompile Include="Game Components\Animator.cpp" />
     <ClCompile Include="Game Components\Enemies\Enemy.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Coin.h" />
     <ClInclude Include="Design Patterns\Singleton.h" />
     <ClInclude Include="Game Components\Animation.h" />
     <ClInclude Include="Game Components\Animator.h" />

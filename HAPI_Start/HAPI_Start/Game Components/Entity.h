@@ -14,7 +14,7 @@ enum class e_Direction {
 };
 
 enum class e_EntityType {
-	eNone = -1, ePlayer, eSlime = 65, eSnail = 66
+	eNone = -1, ePlayer, eSlime = 65, eCoin = 66, eSnail = 68,
 };
 
 // Every entity will have 4 collision areas as well as
@@ -41,6 +41,7 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render();
+	virtual void Render(float playerOffset);
 	virtual void CheckEntityCollisions(Entity* other) = 0;
 	
 	// Different per entity and per animation frame...

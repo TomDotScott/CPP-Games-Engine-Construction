@@ -69,3 +69,13 @@ void Entity::Render() {
 		}
 	);
 }
+
+void Entity::Render(const float playerOffset) {
+	Graphics::GetInstance().DrawSprite(
+		m_animator.GetCurrentFrameIdentifier(),
+		{
+			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
+			m_position.y
+		}
+	);
+}
