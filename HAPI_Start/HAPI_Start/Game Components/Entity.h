@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <string>
 #include "../Utilities/BoundsRectangle.h"
-#include "../Utilities/Constants.h"
 #include "../Utilities/Vector.h"
+#include "../Utilities/Constants.h"
 #include "Animator.h"
 
 enum class e_EntityState
@@ -47,7 +47,7 @@ public:
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render();
 	virtual void Render(float playerOffset);
-	virtual void CheckEntityCollisions(Entity* other) = 0;
+	virtual void CheckEntityCollisions(Entity& other) = 0;
 
 	// Different per entity and per animation frame...
 	virtual CollisionBoxes GenerateCollisionBoxes() = 0;

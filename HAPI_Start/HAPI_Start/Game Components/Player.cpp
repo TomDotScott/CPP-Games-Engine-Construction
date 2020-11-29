@@ -85,9 +85,9 @@ void Player::Render()
 	);
 }
 
-void Player::CheckEntityCollisions(Entity* other)
+void Player::CheckEntityCollisions(Entity& other)
 {
-	const auto otherEntColBox = other->GetCurrentCollisionBoxes();
+	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
 	// Check the global boxes
 	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
@@ -100,7 +100,7 @@ void Player::CheckEntityCollisions(Entity* other)
 		}
 		// If touching the bottom...
 		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
-			(other->GetEntityType() == e_EntityType::eSnail || other->GetEntityType() == e_EntityType::eSlime)
+			(other.GetEntityType() == e_EntityType::eSnail || other.GetEntityType() == e_EntityType::eSlime)
 			)
 		{
 			// Jump

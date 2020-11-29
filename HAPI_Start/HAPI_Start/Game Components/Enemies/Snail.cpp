@@ -43,12 +43,12 @@ void Snail::Update(const float deltaTime)
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
-void Snail::CheckEntityCollisions(Entity* other)
+void Snail::CheckEntityCollisions(Entity& other)
 {
-	const auto otherEntColBox = other->GetCurrentCollisionBoxes();
+	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
 	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
-		if (other->GetEntityType() == e_EntityType::ePlayer)
+		if (other.GetEntityType() == e_EntityType::ePlayer)
 		{
 			if (m_currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
 			{

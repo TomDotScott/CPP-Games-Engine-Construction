@@ -71,8 +71,8 @@ void Game::UpdateEnemies(std::vector<T>& enemyContainer, const float deltaTime)
 			CheckEnemyLevelCollisions(&enemy);
 			if (enemy.GetCurrentEntityState() != e_EntityState::eDead)
 			{
-				m_player.CheckEntityCollisions(&enemy);
-				enemy.CheckEntityCollisions(&m_player);
+				m_player.CheckEntityCollisions(enemy);
+				enemy.CheckEntityCollisions(m_player);
 				// Check for snail shell collisions
 				for (auto& snail : m_snails)
 				{

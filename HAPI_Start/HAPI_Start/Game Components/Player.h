@@ -13,7 +13,7 @@ public:
 
 	void Update(float deltaTime) override;
 	void Render() override;
-	void CheckEntityCollisions(Entity* other) override;
+	void CheckEntityCollisions(Entity& other) override;
 	void SetShouldJump(bool shouldJump);
 
 	e_Direction GetMoveDirectionLimit() const;

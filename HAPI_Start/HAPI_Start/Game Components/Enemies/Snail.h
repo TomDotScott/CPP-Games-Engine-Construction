@@ -14,7 +14,7 @@ class Snail final : public Enemy
 public:
 	explicit Snail(Vector2 startingPos);
 	void Update(float deltaTime) override;
-	void CheckEntityCollisions(Entity* other) override;
+	void CheckEntityCollisions(Entity& other) override;
 	void CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes) override;
 	e_SnailState GetSnailState() const;
 	void Squash() override;

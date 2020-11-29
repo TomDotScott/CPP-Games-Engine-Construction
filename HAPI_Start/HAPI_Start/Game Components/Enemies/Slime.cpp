@@ -31,9 +31,9 @@ void Slime::Update(const float deltaTime)
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
-void Slime::CheckEntityCollisions(Entity* other)
+void Slime::CheckEntityCollisions(Entity& other)
 {
-	const auto otherEntColBox = other->GetCurrentCollisionBoxes();
+	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
 	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
 		// If player's feet are on the top of the enemy, squash it

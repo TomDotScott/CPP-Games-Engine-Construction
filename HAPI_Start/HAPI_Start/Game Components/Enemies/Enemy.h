@@ -8,7 +8,7 @@ public:
 	void Render(float playerOffset);
 	bool CanAvoidEdges() const;
 	void SetIsFalling(bool isFalling);
-	virtual void CheckEntityCollisions(Entity* other) override = 0;
+	virtual void CheckEntityCollisions(Entity& other) override = 0;
 	virtual void CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes);
 	virtual void Squash() = 0;
 
