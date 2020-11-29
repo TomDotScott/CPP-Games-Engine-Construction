@@ -1,7 +1,11 @@
 ﻿#include "Entity.h"
 #include "../Graphics/Graphics.h"
 
-Entity::Entity(const Vector2 size, const e_Direction direction, const Vector2 position, const Vector2 velocity, const Vector2 acceleration) :
+Entity::Entity(
+	e_EntityType type, const int ID, const Vector2 size, const e_Direction direction, const Vector2 position,
+	const Vector2 velocity, const Vector2 acceleration
+) :
+	m_entityID(ID),
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
@@ -68,6 +72,11 @@ void Entity::SetEntityState(const e_EntityState state)
 e_EntityType Entity::GetEntityType() const
 {
 	return m_entityType;
+}
+
+int Entity::GetEntityID() const
+{
+	return m_entityID;
 }
 
 void Entity::AddAnimation(std::vector<std::string>& animation, const bool looping, const float duration)

@@ -1,15 +1,17 @@
 #include "Coin.h"
 
-Coin::Coin(const Vector2 position, const bool visible) :
-	Entity({ constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth },
+Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
+	Entity(e_EntityType::eCoin, 
+		entityID, 
+		{ constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth },
 		e_Direction::eNone,
 		position,
 		{ 0, 1 },
 		Vector2::ZERO
 	),
+	m_lifeTime(0.f),
 	m_isVisible(visible)
 {
-	m_entityType = e_EntityType::eCoin;
 	// Spin Animation
 	std::vector<std::string> spin{ "Coin_1", "Coin_2" , "Coin_3" , "Coin_4" , "Coin_5" , "Coin_6" , "Coin_7" , "Coin_8" };
 	AddAnimation(spin, true, 100.f);

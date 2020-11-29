@@ -266,24 +266,25 @@ bool Game::Initialise()
 		return false;
 	}
 
+	int currentEntityID{ 0 };
+
 	for (auto& enemyLocation : m_entityLocations)
 	{
 		switch (enemyLocation.first)
 		{
 		case e_EntityType::eCoin:
-			m_coins.emplace_back(enemyLocation.second, true);
+			m_coins.emplace_back(currentEntityID, enemyLocation.second, true);
 			break;
 		case e_EntityType::eSlime:
-			m_slimes.emplace_back(enemyLocation.second, enemyLocation.second.y == 768.f ? true : false);
+			m_slimes.emplace_back(currentEntityID, enemyLocation.second, enemyLocation.second.y == 768.f ? true : false);
 			break;
 		case e_EntityType::eSnail:
-			m_snails.emplace_back(enemyLocation.second);
+			m_snails.emplace_back(currentEntityID, enemyLocation.second);
 			break;
 		default: break;
 		}
+		currentEntityID++;
 	}
-
-	m_snails.emplace_back(Vector2(1400, 768));
 
 	m_player.SetPosition(Vector2::CENTRE);
 
@@ -452,9 +453,9 @@ void Game::CheckPlayerLevelCollisions(const CollisionBoxes playerCollisionBoxes)
 	}
 }
 
-void Game::CheckEnemyLevelCollisions(Enemy* enemy)
+void Game::CheckEnemyLevelCollisions(Enemy& enemy)
 {
-	const auto enemyPos = enemy->GetPosition();
+	const auto enemyPos = enemy.GetPosition();
 
 	const int enemyXTile = ((static_cast<int>(enemyPos.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 
@@ -467,42 +468,42 @@ void Game::CheckEnemyLevelCollisions(Enemy* enemy)
 		{
 			if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eSpikes)
 			{
-				enemy->Squash();
+				enemy.Squash();
 			}
-			enemy->SetIsFalling(false);
+			enemy.SetIsFalling(false);
 		}
 
 		// Check if there is a block to the left
-		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eLeft)
+		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy.GetCurrentDirection() == e_Direction::eLeft)
 		{
-			enemy->SetDirection(e_Direction::eRight);
+			enemy.SetDirection(e_Direction::eRight);
 		}
 
 		// Check if there is a block to the right
-		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy->GetCurrentDirection() == e_Direction::eRight)
+		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy.GetCurrentDirection() == e_Direction::eRight)
 		{
-			enemy->SetDirection(e_Direction::eLeft);
+			enemy.SetDirection(e_Direction::eLeft);
 		}
 
 		// If the enemy can stay on platforms...
-		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eLeft)
+		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy.GetCurrentDirection() == e_Direction::eLeft)
 		{
-			if (enemy->CanAvoidEdges())
+			if (enemy.CanAvoidEdges())
 			{
-				enemy->SetDirection(e_Direction::eRight);
+				enemy.SetDirection(e_Direction::eRight);
 			} else
 			{
-				enemy->SetIsFalling(true);
+				enemy.SetIsFalling(true);
 			}
 		}
-		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy->GetCurrentDirection() == e_Direction::eRight)
+		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy.GetCurrentDirection() == e_Direction::eRight)
 		{
-			if (enemy->CanAvoidEdges())
+			if (enemy.CanAvoidEdges())
 			{
-				enemy->SetDirection(e_Direction::eLeft);
+				enemy.SetDirection(e_Direction::eLeft);
 			} else
 			{
-				enemy->SetIsFalling(true);
+				enemy.SetIsFalling(true);
 			}
 		}
 	}

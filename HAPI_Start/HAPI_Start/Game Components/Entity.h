@@ -35,7 +35,9 @@ struct CollisionBoxes
 class Entity
 {
 public:
-	explicit Entity(Vector2 size,
+	explicit Entity(e_EntityType type, 
+		int ID, 
+		Vector2 size,
 		e_Direction = e_Direction::eLeft,
 		Vector2 position = Vector2::CENTRE,
 		Vector2 velocity = {},
@@ -67,8 +69,10 @@ public:
 	void SetEntityState(e_EntityState state);
 
 	e_EntityType GetEntityType() const;
+	int GetEntityID() const;
 
 protected:
+	const int m_entityID;
 	Animator m_animator;
 	Vector2 m_size;
 	Vector2 m_position;

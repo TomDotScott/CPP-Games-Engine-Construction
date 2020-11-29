@@ -3,7 +3,9 @@
 #include "../Graphics/Graphics.h"
 
 Player::Player(const Vector2 startingPosition) :
-	Entity(Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 13),
+	Entity(e_EntityType::ePlayer,
+		-1,
+		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 13),
 		e_Direction::eNone,
 		startingPosition,
 		{ Vector2::ZERO }),

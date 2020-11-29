@@ -4,7 +4,7 @@
 class Enemy : public Entity
 {
 public:
-	explicit Enemy(Vector2 startingPosition, Vector2 size, e_Direction startDir, bool canAvoidEdges = false);
+	explicit Enemy(e_EntityType type, const int entityID, Vector2 startingPosition, Vector2 size, e_Direction startDir, bool canAvoidEdges = false);
 	void Render(float playerOffset);
 	bool CanAvoidEdges() const;
 	void SetIsFalling(bool isFalling);

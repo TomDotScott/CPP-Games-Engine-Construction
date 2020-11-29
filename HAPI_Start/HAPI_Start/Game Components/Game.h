@@ -28,7 +28,7 @@ private:
 
 	int m_gameScore;
 	int m_currentSprite;
-
+	
 	Vector2 m_backgroundPosition;
 	e_Direction m_backgroundMoveDir;
 
@@ -48,7 +48,7 @@ private:
 	bool Initialise();
 	bool LoadLevel();
 	void CheckPlayerLevelCollisions(CollisionBoxes playerCollisionBoxes);
-	void CheckEnemyLevelCollisions(Enemy* enemy);
+	void CheckEnemyLevelCollisions(Enemy& enemy);
 
 	template<typename T>
 	void UpdateEnemies(std::vector<T>& enemyContainer, float deltaTime);
@@ -68,7 +68,7 @@ void Game::UpdateEnemies(std::vector<T>& enemyContainer, const float deltaTime)
 			enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset > 0)
 		{
 			enemy.Update(deltaTime);
-			CheckEnemyLevelCollisions(&enemy);
+			CheckEnemyLevelCollisions(enemy);
 			if (enemy.GetCurrentEntityState() != e_EntityState::eDead)
 			{
 				m_player.CheckEntityCollisions(enemy);
@@ -78,7 +78,7 @@ void Game::UpdateEnemies(std::vector<T>& enemyContainer, const float deltaTime)
 				{
 					if (snail.GetSnailState() == e_SnailState::eSliding)
 					{
-						if (&snail != dynamic_cast<Snail*>(&enemy))
+						if (enemy.GetEntityID() != snail.GetEntityID())
 						{
 							enemy.CheckSnailShellCollisions(snail.GetCurrentCollisionBoxes());
 						}

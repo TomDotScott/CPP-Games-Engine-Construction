@@ -1,6 +1,8 @@
 ﻿#include "Slime.h"
-Slime::Slime(const Vector2 startingPosition, const bool canAvoidEdges) :
-	Enemy(startingPosition,
+Slime::Slime(const int entityID, const Vector2 startingPosition, const bool canAvoidEdges) :
+	Enemy(e_EntityType::eSlime,
+		entityID,
+		startingPosition,
 		{ static_cast<float>(constants::k_spriteSheetCellWidth), static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f },
 		e_Direction::eLeft,
 		canAvoidEdges)

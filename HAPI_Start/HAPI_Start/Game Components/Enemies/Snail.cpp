@@ -1,6 +1,8 @@
 ﻿#include "Snail.h"
-Snail::Snail(const Vector2 startingPos) :
-	Enemy(startingPos,
+Snail::Snail(const int entityID, const Vector2 startingPos) :
+	Enemy(e_EntityType::eSnail,
+		entityID,
+		startingPos,
 		Vector2(constants::k_spriteSheetCellWidth, 36),
 		e_Direction::eLeft,
 		true),
@@ -8,8 +10,6 @@ Snail::Snail(const Vector2 startingPos) :
 	m_inShellDuration(0.f),
 	m_snailState(e_SnailState::eWalking)
 {
-
-	m_entityType = e_EntityType::eSnail;
 	std::vector<std::string> walk{ "Snail_1", "Snail_2" };
 	AddAnimation(walk, true, 500.f);
 	std::vector<std::string> squashed{ "Snail_Shell" };

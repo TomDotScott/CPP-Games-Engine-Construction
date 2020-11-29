@@ -12,7 +12,7 @@ enum class e_SnailState
 class Snail final : public Enemy
 {
 public:
-	explicit Snail(Vector2 startingPos);
+	explicit Snail(const int entityID, Vector2 startingPos);
 	void Update(float deltaTime) override;
 	void CheckEntityCollisions(Entity& other) override;
 	void CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes) override;

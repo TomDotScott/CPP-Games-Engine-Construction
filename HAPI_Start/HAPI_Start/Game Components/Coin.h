@@ -4,7 +4,7 @@
 class Coin : public Entity
 {
 public:
-	explicit Coin(Vector2 position, bool visible);
+	explicit Coin(const int entityID, Vector2 position, bool visible);
 	void Update(float deltaTime) override;
 	void CheckEntityCollisions(Entity& other) override;
 
