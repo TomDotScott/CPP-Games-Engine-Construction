@@ -16,11 +16,11 @@ Enemy::Enemy(const e_EntityType type, const int entityID, const Vector2 starting
 
 void Enemy::Render(const float playerOffset)
 {
-	if (m_animator.GetCurrentAnimationState() == e_AnimationState::eStarted ||
-		m_animator.GetCurrentAnimationState() == e_AnimationState::ePaused)
+	if (GetCurrentAnimationState() == e_AnimationState::eStarted ||
+		GetCurrentAnimationState() == e_AnimationState::ePaused)
 	{
 		Graphics::GetInstance().DrawSprite(
-			m_animator.GetCurrentFrameIdentifier(),
+			GetCurrentAnimationFrameIdentifier(),
 			{
 				m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
 				m_position.y
@@ -51,7 +51,7 @@ void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
 			m_currentEntityState = e_EntityState::eSnailShellHit;
-			m_animator.SetAnimationIndex(static_cast<int>(m_currentEntityState));
+			SetAnimationIndex(static_cast<int>(m_currentEntityState));
 		}
 	}
 }

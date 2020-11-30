@@ -1,5 +1,5 @@
-﻿#include "Animation.h"
-Animation::Animation(std::vector<std::string>& frames, const bool looping, const float duration) :
+﻿#include "AnimationPlayer.h"
+AnimationPlayer::AnimationPlayer(std::vector<std::string>& frames, const bool looping, const float duration) :
 	m_frames(frames),
 	m_currentFrame(0),
 	m_duration(duration),
@@ -10,7 +10,7 @@ Animation::Animation(std::vector<std::string>& frames, const bool looping, const
 
 }
 
-void Animation::Update(const float deltaTime)
+void AnimationPlayer::Play(const float deltaTime)
 {
 	if (m_state == e_AnimationState::eStarted)
 	{
@@ -33,4 +33,19 @@ void Animation::Update(const float deltaTime)
 			}
 		}
 	}
+}
+
+unsigned AnimationPlayer::GetCurrentFrame() const
+{
+	return m_currentFrame;
+}
+
+std::string AnimationPlayer::GetCurrentFrameIdentifier() const
+{
+	return m_frames[m_currentFrame];
+}
+
+e_AnimationState AnimationPlayer::GetCurrentAnimationState() const
+{
+	return m_state;
 }

@@ -65,8 +65,8 @@ void Player::Update(const float deltaTime)
 		m_currentPlayerState = e_PlayerState::eIdle;
 	}
 
-	m_animator.SetAnimationIndex(static_cast<int>(m_currentPlayerState));
-	m_animator.Update(deltaTime);
+	SetAnimationIndex(static_cast<int>(m_currentPlayerState));
+	m_animations[m_animationIndex].Play(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
@@ -80,7 +80,7 @@ void Player::Render()
 	);
 
 	Graphics::GetInstance().DrawSprite(
-		m_animator.GetCurrentFrameIdentifier(),
+		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
 		},
 		true
@@ -158,7 +158,7 @@ void Player::Jump(const float jumpForce)
 // we need to edit the string identifier for the sprite to remove the "Bottom"
 std::string Player::GetTopIdentifier()
 {
-	std::string currentFramePlayerTopIdentifier = m_animator.GetCurrentFrameIdentifier();
+	std::string currentFramePlayerTopIdentifier = GetCurrentAnimationFrameIdentifier();
 
 	// Store the frame no to add back to the end
 	const auto frameNo = currentFramePlayerTopIdentifier[currentFramePlayerTopIdentifier.size() - 1];

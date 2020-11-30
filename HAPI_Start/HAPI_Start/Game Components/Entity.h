@@ -3,7 +3,7 @@
 #include "../Utilities/BoundsRectangle.h"
 #include "../Utilities/Vector.h"
 #include "../Utilities/Constants.h"
-#include "Animator.h"
+#include "AnimationPlayer.h"
 
 enum class e_EntityState
 {
@@ -35,8 +35,8 @@ struct CollisionBoxes
 class Entity
 {
 public:
-	explicit Entity(e_EntityType type, 
-		int ID, 
+	explicit Entity(e_EntityType type,
+		int ID,
 		Vector2 size,
 		e_Direction = e_Direction::eLeft,
 		Vector2 position = Vector2::CENTRE,
@@ -73,7 +73,8 @@ public:
 
 protected:
 	const int m_entityID;
-	Animator m_animator;
+	std::vector<AnimationPlayer> m_animations;
+	int m_animationIndex{ 0 };
 	Vector2 m_size;
 	Vector2 m_position;
 	Vector2 m_velocity;
@@ -83,7 +84,12 @@ protected:
 	e_EntityType m_entityType;
 	CollisionBoxes m_currentCollisionBoxes;
 
+
+
 	virtual void Move(float deltaTime) = 0;
 
-	void AddAnimation(std::vector<std::string>& animation, bool looping = true, float duration = 100.f);
+	void AddAnimation(std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
+	void SetAnimationIndex(int animationIndex);
+	std::string GetCurrentAnimationFrameIdentifier();
+	e_AnimationState GetCurrentAnimationState() const;
 };

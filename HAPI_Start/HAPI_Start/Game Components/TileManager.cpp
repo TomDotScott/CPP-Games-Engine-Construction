@@ -34,8 +34,6 @@ bool TileManager::LoadLevel(const std::string& filename)
 				{
 					break;
 				}
-
-				std::cout << val << ", ";
 				
 				const auto tileString = atoi(val.c_str());
 
@@ -67,7 +65,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					row.emplace_back(tileType, tilePosition, canCollide);
 				}
 			}
-			std::cout << std::endl;
+
 			m_levelData.emplace_back(row);
 		}
 	}

@@ -20,8 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game Components\Coin.cpp" />
-    <ClCompile Include="Game Components\Animation.cpp" />
-    <ClCompile Include="Game Components\Animator.cpp" />
+    <ClCompile Include="Game Components\AnimationPlayer.cpp" />
     <ClCompile Include="Game Components\Enemies\Enemy.cpp" />
     <ClCompile Include="Game Components\Enemies\Snail.cpp" />
     <ClCompile Include="Game Components\Entity.cpp" />
@@ -43,8 +42,7 @@
   <ItemGroup>
     <ClInclude Include="Game Components\Coin.h" />
     <ClInclude Include="Design Patterns\Singleton.h" />
-    <ClInclude Include="Game Components\Animation.h" />
-    <ClInclude Include="Game Components\Animator.h" />
+    <ClInclude Include="Game Components\AnimationPlayer.h" />
     <ClInclude Include="Game Components\Enemies\Enemy.h" />
     <ClInclude Include="Game Components\Enemies\Slime.h" />
     <ClInclude Include="Game Components\Enemies\Snail.h" />

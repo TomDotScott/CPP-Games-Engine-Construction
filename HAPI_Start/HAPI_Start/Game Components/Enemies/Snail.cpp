@@ -36,10 +36,10 @@ void Snail::Update(const float deltaTime)
 		{
 			m_snailState = e_SnailState::eWalking;
 			m_canAvoidEdges = true;
-			m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
+			SetAnimationIndex(static_cast<int>(m_snailState));
 		}
 	}
-	m_animator.Update(deltaTime);
+	m_animations[m_animationIndex].Play(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
@@ -78,7 +78,7 @@ void Snail::CheckEntityCollisions(Entity& other)
 					break;
 				default:;
 				}
-				m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
+				SetAnimationIndex(static_cast<int>(m_snailState));
 			}
 		}
 	}
@@ -92,7 +92,7 @@ void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
 			m_snailState = e_SnailState::eShellHit;
-			m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
+			SetAnimationIndex(static_cast<int>(m_snailState));
 		}
 	}
 }
@@ -106,7 +106,7 @@ void Snail::Squash()
 {
 	m_snailState = e_SnailState::eCracking;
 	m_currentEntityState = e_EntityState::eDead;
-	m_animator.SetAnimationIndex(static_cast<int>(m_snailState));
+	SetAnimationIndex(static_cast<int>(m_snailState));
 }
 
 void Snail::Move(const float deltaTime)

@@ -29,7 +29,7 @@ void Slime::Update(const float deltaTime)
 		Move(deltaTime);
 	}
 
-	m_animator.Update(deltaTime);
+	m_animations[m_animationIndex].Play(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
@@ -42,7 +42,7 @@ void Slime::CheckEntityCollisions(Entity& other)
 		if (m_currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
 		{
 			m_currentEntityState = e_EntityState::eDead;
-			m_animator.SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
+			SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
 		}
 	}
 }
@@ -50,7 +50,7 @@ void Slime::CheckEntityCollisions(Entity& other)
 void Slime::Squash()
 {
 	m_currentEntityState = e_EntityState::eDead;
-	m_animator.SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
+	SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
 }
 
 CollisionBoxes Slime::GenerateCollisionBoxes()

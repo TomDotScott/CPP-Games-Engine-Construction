@@ -1,8 +1,8 @@
 #include "Coin.h"
 
 Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
-	Entity(e_EntityType::eCoin, 
-		entityID, 
+	Entity(e_EntityType::eCoin,
+		entityID,
 		{ constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth },
 		e_Direction::eNone,
 		position,
@@ -22,7 +22,7 @@ void Coin::Update(const float deltaTime)
 	if (m_isVisible)
 	{
 		m_lifeTime += deltaTime / 1000.f;
-		m_animator.Update(deltaTime);
+		m_animations[m_animationIndex].Play(deltaTime);
 		m_currentCollisionBoxes = GenerateCollisionBoxes();
 	}
 }

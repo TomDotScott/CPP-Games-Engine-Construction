@@ -79,16 +79,31 @@ int Entity::GetEntityID() const
 	return m_entityID;
 }
 
-void Entity::AddAnimation(std::vector<std::string>& animation, const bool looping, const float duration)
+void Entity::AddAnimation(std::vector<std::string>& animationFrameIdentifiers, const bool looping, const float frameLength)
 {
-	Animation newAnimation{ animation, looping, duration };
-	m_animator.AddAnimation(newAnimation);
+	auto anim = AnimationPlayer(animationFrameIdentifiers, looping, frameLength);
+	m_animations.emplace_back(anim);
+}
+
+void Entity::SetAnimationIndex(const int animationIndex)
+{
+	m_animationIndex = animationIndex;
+}
+
+std::string Entity::GetCurrentAnimationFrameIdentifier()
+{
+	return m_animations[m_animationIndex].GetCurrentFrameIdentifier();
+}
+
+e_AnimationState Entity::GetCurrentAnimationState() const
+{
+	return m_animations[m_animationIndex].GetCurrentAnimationState();
 }
 
 void Entity::Render()
 {
 	Graphics::GetInstance().DrawSprite(
-		m_animator.GetCurrentFrameIdentifier(),
+		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
 		}
 	);
@@ -97,7 +112,7 @@ void Entity::Render()
 void Entity::Render(const float playerOffset)
 {
 	Graphics::GetInstance().DrawSprite(
-		m_animator.GetCurrentFrameIdentifier(),
+		GetCurrentAnimationFrameIdentifier(),
 		{
 			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
 			m_position.y

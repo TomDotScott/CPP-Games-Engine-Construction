@@ -39,12 +39,6 @@
     <ClCompile Include="Utilities\BoundsRectangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game Components\Animator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game Components\Enemies\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,6 +52,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game Components\TileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\AnimationPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,12 +95,6 @@
     <ClInclude Include="Utilities\BoundsRectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\Animation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game Components\Animator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game Components\Enemies\Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Components\TileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\AnimationPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
