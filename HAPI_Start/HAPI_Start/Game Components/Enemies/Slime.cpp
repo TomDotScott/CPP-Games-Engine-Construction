@@ -10,12 +10,10 @@ Slime::Slime(const int entityID, const Vector2 startingPosition, const bool canA
 	m_entityType = e_EntityType::eSlime;
 	// Create the Animations
 	// Walk animation
-	std::vector<std::string> walk{ "Slime_1", "Slime_2" };
-	AddAnimation(walk, true, 500.f);
-	std::vector<std::string> dead{ "Slime_Squashed" };
-	AddAnimation(dead, false, 2000.f);
-	std::vector<std::string> snailShell{ "Slime_Snail_Shell_Hit" };
-	AddAnimation(snailShell, false, 1000.f);
+	
+	AddAnimation(animations::SLIME_WALK, true, 500.f);
+	AddAnimation(animations::SLIME_SQUASHED, false, 2000.f);
+	AddAnimation(animations::SLIME_SHELL_HIT, false, 1000.f);
 }
 
 void Slime::Update(const float deltaTime)

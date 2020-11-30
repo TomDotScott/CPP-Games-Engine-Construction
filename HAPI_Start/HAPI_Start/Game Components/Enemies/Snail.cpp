@@ -10,16 +10,16 @@ Snail::Snail(const int entityID, const Vector2 startingPos) :
 	m_inShellDuration(0.f),
 	m_snailState(e_SnailState::eWalking)
 {
-	std::vector<std::string> walk{ "Snail_1", "Snail_2" };
-	AddAnimation(walk, true, 500.f);
-	std::vector<std::string> squashed{ "Snail_Shell" };
-	AddAnimation(squashed, true);
-	// For sliding
-	AddAnimation(squashed, true);
-	std::vector<std::string> shellHit{ "Snail_Snail_Shell_Hit" };
-	AddAnimation(shellHit, false, 1000.f);
-	std::vector<std::string> shellCrack{ "Snail_Shell", "Snail_Shell_Crack_1", "Snail_Shell_Crack_2" , "Snail_Shell_Crack_3" };
-	AddAnimation(shellCrack, false, 50.f);
+	AddAnimation(animations::SNAIL_WALK, true, 500.f);
+
+	AddAnimation(animations::SNAIL_IN_SHELL, true);
+
+	// Sliding
+	AddAnimation(animations::SNAIL_IN_SHELL, true);
+
+	AddAnimation(animations::SNAIL_SHELL_HIT, false, 1000.f);
+
+	AddAnimation(animations::SNAIL_SHELL_CRACK, false, 50.f);
 }
 
 void Snail::Update(const float deltaTime)

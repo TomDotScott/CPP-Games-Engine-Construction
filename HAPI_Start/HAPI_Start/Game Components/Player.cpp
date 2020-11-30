@@ -14,25 +14,12 @@ Player::Player(const Vector2 startingPosition) :
 	m_currentPlayerState(e_PlayerState::eJumping),
 	m_moveDirectionLimit(e_Direction::eNone)
 {
-
 	m_entityType = e_EntityType::ePlayer;
-
-	// Create the animations
-	// Idle Animation
-	std::vector<std::string> idle{ "Player_Idle_Body_1", "Player_Idle_Body_2" };
-	AddAnimation(idle, true, 1000.f);
-
-	// Walk Animation
-	std::vector<std::string> walk{ "Player_Walk_Body_1", "Player_Walk_Body_2" };
-	AddAnimation(walk);
-
-	// Jump Animation
-	std::vector<std::string> jump{ "Player_Jump_Body_1" };
-	AddAnimation(jump);
-
-	// Climb Animation
-	std::vector<std::string> climb{ "Player_Climb_Body_1", "Player_Climb_Body_2" };
-	AddAnimation(climb);
+	
+	AddAnimation(animations::PLAYER_IDLE, true, 1000.f);
+	AddAnimation(animations::PLAYER_WALK);
+	AddAnimation(animations::PLAYER_JUMP);
+	AddAnimation(animations::PLAYER_CLIMB);
 }
 
 void Player::Update(const float deltaTime)

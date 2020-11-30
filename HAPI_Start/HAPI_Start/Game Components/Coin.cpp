@@ -13,8 +13,7 @@ Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
 	m_isVisible(visible)
 {
 	// Spin Animation
-	std::vector<std::string> spin{ "Coin_1", "Coin_2" , "Coin_3" , "Coin_4" , "Coin_5" , "Coin_6" , "Coin_7" , "Coin_8" };
-	AddAnimation(spin, true, 100.f);
+	AddAnimation(animations::COIN_SPIN);
 }
 
 void Coin::Update(const float deltaTime)

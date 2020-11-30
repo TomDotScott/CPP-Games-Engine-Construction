@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdlib>
+#include <random>
 
 namespace constants
 {
@@ -18,7 +18,7 @@ namespace constants
 	constexpr float k_rightThumbDeadzone = 8689.f;
 
 	constexpr float k_gravity = 25.f;
-
+	
 	inline int rand_range(const int min, const int max)
 	{
 		return min + (rand() % (max - min + 1));

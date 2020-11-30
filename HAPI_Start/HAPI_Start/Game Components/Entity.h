@@ -4,6 +4,7 @@
 #include "../Utilities/Vector.h"
 #include "../Utilities/Constants.h"
 #include "AnimationPlayer.h"
+#include "Animations.h"
 
 enum class e_EntityState
 {
