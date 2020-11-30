@@ -36,6 +36,7 @@
     </ClCompile>
     <ClCompile Include="Game Components\Player.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Game Components\TileManager.cpp" />
     <ClCompile Include="Utilities\BoundsRectangle.cpp" />
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
@@ -47,6 +48,7 @@
     <ClInclude Include="Game Components\Enemies\Enemy.h" />
     <ClInclude Include="Game Components\Enemies\Slime.h" />
     <ClInclude Include="Game Components\Enemies\Snail.h" />
+    <ClInclude Include="Game Components\TileManager.h" />
     <ClInclude Include="Utilities\BoundsRectangle.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entity.h" />
