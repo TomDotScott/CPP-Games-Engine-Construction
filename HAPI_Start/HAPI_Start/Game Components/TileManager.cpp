@@ -1,8 +1,6 @@
 #include "TileManager.h"
 #include <fstream>
 #include <sstream>
-#include "Player.h"
-#include "Enemies/Enemy.h"
 #include "../Graphics/Graphics.h"
 
 bool TileManager::LoadLevel(const std::string& filename)

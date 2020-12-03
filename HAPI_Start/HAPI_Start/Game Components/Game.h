@@ -2,10 +2,10 @@
 #include <ctime>
 #include <HAPI_lib.h>
 #include <unordered_map>
-#include "Coin.h"
-#include "Enemies/Slime.h"
-#include "Enemies/Snail.h"
-#include "Player.h"
+#include "Entities/Coin.h"
+#include "Entities/Enemies/Slime.h"
+#include "Entities/Enemies/Snail.h"
+#include "Entities/Player.h"
 #include "TileManager.h"
 
 enum class e_KeyCode;

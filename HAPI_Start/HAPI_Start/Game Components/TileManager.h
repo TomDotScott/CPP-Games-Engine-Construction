@@ -1,11 +1,10 @@
 #pragma once
 #include <vector>
 #include "../Utilities/Vector.h"
-#include "Entity.h"
-class Enemy;
-class Player;
+#include "Entities/Enemies/Enemy.h"
+#include "Entities/Entity.h"
+#include "Entities/Player.h"
 struct Tile;
-
 using entity_locations = std::vector<std::pair<e_EntityType, Vector2>>;
 
 class TileManager

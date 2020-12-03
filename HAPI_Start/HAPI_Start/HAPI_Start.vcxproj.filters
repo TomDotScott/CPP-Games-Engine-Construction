@@ -21,34 +21,16 @@
     <ClCompile Include="Game Components\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities\Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utilities\BoundsRectangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game Components\Enemies\Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game Components\Enemies\Slime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game Components\Enemies\Snail.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game Components\Coin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game Components\TileManager.cpp">
@@ -58,6 +40,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game Components\animations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Entities\Enemies\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Entities\Enemies\Slime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Entities\Enemies\Snail.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Entities\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Entities\Coin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Components\Entities\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,16 +74,10 @@
     <ClInclude Include="Game Components\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game Components\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utilities\Vector.h">
@@ -98,18 +92,6 @@
     <ClInclude Include="Utilities\BoundsRectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\Enemies\Enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game Components\Enemies\Slime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game Components\Enemies\Snail.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game Components\Coin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game Components\TileManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,6 +99,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Components\Animations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Entities\Enemies\Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Entities\Enemies\Slime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Entities\Enemies\Snail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Entities\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Entities\Coin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Components\Entities\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

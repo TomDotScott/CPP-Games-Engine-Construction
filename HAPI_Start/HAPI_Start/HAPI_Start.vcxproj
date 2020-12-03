@@ -20,13 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game Components\animations.cpp" />
-    <ClCompile Include="Game Components\Coin.cpp" />
+    <ClCompile Include="Game Components\Entities\Coin.cpp" />
     <ClCompile Include="Game Components\AnimationPlayer.cpp" />
-    <ClCompile Include="Game Components\Enemies\Enemy.cpp" />
-    <ClCompile Include="Game Components\Enemies\Snail.cpp" />
-    <ClCompile Include="Game Components\Entity.cpp" />
+    <ClCompile Include="Game Components\Entities\Enemies\Enemy.cpp" />
+    <ClCompile Include="Game Components\Entities\Enemies\Snail.cpp" />
+    <ClCompile Include="Game Components\Entities\Entity.cpp" />
     <ClCompile Include="Game Components\Game.cpp" />
-    <ClCompile Include="Game Components\Enemies\Slime.cpp" />
+    <ClCompile Include="Game Components\Entities\Enemies\Slime.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -34,7 +34,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Game Components\Player.cpp" />
+    <ClCompile Include="Game Components\Entities\Player.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
     <ClCompile Include="Game Components\TileManager.cpp" />
     <ClCompile Include="Utilities\BoundsRectangle.cpp" />
@@ -42,22 +42,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game Components\Animations.h" />
-    <ClInclude Include="Game Components\Coin.h" />
+    <ClInclude Include="Game Components\Entities\Coin.h" />
     <ClInclude Include="Design Patterns\Singleton.h" />
     <ClInclude Include="Game Components\AnimationPlayer.h" />
-    <ClInclude Include="Game Components\Enemies\Enemy.h" />
-    <ClInclude Include="Game Components\Enemies\Slime.h" />
-    <ClInclude Include="Game Components\Enemies\Snail.h" />
+    <ClInclude Include="Game Components\Entities\Enemies\Enemy.h" />
+    <ClInclude Include="Game Components\Entities\Enemies\Slime.h" />
+    <ClInclude Include="Game Components\Entities\Enemies\Snail.h" />
     <ClInclude Include="Game Components\TileManager.h" />
     <ClInclude Include="Utilities\BoundsRectangle.h" />
     <ClInclude Include="Utilities\Constants.h" />
-    <ClInclude Include="Game Components\Entity.h" />
+    <ClInclude Include="Game Components\Entities\Entity.h" />
     <ClInclude Include="Game Components\Game.h" />
     <ClInclude Include="Graphics\Graphics.h" />
     <ClInclude Include="HAPI\HAPI_InputCodes.h" />
     <ClInclude Include="HAPI\HAPI_lib.h" />
     <ClInclude Include="HAPI\HAPI_Types.h" />
-    <ClInclude Include="Game Components\Player.h" />
+    <ClInclude Include="Game Components\Entities\Player.h" />
     <ClInclude Include="Graphics\Texture.h" />
     <ClInclude Include="Utilities\Vector.h" />
   </ItemGroup>
