@@ -19,6 +19,40 @@ std::vector<std::string> animations::PLAYER_CLIMB
 	"Player_Climb_Body_1", "Player_Climb_Body_2"
 };
 
+// POWERED UP PLAYER
+
+std::vector<std::string> animations::PLAYER_POWER_UP_IDLE
+{
+	"Player_Power_Up_Idle_Body_1", "Player_Power_Up_Idle_Body_2"
+};
+
+std::vector<std::string> animations::PLAYER_POWER_UP_WALK
+{
+	"Player_Power_Up_Walk_Body_1", "Player_Power_Up_Walk_Body_2"
+};
+
+std::vector<std::string> animations::PLAYER_POWER_UP_JUMP{
+	"Player_Power_Up_Jump_Body_1"
+};
+
+std::vector<std::string> animations::PLAYER_POWER_UP_CLIMB
+{
+	"Player_Power_Up_Climb_Body_1", "Player_Climb_Body_2"
+};
+
+/* FIREBALL BEGIN */
+std::vector<std::string> animations::FIREBALL_SPIN
+{
+	"Fireball_1", "Fireball_2", "Fireball_3", "Fireball_4",
+	"Fireball_5", "Fireball_6", "Fireball_7", "Fireball_8"
+};
+
+std::vector<std::string> animations::FIREBALL_EXPLOSION
+{
+	"Explosion_1", "Explosion_2", "Explosion_3", "Explosion_4",
+	"Explosion_5", "Explosion_6", "Explosion_7", "Explosion_8",
+};
+
 /* COIN BEGIN */
 std::vector<std::string> animations::COIN_SPIN
 {
