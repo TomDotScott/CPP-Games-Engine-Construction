@@ -6,19 +6,19 @@
 #include "../Utilities/Vector.h"
 #include "../Utilities/Constants.h"
 
-enum class e_EntityState
+enum class eEntityState
 {
-	eAlive, eDead, eSnailShellHit
+	e_Alive, e_Dead, e_SnailShellHit
 };
 
-enum class e_Direction
+enum class eDirection
 {
-	eNone = -1, eLeft, eRight
+	e_None = -1, e_Left, e_Right
 };
 
-enum class e_EntityType
+enum class eEntityType
 {
-	eNone = -1, ePlayer, eSlime = 65, eCoin = 66, eSnail = 68,
+	e_None = -1, e_Player, e_Fireball, e_Slime = 65, e_Coin = 66, e_Snail = 68,
 };
 
 // Every entity will have 4 collision areas as well as
@@ -36,10 +36,10 @@ struct CollisionBoxes
 class Entity
 {
 public:
-	explicit Entity(e_EntityType type,
+	explicit Entity(eEntityType type,
 		int ID,
 		Vector2 size,
-		e_Direction = e_Direction::eLeft,
+		eDirection = eDirection::e_Left,
 		Vector2 position = Vector2::CENTRE,
 		Vector2 velocity = {},
 		Vector2 acceleration = {}
@@ -63,13 +63,13 @@ public:
 	Vector2 GetVelocity() const;
 	void SetVelocity(Vector2 newVel);
 
-	e_Direction GetCurrentDirection() const;
-	void SetDirection(e_Direction direction);
+	eDirection GetCurrentDirection() const;
+	void SetDirection(eDirection direction);
 
-	e_EntityState GetCurrentEntityState() const;
-	void SetEntityState(e_EntityState state);
+	eEntityState GetCurrentEntityState() const;
+	void SetEntityState(eEntityState state);
 
-	e_EntityType GetEntityType() const;
+	eEntityType GetEntityType() const;
 	int GetEntityID() const;
 
 protected:
@@ -80,9 +80,9 @@ protected:
 	Vector2 m_position;
 	Vector2 m_velocity;
 	Vector2 m_acceleration;
-	e_Direction m_currentDirection;
-	e_EntityState m_currentEntityState;
-	e_EntityType m_entityType;
+	eDirection m_currentDirection;
+	eEntityState m_currentEntityState;
+	eEntityType m_entityType;
 	CollisionBoxes m_currentCollisionBoxes;
 
 
@@ -90,7 +90,8 @@ protected:
 	virtual void Move(float deltaTime) = 0;
 
 	void AddAnimation(std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
+	void PlayAnimation(float deltaTime);
 	void SetAnimationIndex(int animationIndex);
 	std::string GetCurrentAnimationFrameIdentifier();
-	e_AnimationState GetCurrentAnimationState() const;
+	eAnimationState GetCurrentAnimationState() const;
 };

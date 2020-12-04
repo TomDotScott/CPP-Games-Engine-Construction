@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game Components\Entities\Fireball.cpp" />
     <ClCompile Include="Game Components\animations.cpp" />
     <ClCompile Include="Game Components\Entities\Coin.cpp" />
     <ClCompile Include="Game Components\AnimationPlayer.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game Components\Entities\Fireball.h" />
     <ClInclude Include="Game Components\Animations.h" />
     <ClInclude Include="Game Components\Entities\Coin.h" />
     <ClInclude Include="Design Patterns\Singleton.h" />

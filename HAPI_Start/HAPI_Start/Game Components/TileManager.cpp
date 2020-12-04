@@ -32,7 +32,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 				{
 					break;
 				}
-				
+
 				const auto tileString = atoi(val.c_str());
 
 				const Vector2 tilePosition{
@@ -40,22 +40,22 @@ bool TileManager::LoadLevel(const std::string& filename)
 					static_cast<float>(r * constants::k_spriteSheetCellWidth)
 				};
 
-				const auto tileType = static_cast<e_TileType>(tileString);
+				const auto tileType = static_cast<eTileType>(tileString);
 
-				if (tileType == e_TileType::eSlime ||
-					tileType == e_TileType::eCoin ||
-					tileType == e_TileType::eSnail)
+				if (tileType == eTileType::e_Slime ||
+					tileType == eTileType::e_Coin ||
+					tileType == eTileType::e_Snail)
 				{
-					m_entityLocations.push_back({ static_cast<const e_EntityType>(tileString), tilePosition });
-					row.emplace_back(e_TileType::eAir, tilePosition, false);
+					m_entityLocations.push_back({ static_cast<const eEntityType>(tileString), tilePosition });
+					row.emplace_back(eTileType::e_Air, tilePosition, false);
 				} else
 				{
 					bool canCollide = true;
 
-					if (tileType == e_TileType::eAir || tileType == e_TileType::ePlant ||
-						tileType == e_TileType::eRock || tileType == e_TileType::eBush ||
-						tileType == e_TileType::eMushroom1 || tileType == e_TileType::eMushroom2 ||
-						tileType == e_TileType::eRightArrow)
+					if (tileType == eTileType::e_Air || tileType == eTileType::e_Plant ||
+						tileType == eTileType::e_Rock || tileType == eTileType::e_Bush ||
+						tileType == eTileType::e_Mushroom1 || tileType == eTileType::e_Mushroom2 ||
+						tileType == eTileType::e_RightArrow)
 					{
 						canCollide = false;
 					}
@@ -77,7 +77,7 @@ void TileManager::RenderTiles(const float playerOffset)
 	{
 		for (const auto& currentTile : row)
 		{
-			if (currentTile.m_type != e_TileType::eAir)
+			if (currentTile.m_type != eTileType::e_Air)
 			{
 				const Vector2 tilePos = {
 					currentTile.m_position.x - playerOffset + static_cast<float>(constants::k_screenWidth) / 2.f,
@@ -88,79 +88,79 @@ void TileManager::RenderTiles(const float playerOffset)
 					std::string spriteIdentifier;
 					switch (currentTile.m_type)
 					{
-					case e_TileType::eAir:
+					case eTileType::e_Air:
 						spriteIdentifier = "Air";
 						break;
-					case e_TileType::eDirt:
+					case eTileType::e_Dirt:
 						spriteIdentifier = "Dirt";
 						break;
-					case e_TileType::eGrassLeft:
+					case eTileType::e_GrassLeft:
 						spriteIdentifier = "Grass_Left";
 						break;
-					case e_TileType::eGrassCentre:
+					case eTileType::e_GrassCentre:
 						spriteIdentifier = "Grass_Centre";
 						break;
-					case e_TileType::eGrassRight:
+					case eTileType::e_GrassRight:
 						spriteIdentifier = "Grass_Right";
 						break;
-					case e_TileType::eStoneTop:
+					case eTileType::e_StoneTop:
 						spriteIdentifier = "Stone_Top";
 						break;
-					case e_TileType::eStoneCentre:
+					case eTileType::e_StoneCentre:
 						spriteIdentifier = "Stone_Centre";
 						break;
-					case e_TileType::eStoneLeft:
+					case eTileType::e_StoneLeft:
 						spriteIdentifier = "Stone_Left";
 						break;
-					case e_TileType::eStoneRight:
+					case eTileType::e_StoneRight:
 						spriteIdentifier = "Stone_Right";
 						break;
-					case e_TileType::eFlag:
+					case eTileType::e_Flag:
 						spriteIdentifier = "Flag_Up_1";
 						break;
-					case e_TileType::eCoinBlock:
+					case eTileType::e_CoinBlock:
 						spriteIdentifier = "Block_Coin";
 						break;
-					case e_TileType::eBoxedCoinBlock:
+					case eTileType::e_BoxedCoinBlock:
 						spriteIdentifier = "Block_Boxed_Coin";
 						break;
-					case e_TileType::eCrateBlock:
+					case eTileType::e_CrateBlock:
 						spriteIdentifier = "Block_Crate";
 						break;
-					case e_TileType::eItemBlock:
+					case eTileType::e_ItemBlock:
 						spriteIdentifier = "Block_Item";
 						break;
-					case e_TileType::eBrickBlock:
+					case eTileType::e_BrickBlock:
 						spriteIdentifier = "Block_Brick";
 						break;
-					case e_TileType::eBush:
+					case eTileType::e_Bush:
 						spriteIdentifier = "Bush";
 						break;
-					case e_TileType::eOpenDoorMid:
+					case eTileType::e_OpenDoorMid:
 						spriteIdentifier = "Door_Open_Mid";
 						break;
-					case e_TileType::eOpenDoorTop:
+					case eTileType::e_OpenDoorTop:
 						spriteIdentifier = "Door_Open_Top";
 						break;
-					case e_TileType::ePlant:
+					case eTileType::e_Plant:
 						spriteIdentifier = "Plant";
 						break;
-					case e_TileType::eMushroom1:
+					case eTileType::e_Mushroom1:
 						spriteIdentifier = "Mushroom1";
 						break;
-					case e_TileType::eMushroom2:
+					case eTileType::e_Mushroom2:
 						spriteIdentifier = "Mushroom2";
 						break;
-					case e_TileType::eRock:
+					case eTileType::e_Rock:
 						spriteIdentifier = "Rock";
 						break;
-					case e_TileType::eSpikes:
+					case eTileType::e_Spikes:
 						spriteIdentifier = "Spikes";
 						break;
-					case e_TileType::eFlagPole:
+					case eTileType::e_FlagPole:
 						spriteIdentifier = "Flag_Pole";
 						break;
-					case e_TileType::eRightArrow:
+					case eTileType::e_RightArrow:
 						spriteIdentifier = "Arrow_Sign";
 						break;
 					default:;
@@ -190,15 +190,15 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 			Tile& currentTile = m_levelData[headY][headX];
 			switch (currentTile.m_type)
 			{
-			case e_TileType::eCrateBlock:
-			case e_TileType::eCoinBlock:
-				currentTile.m_type = e_TileType::eAir;
+			case eTileType::e_CrateBlock:
+			case eTileType::e_CoinBlock:
+				currentTile.m_type = eTileType::e_Air;
 				currentTile.m_canCollide = false;
 				break;
-			case e_TileType::eBoxedCoinBlock:
-				currentTile.m_type = e_TileType::eCoinBlock;
-			case e_TileType::eItemBlock:
-				currentTile.m_type = e_TileType::eBrickBlock;
+			case eTileType::e_BoxedCoinBlock:
+				currentTile.m_type = eTileType::e_CoinBlock;
+			case eTileType::e_ItemBlock:
+				currentTile.m_type = eTileType::e_BrickBlock;
 				break;
 			default:;
 			}
@@ -222,7 +222,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 
 		if (abs(xOverlap) > 32.f)
 		{
-			player.SetMoveDirectionLimit(e_Direction::eLeft);
+			player.SetMoveDirectionLimit(eDirection::e_Left);
 			hasCollided = true;
 		}
 	}
@@ -240,14 +240,14 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 
 		if (abs(xOverlap) > 8.f)
 		{
-			player.SetMoveDirectionLimit(e_Direction::eRight);
+			player.SetMoveDirectionLimit(eDirection::e_Right);
 			hasCollided = true;
 		}
 	}
 
 	if (!hasCollided)
 	{
-		player.SetMoveDirectionLimit(e_Direction::eNone);
+		player.SetMoveDirectionLimit(eDirection::e_None);
 	}
 
 
@@ -264,10 +264,18 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 		{
 			player.SetPosition({ player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellWidth });
 		}
-		player.SetPlayerState(e_PlayerState::eWalking);
+		player.SetPlayerState(ePlayerState::e_Walking);
 	} else
 	{
-		player.SetPlayerState(e_PlayerState::eJumping);
+		player.SetPlayerState(ePlayerState::e_Jumping);
+	}
+
+	for (auto& fireball : player.GetFireBallPool())
+	{
+		if (fireball.GetActiveState())
+		{
+			CheckFireballLevelCollisions(fireball);
+		}
 	}
 }
 
@@ -284,7 +292,7 @@ void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
 		// Stop falling if there is a walkable block below
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide)
 		{
-			if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eSpikes)
+			if (m_levelData[enemyYTile + 1][enemyXTile].m_type == eTileType::e_Spikes)
 			{
 				enemy.Squash();
 			}
@@ -292,37 +300,61 @@ void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
 		}
 
 		// Check if there is a block to the left
-		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy.GetCurrentDirection() == e_Direction::eLeft)
+		if (m_levelData[enemyYTile][enemyXTile].m_canCollide && enemy.GetCurrentDirection() == eDirection::e_Left)
 		{
-			enemy.SetDirection(e_Direction::eRight);
+			enemy.SetDirection(eDirection::e_Right);
 		}
 
 		// Check if there is a block to the right
-		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy.GetCurrentDirection() == e_Direction::eRight)
+		if (m_levelData[enemyYTile][enemyXTile + 1].m_canCollide && enemy.GetCurrentDirection() == eDirection::e_Right)
 		{
-			enemy.SetDirection(e_Direction::eLeft);
+			enemy.SetDirection(eDirection::e_Left);
 		}
 
 		// If the enemy can stay on platforms...
-		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == e_TileType::eAir && enemy.GetCurrentDirection() == e_Direction::eLeft)
+		if (m_levelData[enemyYTile + 1][enemyXTile].m_type == eTileType::e_Air && enemy.GetCurrentDirection() == eDirection::e_Left)
 		{
 			if (enemy.CanAvoidEdges())
 			{
-				enemy.SetDirection(e_Direction::eRight);
+				enemy.SetDirection(eDirection::e_Right);
 			} else
 			{
 				enemy.SetIsFalling(true);
 			}
 		}
-		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == e_TileType::eAir && enemy.GetCurrentDirection() == e_Direction::eRight)
+		if (m_levelData[enemyYTile + 1][enemyXTile + 1].m_type == eTileType::e_Air && enemy.GetCurrentDirection() == eDirection::e_Right)
 		{
 			if (enemy.CanAvoidEdges())
 			{
-				enemy.SetDirection(e_Direction::eLeft);
+				enemy.SetDirection(eDirection::e_Left);
 			} else
 			{
 				enemy.SetIsFalling(true);
 			}
+		}
+	}
+}
+
+void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
+{
+	auto fireballBottom = fireball.GetCurrentCollisionBoxes().m_bottomCollisionBox;
+	
+	const int fireballX = ((static_cast<int>(fireballBottom.TOP_LEFT.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+
+	const int fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellWidth;
+
+
+	if (fireballX >= 0 && fireballX <= m_levelData[0].size() && fireballY <= 15 && fireballY >= 0)
+	{
+		const auto& groundTile = m_levelData[fireballY][fireballX];
+		
+		const auto groundTileBoxes = BoundsRectangle({ groundTile.m_position },
+			{ groundTile.m_position.x + constants::k_spriteSheetCellWidth, groundTile.m_position.y + constants::k_spriteSheetCellWidth});
+
+		if (fireballBottom.Translate({static_cast<float>(constants::k_maxTilesHorizontal / 2), 0 }).Overlapping(groundTileBoxes) 
+			&& groundTile.m_canCollide)
+		{
+			fireball.Bounce();
 		}
 	}
 }

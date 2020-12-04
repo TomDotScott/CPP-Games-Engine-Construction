@@ -1,10 +1,10 @@
 #include "Coin.h"
 
 Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
-	Entity(e_EntityType::eCoin,
+	Entity(eEntityType::e_Coin,
 		entityID,
 		{ constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth },
-		e_Direction::eNone,
+		eDirection::e_None,
 		position,
 		{ 0, 1 },
 		Vector2::ZERO
@@ -21,7 +21,7 @@ void Coin::Update(const float deltaTime)
 	if (m_isVisible)
 	{
 		m_lifeTime += deltaTime / 1000.f;
-		m_animations[m_animationIndex].Play(deltaTime);
+		PlayAnimation(deltaTime);
 		m_currentCollisionBoxes = GenerateCollisionBoxes();
 	}
 }
@@ -29,7 +29,7 @@ void Coin::Update(const float deltaTime)
 void Coin::CheckEntityCollisions(Entity& other)
 {
 	// Only collide with the player...
-	if (other.GetEntityType() == e_EntityType::ePlayer)
+	if (other.GetEntityType() == eEntityType::e_Player)
 	{
 		if (m_currentCollisionBoxes.m_globalBounds.Overlapping(other.GetCurrentCollisionBoxes().m_globalBounds))
 		{

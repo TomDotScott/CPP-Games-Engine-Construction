@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
-enum class e_AnimationState
+enum class eAnimationState
 {
-	eStarted, ePaused, eEnded
+	e_Started, e_Paused, e_Ended
 };
 
 class AnimationPlayer
@@ -14,7 +14,7 @@ public:
 	void Play(float deltaTime);
 	unsigned GetCurrentFrame() const;
 	std::string GetCurrentFrameIdentifier() const;
-	e_AnimationState GetCurrentAnimationState() const;
+	eAnimationState GetCurrentAnimationState() const;
 	
 private:
 	std::vector<std::string> m_frames;
@@ -22,6 +22,6 @@ private:
 	float m_duration;
 	float m_playTime;
 	bool m_looping;
-	e_AnimationState m_state;
+	eAnimationState m_state;
 
 };

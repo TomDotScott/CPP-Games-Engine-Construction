@@ -1,32 +1,47 @@
 ﻿#include "Player.h"
-
+#include "../Game.h"
 #include "../Graphics/Graphics.h"
 
 Player::Player(const Vector2 startingPosition) :
-	Entity(e_EntityType::ePlayer,
+	Entity(eEntityType::e_Player,
 		-1,
 		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 13),
-		e_Direction::eNone,
+		eDirection::e_None,
 		startingPosition,
 		{ Vector2::ZERO }),
 	m_jumpForce(8.f),
 	m_shouldJumpNextFrame(false),
-	m_currentPlayerState(e_PlayerState::eJumping),
-	m_moveDirectionLimit(e_Direction::eNone)
+	m_canShoot(false),
+	m_shotDuration(0.f),
+	m_currentPlayerState(ePlayerState::e_Jumping),
+	m_moveDirectionLimit(eDirection::e_None)
 {
-	m_entityType = e_EntityType::ePlayer;
-	
+	m_entityType = eEntityType::e_Player;
+
 	AddAnimation(animations::PLAYER_IDLE, true, 1000.f);
 	AddAnimation(animations::PLAYER_WALK);
 	AddAnimation(animations::PLAYER_JUMP);
 	AddAnimation(animations::PLAYER_CLIMB);
+
+	for (int i = 0; i < 1; i++)
+	{
+		m_fireballPool.emplace_back(Game::GenerateNextEntityId());
+	}
 }
 
 void Player::Update(const float deltaTime)
 {
 	Move(deltaTime);
 
-	if (m_currentPlayerState == e_PlayerState::eWalking)
+	if (m_canShoot)
+	{
+		Shoot();
+	}/*else
+	{
+		m_shotDuration += deltaTime / 1000.f;
+	}*/
+
+	if (m_currentPlayerState == ePlayerState::e_Walking)
 	{
 		m_velocity.y = 0;
 		if (m_shouldJumpNextFrame)
@@ -34,7 +49,7 @@ void Player::Update(const float deltaTime)
 			Jump(m_jumpForce);
 			m_shouldJumpNextFrame = false;
 		}
-	} else if (m_currentPlayerState == e_PlayerState::eJumping)
+	} else if (m_currentPlayerState == ePlayerState::e_Jumping)
 	{
 		m_velocity.y += constants::k_gravity * (deltaTime / 1000);
 	}
@@ -47,14 +62,23 @@ void Player::Update(const float deltaTime)
 		m_position.y = constants::k_spriteSheetCellWidth;
 	}
 
-	if (m_currentDirection == e_Direction::eNone && m_currentPlayerState != e_PlayerState::eJumping && !m_shouldJumpNextFrame)
+	if (m_currentDirection == eDirection::e_None && m_currentPlayerState != ePlayerState::e_Jumping && !m_shouldJumpNextFrame)
 	{
-		m_currentPlayerState = e_PlayerState::eIdle;
+		m_currentPlayerState = ePlayerState::e_Idle;
 	}
 
 	SetAnimationIndex(static_cast<int>(m_currentPlayerState));
-	m_animations[m_animationIndex].Play(deltaTime);
+	PlayAnimation(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
+
+	// Update the fireballs
+	for (auto& ball : m_fireballPool)
+	{
+		if (ball.GetActiveState())
+		{
+			ball.Update(deltaTime);
+		}
+	}
 }
 
 void Player::Render()
@@ -89,7 +113,7 @@ void Player::CheckEntityCollisions(Entity& other)
 		}
 		// If touching the bottom...
 		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
-			(other.GetEntityType() == e_EntityType::eSnail || other.GetEntityType() == e_EntityType::eSlime)
+			(other.GetEntityType() == eEntityType::e_Snail || other.GetEntityType() == eEntityType::e_Slime)
 			)
 		{
 			// Jump
@@ -98,14 +122,19 @@ void Player::CheckEntityCollisions(Entity& other)
 	}
 }
 
-e_PlayerState Player::GetCurrentPlayerState() const
+ePlayerState Player::GetCurrentPlayerState() const
 {
 	return m_currentPlayerState;
 }
 
-void Player::SetPlayerState(const e_PlayerState state)
+void Player::SetPlayerState(const ePlayerState state)
 {
 	m_currentPlayerState = state;
+}
+
+std::vector<Fireball>& Player::GetFireBallPool()
+{
+	return m_fireballPool;
 }
 
 void Player::SetShouldJump(const bool shouldJump)
@@ -113,22 +142,30 @@ void Player::SetShouldJump(const bool shouldJump)
 	m_shouldJumpNextFrame = shouldJump;
 }
 
-e_Direction Player::GetMoveDirectionLimit() const
+void Player::SetCanShoot(const bool canShoot)
+{
+	if (canShoot && m_canShoot == false)
+	{
+		m_canShoot = canShoot;
+	}
+}
+
+eDirection Player::GetMoveDirectionLimit() const
 {
 	return m_moveDirectionLimit;
 }
 
-void Player::SetMoveDirectionLimit(const e_Direction direction)
+void Player::SetMoveDirectionLimit(const eDirection direction)
 {
 	m_moveDirectionLimit = direction;
 }
 
 void Player::Move(const float deltaTime)
 {
-	if (m_currentDirection == e_Direction::eRight && m_moveDirectionLimit != e_Direction::eRight)
+	if (m_currentDirection == eDirection::e_Right && m_moveDirectionLimit != eDirection::e_Right)
 	{
 		m_position = m_position + (Vector2::RIGHT * deltaTime);
-	} else if (m_currentDirection == e_Direction::eLeft && m_moveDirectionLimit != e_Direction::eLeft)
+	} else if (m_currentDirection == eDirection::e_Left && m_moveDirectionLimit != eDirection::e_Left)
 	{
 		m_position = m_position + (Vector2::LEFT * deltaTime);
 	}
@@ -136,8 +173,22 @@ void Player::Move(const float deltaTime)
 
 void Player::Jump(const float jumpForce)
 {
-	m_currentPlayerState = e_PlayerState::eJumping;
+	m_currentPlayerState = ePlayerState::e_Jumping;
 	m_velocity.y = -jumpForce;
+}
+
+void Player::Shoot()
+{
+	// Find the first inactive fireball and initialise it 
+	for (auto& ball : m_fireballPool)
+	{
+		if (ball.GetActiveState() == false)
+		{
+			ball.Initialise(m_position, m_currentDirection);
+			m_canShoot = false;
+			return;
+		}
+	}
 }
 
 // The animations are just for the body but the character is made up of

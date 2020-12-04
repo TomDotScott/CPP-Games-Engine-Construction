@@ -5,14 +5,14 @@ AnimationPlayer::AnimationPlayer(std::vector<std::string>& frames, const bool lo
 	m_duration(duration),
 	m_playTime(0.f),
 	m_looping(looping),
-	m_state(e_AnimationState::eStarted)
+	m_state(eAnimationState::e_Started)
 {
 
 }
 
 void AnimationPlayer::Play(const float deltaTime)
 {
-	if (m_state == e_AnimationState::eStarted)
+	if (m_state == eAnimationState::e_Started)
 	{
 		m_playTime += deltaTime;
 		if (m_playTime >= m_duration)
@@ -28,7 +28,7 @@ void AnimationPlayer::Play(const float deltaTime)
 					m_currentFrame = 0;
 				} else
 				{
-					m_state = e_AnimationState::eEnded;
+					m_state = eAnimationState::e_Ended;
 				}
 			}
 		}
@@ -45,7 +45,7 @@ std::string AnimationPlayer::GetCurrentFrameIdentifier() const
 	return m_frames[m_currentFrame];
 }
 
-e_AnimationState AnimationPlayer::GetCurrentAnimationState() const
+eAnimationState AnimationPlayer::GetCurrentAnimationState() const
 {
 	return m_state;
 }

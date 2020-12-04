@@ -1,14 +1,14 @@
 ﻿#include "Snail.h"
 Snail::Snail(const int entityID, const Vector2 startingPos) :
-	Enemy(e_EntityType::eSnail,
+	Enemy(eEntityType::e_Snail,
 		entityID,
 		startingPos,
 		Vector2(constants::k_spriteSheetCellWidth, 36),
-		e_Direction::eLeft,
+		eDirection::e_Left,
 		true),
 	m_speedMultiplier(0.5f),
 	m_inShellDuration(0.f),
-	m_snailState(e_SnailState::eWalking)
+	m_snailState(eSnailState::e_Walking)
 {
 	AddAnimation(animations::SNAIL_WALK, true, 500.f);
 
@@ -24,7 +24,7 @@ Snail::Snail(const int entityID, const Vector2 startingPos) :
 
 void Snail::Update(const float deltaTime)
 {
-	if (m_snailState == e_SnailState::eWalking || m_snailState == e_SnailState::eSliding)
+	if (m_snailState == eSnailState::e_Walking || m_snailState == eSnailState::e_Sliding)
 	{
 		Move(deltaTime);
 	} else
@@ -34,12 +34,12 @@ void Snail::Update(const float deltaTime)
 			m_inShellDuration += deltaTime;
 		} else
 		{
-			m_snailState = e_SnailState::eWalking;
+			m_snailState = eSnailState::e_Walking;
 			m_canAvoidEdges = true;
 			SetAnimationIndex(static_cast<int>(m_snailState));
 		}
 	}
-	m_animations[m_animationIndex].Play(deltaTime);
+	PlayAnimation(deltaTime);
 	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
@@ -48,32 +48,32 @@ void Snail::CheckEntityCollisions(Entity& other)
 	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
 	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
-		if (other.GetEntityType() == e_EntityType::ePlayer)
+		if (other.GetEntityType() == eEntityType::e_Player)
 		{
 			if (m_currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
 			{
 				// If not in shell...
 				switch (m_snailState)
 				{
-				case e_SnailState::eWalking:
+				case eSnailState::e_Walking:
 					m_inShellDuration = 0.f;
-					m_snailState = e_SnailState::eSquashed;
+					m_snailState = eSnailState::e_Squashed;
 					break;
-				case e_SnailState::eSquashed:
-					m_snailState = e_SnailState::eSliding;
+				case eSnailState::e_Squashed:
+					m_snailState = eSnailState::e_Sliding;
 					m_speedMultiplier = 4.f;
 					m_canAvoidEdges = false;
 					// Work out to go left or right
 					if (otherEntColBox.m_bottomCollisionBox.TOP_LEFT.x < m_currentCollisionBoxes.m_rightCollisionBox.TOP_LEFT.x)
 					{
-						SetDirection(e_Direction::eRight);
+						SetDirection(eDirection::e_Right);
 					} else
 					{
-						SetDirection(e_Direction::eLeft);
+						SetDirection(eDirection::e_Left);
 					}
 					break;
-				case e_SnailState::eSliding:
-					m_snailState = e_SnailState::eSquashed;
+				case eSnailState::e_Sliding:
+					m_snailState = eSnailState::e_Squashed;
 					m_speedMultiplier = 0.5f;
 					break;
 				default:;
@@ -91,21 +91,21 @@ void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
 			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
-			m_snailState = e_SnailState::eShellHit;
+			m_snailState = eSnailState::e_ShellHit;
 			SetAnimationIndex(static_cast<int>(m_snailState));
 		}
 	}
 }
 
-e_SnailState Snail::GetSnailState() const
+eSnailState Snail::GetSnailState() const
 {
 	return m_snailState;
 }
 
 void Snail::Squash()
 {
-	m_snailState = e_SnailState::eCracking;
-	m_currentEntityState = e_EntityState::eDead;
+	m_snailState = eSnailState::e_Cracking;
+	m_currentEntityState = eEntityState::e_Dead;
 	SetAnimationIndex(static_cast<int>(m_snailState));
 }
 

@@ -1,9 +1,11 @@
 ﻿#pragma once
+#pragma once
 #include "Entity.h"
+#include "Fireball.h"
 
-enum class e_PlayerState
+enum class ePlayerState
 {
-	eIdle, eWalking, eJumping, eClimbing
+	e_Idle, e_Walking, e_Jumping, e_Climbing
 };
 
 class Player final : public Entity
@@ -16,20 +18,29 @@ public:
 	void CheckEntityCollisions(Entity& other) override;
 	void SetShouldJump(bool shouldJump);
 
-	e_Direction GetMoveDirectionLimit() const;
-	void SetMoveDirectionLimit(e_Direction direction);
+	void SetCanShoot(bool canShoot);
 
-	e_PlayerState GetCurrentPlayerState() const;
-	void SetPlayerState(e_PlayerState state);
+	eDirection GetMoveDirectionLimit() const;
+	void SetMoveDirectionLimit(eDirection direction);
+
+	ePlayerState GetCurrentPlayerState() const;
+	void SetPlayerState(ePlayerState state);
+
+	std::vector<Fireball>& GetFireBallPool();
 
 private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
-	e_PlayerState m_currentPlayerState;
-	e_Direction m_moveDirectionLimit;
+	bool m_canShoot;
+	float m_shotDuration;
+	ePlayerState m_currentPlayerState;
+	eDirection m_moveDirectionLimit;
 
+	std::vector<Fireball> m_fireballPool;
+	
 	void Move(float deltaTime) override;
 	void Jump(float jumpForce);
+	void Shoot();
 	std::string GetTopIdentifier();
 	CollisionBoxes GenerateCollisionBoxes() override;
 };

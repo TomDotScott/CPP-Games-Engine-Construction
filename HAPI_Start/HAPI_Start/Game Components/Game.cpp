@@ -13,7 +13,7 @@ Game::Game() :
 	m_gameScore(0),
 	m_currentSprite(0),
 	m_backgroundPosition(Vector2::ZERO),
-	m_backgroundMoveDir(e_Direction::eNone)
+	m_backgroundMoveDir(eDirection::e_None)
 {
 	if (!Initialise())
 	{
@@ -44,18 +44,18 @@ void Game::Update()
 	m_tileManager.CheckPlayerLevelCollisions(m_player);
 
 	// Scroll the background
-	if (m_player.GetCurrentDirection() == e_Direction::eRight && m_player.GetMoveDirectionLimit() != e_Direction::eRight)
+	if (m_player.GetCurrentDirection() == eDirection::e_Right && m_player.GetMoveDirectionLimit() != eDirection::e_Right)
 	{
 		m_backgroundPosition.x -= 1.f;
-		m_backgroundMoveDir = e_Direction::eLeft;
+		m_backgroundMoveDir = eDirection::e_Left;
 		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth)
 		{
 			m_backgroundPosition.x = 0;
 		}
-	} else if (m_player.GetCurrentDirection() == e_Direction::eLeft && m_player.GetMoveDirectionLimit() != e_Direction::eLeft)
+	} else if (m_player.GetCurrentDirection() == eDirection::e_Left && m_player.GetMoveDirectionLimit() != eDirection::e_Left)
 	{
 		m_backgroundPosition.x += 1.f;
-		m_backgroundMoveDir = e_Direction::eRight;
+		m_backgroundMoveDir = eDirection::e_Right;
 		if (m_backgroundPosition.x > constants::k_backgroundTileWidth)
 		{
 			m_backgroundPosition.x = 0;
@@ -98,7 +98,22 @@ void Game::Render()
 		snail.Render(playerXOffset);
 	}
 
+	for (auto& ball : m_player.GetFireBallPool())
+	{
+		if (ball.GetActiveState())
+		{
+			ball.Render(playerXOffset);
+		}
+	}
+
+	
 	m_player.Render();
+}
+
+int Game::GenerateNextEntityId()
+{
+	static int currentEntityID = 0;
+	return ++currentEntityID;
 }
 
 void Game::CreateSprite(const std::string& spriteSheetIdentifier)
@@ -119,28 +134,33 @@ float Game::DeltaTime() const
 	return programTickCount * ticksToMilliseconds;
 }
 
-bool Game::GetKey(const e_KeyCode keyCode) const
+bool Game::GetKey(const eKeyCode keyCode) const
 {
 	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
 }
 
 void Game::HandleKeyBoardInput()
 {
-	if (GetKey(e_KeyCode::SPACE))
+	if (GetKey(eKeyCode::SPACE))
 	{
-		if (m_player.GetCurrentPlayerState() != e_PlayerState::eJumping)
+		if (m_player.GetCurrentPlayerState() != ePlayerState::e_Jumping)
 		{
 			m_player.SetShouldJump(true);
 		}
 	}
 
-	e_Direction playerMoveDir = e_Direction::eNone;
-	if (GetKey(e_KeyCode::A) || GetKey(e_KeyCode::LEFT))
+	if (GetKey(eKeyCode::SHIFT))
 	{
-		playerMoveDir = e_Direction::eLeft;
-	} else if (GetKey(e_KeyCode::D) || GetKey(e_KeyCode::RIGHT))
+		m_player.SetCanShoot(true);
+	}
+	
+	eDirection playerMoveDir = eDirection::e_None;
+	if (GetKey(eKeyCode::A) || GetKey(eKeyCode::LEFT))
 	{
-		playerMoveDir = e_Direction::eRight;
+		playerMoveDir = eDirection::e_Left;
+	} else if (GetKey(eKeyCode::D) || GetKey(eKeyCode::RIGHT))
+	{
+		playerMoveDir = eDirection::e_Right;
 	}
 
 	m_player.SetDirection(playerMoveDir);
@@ -155,13 +175,13 @@ void Game::HandleControllerInput()
 		leftStickVector.Normalised();
 		if (leftStickVector.x > 0)
 		{
-			m_player.SetDirection(e_Direction::eRight);
+			m_player.SetDirection(eDirection::e_Right);
 		} else if (leftStickVector.x < 0)
 		{
-			m_player.SetDirection(e_Direction::eLeft);
+			m_player.SetDirection(eDirection::e_Left);
 		} else
 		{
-			m_player.SetDirection(e_Direction::eNone);
+			m_player.SetDirection(eDirection::e_None);
 		}
 	}
 }
@@ -300,27 +320,23 @@ bool Game::Initialise()
 		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
-
-	int currentEntityID{ 0 };
-
 	const auto entityLocations = m_tileManager.GetEntityLocations();
 
 	for (auto& entityLocation : entityLocations)
 	{
 		switch (entityLocation.first)
 		{
-		case e_EntityType::eCoin:
-			m_coins.emplace_back(currentEntityID, entityLocation.second, true);
+		case eEntityType::e_Coin:
+			m_coins.emplace_back(GenerateNextEntityId(), entityLocation.second, true);
 			break;
-		case e_EntityType::eSlime:
-			m_slimes.emplace_back(currentEntityID, entityLocation.second, entityLocation.second.y == 768.f ? true : false);
+		case eEntityType::e_Slime:
+			m_slimes.emplace_back(GenerateNextEntityId(), entityLocation.second, entityLocation.second.y == 768.f ? true : false);
 			break;
-		case e_EntityType::eSnail:
-			m_snails.emplace_back(currentEntityID, entityLocation.second);
+		case eEntityType::e_Snail:
+			m_snails.emplace_back(GenerateNextEntityId(), entityLocation.second);
 			break;
 		default: break;
 		}
-		currentEntityID++;
 	}
 
 	m_player.SetPosition(Vector2::CENTRE);

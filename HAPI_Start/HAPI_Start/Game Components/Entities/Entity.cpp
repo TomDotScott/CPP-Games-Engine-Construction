@@ -2,7 +2,7 @@
 #include "../Graphics/Graphics.h"
 
 Entity::Entity(
-	e_EntityType type, const int ID, const Vector2 size, const e_Direction direction, const Vector2 position,
+	eEntityType type, const int ID, const Vector2 size, const eDirection direction, const Vector2 position,
 	const Vector2 velocity, const Vector2 acceleration
 ) :
 	m_entityID(ID),
@@ -11,8 +11,8 @@ Entity::Entity(
 	m_velocity(velocity),
 	m_acceleration(acceleration),
 	m_currentDirection(direction),
-	m_currentEntityState(e_EntityState::eAlive),
-	m_entityType(e_EntityType::eNone),
+	m_currentEntityState(eEntityState::e_Alive),
+	m_entityType(eEntityType::e_None),
 	m_currentCollisionBoxes()
 {
 
@@ -43,15 +43,15 @@ void Entity::SetVelocity(const Vector2 newVel)
 	m_velocity = newVel;
 }
 
-e_Direction Entity::GetCurrentDirection() const
+eDirection Entity::GetCurrentDirection() const
 {
 	return m_currentDirection;
 }
 
-void Entity::SetDirection(const e_Direction direction)
+void Entity::SetDirection(const eDirection direction)
 {
 	m_currentDirection = direction;
-	if (direction == e_Direction::eRight)
+	if (direction == eDirection::e_Right)
 	{
 		m_velocity.x = abs(m_velocity.x);
 	} else
@@ -60,16 +60,16 @@ void Entity::SetDirection(const e_Direction direction)
 	}
 }
 
-e_EntityState Entity::GetCurrentEntityState() const
+eEntityState Entity::GetCurrentEntityState() const
 {
 	return m_currentEntityState;
 }
-void Entity::SetEntityState(const e_EntityState state)
+void Entity::SetEntityState(const eEntityState state)
 {
 	m_currentEntityState = state;
 }
 
-e_EntityType Entity::GetEntityType() const
+eEntityType Entity::GetEntityType() const
 {
 	return m_entityType;
 }
@@ -85,6 +85,11 @@ void Entity::AddAnimation(std::vector<std::string>& animationFrameIdentifiers, c
 	m_animations.emplace_back(anim);
 }
 
+void Entity::PlayAnimation(const float deltaTime)
+{
+	m_animations[m_animationIndex].Play(deltaTime);
+}
+
 void Entity::SetAnimationIndex(const int animationIndex)
 {
 	m_animationIndex = animationIndex;
@@ -95,7 +100,7 @@ std::string Entity::GetCurrentAnimationFrameIdentifier()
 	return m_animations[m_animationIndex].GetCurrentFrameIdentifier();
 }
 
-e_AnimationState Entity::GetCurrentAnimationState() const
+eAnimationState Entity::GetCurrentAnimationState() const
 {
 	return m_animations[m_animationIndex].GetCurrentAnimationState();
 }

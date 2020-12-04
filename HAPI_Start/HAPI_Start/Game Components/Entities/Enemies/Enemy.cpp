@@ -1,7 +1,7 @@
 ﻿#include "Enemy.h"
 #include "../Graphics/Graphics.h"
 
-Enemy::Enemy(const e_EntityType type, const int entityID, const Vector2 startingPosition, const Vector2 size, const e_Direction startDir, const bool canAvoidEdges) :
+Enemy::Enemy(const eEntityType type, const int entityID, const Vector2 startingPosition, const Vector2 size, const eDirection startDir, const bool canAvoidEdges) :
 	Entity(type, 
 		entityID,
 		size,
@@ -16,8 +16,8 @@ Enemy::Enemy(const e_EntityType type, const int entityID, const Vector2 starting
 
 void Enemy::Render(const float playerOffset)
 {
-	if (GetCurrentAnimationState() == e_AnimationState::eStarted ||
-		GetCurrentAnimationState() == e_AnimationState::ePaused)
+	if (GetCurrentAnimationState() == eAnimationState::e_Started ||
+		GetCurrentAnimationState() == eAnimationState::e_Paused)
 	{
 		Graphics::GetInstance().DrawSprite(
 			GetCurrentAnimationFrameIdentifier(),
@@ -50,7 +50,7 @@ void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
 			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
-			m_currentEntityState = e_EntityState::eSnailShellHit;
+			m_currentEntityState = eEntityState::e_SnailShellHit;
 			SetAnimationIndex(static_cast<int>(m_currentEntityState));
 		}
 	}
