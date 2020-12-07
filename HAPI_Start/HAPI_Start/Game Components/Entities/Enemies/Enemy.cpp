@@ -45,10 +45,11 @@ void Enemy::SetIsFalling(const bool isFalling)
 
 void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 {
-	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
+	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+	if (currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
 	{
-		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
-			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
+		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
+			currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
 			m_currentEntityState = eEntityState::e_SnailShellHit;
 			SetAnimationIndex(static_cast<int>(m_currentEntityState));

@@ -32,7 +32,7 @@ private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
 	bool m_canShoot;
-	float m_shotDuration;
+	float m_shotCoolDown;
 	ePlayerState m_currentPlayerState;
 	eDirection m_moveDirectionLimit;
 

@@ -15,6 +15,7 @@ public:
 	unsigned GetCurrentFrame() const;
 	std::string GetCurrentFrameIdentifier() const;
 	eAnimationState GetCurrentAnimationState() const;
+	void ResetAnimation();
 	
 private:
 	std::vector<std::string> m_frames;

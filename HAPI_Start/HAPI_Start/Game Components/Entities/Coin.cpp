@@ -22,7 +22,6 @@ void Coin::Update(const float deltaTime)
 	{
 		m_lifeTime += deltaTime / 1000.f;
 		PlayAnimation(deltaTime);
-		m_currentCollisionBoxes = GenerateCollisionBoxes();
 	}
 }
 
@@ -31,12 +30,13 @@ void Coin::CheckEntityCollisions(Entity& other)
 	// Only collide with the player...
 	if (other.GetEntityType() == eEntityType::e_Player)
 	{
-		if (m_currentCollisionBoxes.m_globalBounds.Overlapping(other.GetCurrentCollisionBoxes().m_globalBounds))
+		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+		if (currentCollisionBoxes.m_globalBounds.Overlapping(other.GetCurrentCollisionBoxes().m_globalBounds))
 		{
-			if (m_currentCollisionBoxes.m_topCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
-				m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_rightCollisionBox) ||
-				m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
-				m_currentCollisionBoxes.m_bottomCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
+			if (currentCollisionBoxes.m_topCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_leftCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_rightCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
 			{
 				m_isVisible = false;
 			}

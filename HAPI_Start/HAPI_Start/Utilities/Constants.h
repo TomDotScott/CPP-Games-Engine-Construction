@@ -18,6 +18,8 @@ namespace constants
 	constexpr float k_rightThumbDeadzone = 8689.f;
 
 	constexpr float k_gravity = 25.f;
+
+	constexpr float k_fireBallCoolDownTimer = 0.5f;
 	
 	inline int rand_range(const int min, const int max)
 	{

@@ -5,7 +5,6 @@
 
 bool TileManager::LoadLevel(const std::string& filename)
 {
-	std::cout << filename << std::endl;
 	std::ifstream file(filename);
 	if (!file.is_open())
 	{
@@ -337,24 +336,47 @@ void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
 
 void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 {
+	// COLLISIONS WITH THE GROUND
 	auto fireballBottom = fireball.GetCurrentCollisionBoxes().m_bottomCollisionBox;
-	
-	const int fireballX = ((static_cast<int>(fireballBottom.TOP_LEFT.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 
-	const int fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellWidth;
+	int fireballX = ((static_cast<int>(fireballBottom.TOP_LEFT.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+
+	int fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellWidth;
 
 
-	if (fireballX >= 0 && fireballX <= m_levelData[0].size() && fireballY <= 15 && fireballY >= 0)
+	if (fireballX >= 0 && fireballX <= static_cast<int>(m_levelData[0].size()) && fireballY <= 15 && fireballY >= 0)
 	{
-		const auto& groundTile = m_levelData[fireballY][fireballX];
+		auto& groundTile = m_levelData[fireballY][fireballX];
 		
 		const auto groundTileBoxes = BoundsRectangle({ groundTile.m_position },
 			{ groundTile.m_position.x + constants::k_spriteSheetCellWidth, groundTile.m_position.y + constants::k_spriteSheetCellWidth});
 
-		if (fireballBottom.Translate({static_cast<float>(constants::k_maxTilesHorizontal / 2), 0 }).Overlapping(groundTileBoxes) 
+		if (fireballBottom.Translate({static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes) 
 			&& groundTile.m_canCollide)
 		{
 			fireball.Bounce();
+		}
+	}
+
+	// COLLISIONS TO THE RIGHT
+	auto fireballRight = fireball.GetCurrentCollisionBoxes().m_rightCollisionBox;
+
+	fireballX = ((static_cast<int>(fireballBottom.BOTTOM_RIGHT.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+
+	fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellWidth;
+
+
+	if (fireballX >= 0 && fireballX <= m_levelData[0].size() && fireballY <= 15 && fireballY >= 0)
+	{
+		auto& sideTile = m_levelData[fireballY][fireballX + 1];
+
+		const auto sideTileBounds = BoundsRectangle({ sideTile.m_position },
+			{ sideTile.m_position.x + constants::k_spriteSheetCellWidth, sideTile.m_position.y + constants::k_spriteSheetCellWidth });
+
+		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal / 2), 0 }).Overlapping(sideTileBounds)
+			&& sideTile.m_canCollide)
+		{
+			fireball.Explode();
 		}
 	}
 }

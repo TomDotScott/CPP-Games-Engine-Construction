@@ -28,16 +28,16 @@ void Slime::Update(const float deltaTime)
 	}
 
 	PlayAnimation(deltaTime);
-	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
 void Slime::CheckEntityCollisions(Entity& other)
 {
-	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
-	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
 		// If player's feet are on the top of the enemy, squash it
-		if (m_currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
+		if (currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
 		{
 			m_currentEntityState = eEntityState::e_Dead;
 			SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));

@@ -40,17 +40,17 @@ void Snail::Update(const float deltaTime)
 		}
 	}
 	PlayAnimation(deltaTime);
-	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
 void Snail::CheckEntityCollisions(Entity& other)
 {
-	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
-	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
 		if (other.GetEntityType() == eEntityType::e_Player)
 		{
-			if (m_currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
+			if (currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
 			{
 				// If not in shell...
 				switch (m_snailState)
@@ -64,7 +64,7 @@ void Snail::CheckEntityCollisions(Entity& other)
 					m_speedMultiplier = 4.f;
 					m_canAvoidEdges = false;
 					// Work out to go left or right
-					if (otherEntColBox.m_bottomCollisionBox.TOP_LEFT.x < m_currentCollisionBoxes.m_rightCollisionBox.TOP_LEFT.x)
+					if (otherEntColBox.m_bottomCollisionBox.TOP_LEFT.x < currentCollisionBoxes.m_rightCollisionBox.TOP_LEFT.x)
 					{
 						SetDirection(eDirection::e_Right);
 					} else
@@ -86,10 +86,11 @@ void Snail::CheckEntityCollisions(Entity& other)
 
 void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 {
-	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
+	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+	if (currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
 	{
-		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
-			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
+		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
+			currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
 			m_snailState = eSnailState::e_ShellHit;
 			SetAnimationIndex(static_cast<int>(m_snailState));

@@ -6,14 +6,18 @@ Fireball::Fireball(const int entityID) :
 		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth)
 	),
 	m_activeState(false),
-	m_jumpForce(1.5f)
+	m_jumpForce(1.5f),
+	m_fireBallState(eFireBallState::e_Bouncing)
 {
-	AddAnimation(animations::FIREBALL_SPIN, true, 50);
-	AddAnimation(animations::FIREBALL_EXPLOSION);
+	AddAnimation(animations::FIREBALL_SPIN, true, 50.f);
+	AddAnimation(animations::FIREBALL_EXPLOSION, false, 25.f);
 }
 
 void Fireball::Initialise(const Vector2 startPosition, const eDirection startingDirection)
 {
+	m_fireBallState = eFireBallState::e_Bouncing;
+	SetAnimationIndex(static_cast<int>(m_fireBallState));
+	m_animations[m_animationIndex].ResetAnimation();
 	m_position = startPosition;
 	m_velocity = (startingDirection == eDirection::e_Right ? Vector2::LEFT : Vector2::RIGHT) + Vector2::DOWN;
 	m_velocity.x *= 0.75f;
@@ -22,7 +26,18 @@ void Fireball::Initialise(const Vector2 startPosition, const eDirection starting
 
 void Fireball::Bounce()
 {
+	m_velocity.y = 0;
 	m_velocity.y = -m_jumpForce;
+}
+
+void Fireball::Explode()
+{
+	if (m_fireBallState != eFireBallState::e_Exploding)
+	{
+		m_fireBallState = eFireBallState::e_Exploding;
+		SetAnimationIndex(static_cast<int>(m_fireBallState));
+		m_animations[m_animationIndex].ResetAnimation();
+	}
 }
 
 bool Fireball::GetActiveState() const
@@ -32,9 +47,17 @@ bool Fireball::GetActiveState() const
 
 void Fireball::Update(const float deltaTime)
 {
-	Move(deltaTime);
+	if (m_fireBallState == eFireBallState::e_Bouncing)
+	{
+		Move(deltaTime);
+	} else
+	{
+		if (GetCurrentAnimationState() == eAnimationState::e_Ended)
+		{
+			m_activeState = false;
+		}
+	}
 	PlayAnimation(deltaTime);
-	m_currentCollisionBoxes = GenerateCollisionBoxes();
 }
 
 void Fireball::CheckEntityCollisions(Entity& other)

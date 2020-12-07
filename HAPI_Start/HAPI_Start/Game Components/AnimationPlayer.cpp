@@ -49,3 +49,9 @@ eAnimationState AnimationPlayer::GetCurrentAnimationState() const
 {
 	return m_state;
 }
+
+void AnimationPlayer::ResetAnimation()
+{
+	m_state = eAnimationState::e_Started;
+	m_currentFrame = 0;
+}

@@ -12,7 +12,7 @@ Player::Player(const Vector2 startingPosition) :
 	m_jumpForce(8.f),
 	m_shouldJumpNextFrame(false),
 	m_canShoot(false),
-	m_shotDuration(0.f),
+	m_shotCoolDown(constants::k_fireBallCoolDownTimer),
 	m_currentPlayerState(ePlayerState::e_Jumping),
 	m_moveDirectionLimit(eDirection::e_None)
 {
@@ -23,7 +23,7 @@ Player::Player(const Vector2 startingPosition) :
 	AddAnimation(animations::PLAYER_JUMP);
 	AddAnimation(animations::PLAYER_CLIMB);
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		m_fireballPool.emplace_back(Game::GenerateNextEntityId());
 	}
@@ -33,13 +33,12 @@ void Player::Update(const float deltaTime)
 {
 	Move(deltaTime);
 
+	m_shotCoolDown += deltaTime / 1000.f;
+
 	if (m_canShoot)
 	{
 		Shoot();
-	}/*else
-	{
-		m_shotDuration += deltaTime / 1000.f;
-	}*/
+	}
 
 	if (m_currentPlayerState == ePlayerState::e_Walking)
 	{
@@ -69,7 +68,6 @@ void Player::Update(const float deltaTime)
 
 	SetAnimationIndex(static_cast<int>(m_currentPlayerState));
 	PlayAnimation(deltaTime);
-	m_currentCollisionBoxes = GenerateCollisionBoxes();
 
 	// Update the fireballs
 	for (auto& ball : m_fireballPool)
@@ -100,13 +98,14 @@ void Player::Render()
 
 void Player::CheckEntityCollisions(Entity& other)
 {
-	const auto otherEntColBox = other.GetCurrentCollisionBoxes();
+	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
 	// Check the global boxes
-	if (m_currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
 		// If touching the left or right...
-		if (m_currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-			m_currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+			currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
 		{
 			// TODO: Kill the player
 
@@ -144,10 +143,7 @@ void Player::SetShouldJump(const bool shouldJump)
 
 void Player::SetCanShoot(const bool canShoot)
 {
-	if (canShoot && m_canShoot == false)
-	{
-		m_canShoot = canShoot;
-	}
+	m_canShoot = canShoot;
 }
 
 eDirection Player::GetMoveDirectionLimit() const
@@ -179,14 +175,18 @@ void Player::Jump(const float jumpForce)
 
 void Player::Shoot()
 {
-	// Find the first inactive fireball and initialise it 
-	for (auto& ball : m_fireballPool)
+	if (m_shotCoolDown >= constants::k_fireBallCoolDownTimer)
 	{
-		if (ball.GetActiveState() == false)
+		// Find the first inactive fireball and initialise it 
+		for (int i = 0; i < m_fireballPool.size(); i++)
 		{
-			ball.Initialise(m_position, m_currentDirection);
-			m_canShoot = false;
-			return;
+			if (m_fireballPool[i].GetActiveState() == false)
+			{
+				m_fireballPool[i].Initialise(m_position, m_currentDirection);
+				m_canShoot = false;
+				m_shotCoolDown = 0.f;
+				return;
+			}
 		}
 	}
 }

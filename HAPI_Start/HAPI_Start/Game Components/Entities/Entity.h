@@ -55,7 +55,7 @@ public:
 	// Different per entity and per animation frame...
 	virtual CollisionBoxes GenerateCollisionBoxes() = 0;
 
-	CollisionBoxes GetCurrentCollisionBoxes() const;
+	CollisionBoxes GetCurrentCollisionBoxes();
 
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2 newPos);
@@ -83,12 +83,9 @@ protected:
 	eDirection m_currentDirection;
 	eEntityState m_currentEntityState;
 	eEntityType m_entityType;
-	CollisionBoxes m_currentCollisionBoxes;
-
-
 
 	virtual void Move(float deltaTime) = 0;
-
+	
 	void AddAnimation(std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
 	void PlayAnimation(float deltaTime);
 	void SetAnimationIndex(int animationIndex);

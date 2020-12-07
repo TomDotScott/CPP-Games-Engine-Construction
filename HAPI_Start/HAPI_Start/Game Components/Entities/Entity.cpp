@@ -12,15 +12,14 @@ Entity::Entity(
 	m_acceleration(acceleration),
 	m_currentDirection(direction),
 	m_currentEntityState(eEntityState::e_Alive),
-	m_entityType(eEntityType::e_None),
-	m_currentCollisionBoxes()
+	m_entityType(eEntityType::e_None)
 {
 
 }
 
-CollisionBoxes Entity::GetCurrentCollisionBoxes() const
+CollisionBoxes Entity::GetCurrentCollisionBoxes()
 {
-	return m_currentCollisionBoxes;
+	return GenerateCollisionBoxes();
 }
 
 Vector2 Entity::GetPosition() const

@@ -149,9 +149,12 @@ void Game::HandleKeyBoardInput()
 		}
 	}
 
-	if (GetKey(eKeyCode::SHIFT))
+	if (GetKey(eKeyCode::W))
 	{
 		m_player.SetCanShoot(true);
+	}else
+	{
+		m_player.SetCanShoot(false);
 	}
 	
 	eDirection playerMoveDir = eDirection::e_None;
