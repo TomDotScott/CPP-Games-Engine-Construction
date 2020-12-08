@@ -51,7 +51,7 @@ void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
 			currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
-			m_currentEntityState = eEntityState::e_SnailShellHit;
+			m_currentEntityState = eEntityState::e_ProjectileHit;
 			SetAnimationIndex(static_cast<int>(m_currentEntityState));
 		}
 	}

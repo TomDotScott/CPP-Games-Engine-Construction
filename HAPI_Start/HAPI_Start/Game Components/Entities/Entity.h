@@ -8,7 +8,7 @@
 
 enum class eEntityState
 {
-	e_Alive, e_Dead, e_SnailShellHit
+	e_Alive, e_Dead, e_ProjectileHit
 };
 
 enum class eDirection
@@ -18,7 +18,12 @@ enum class eDirection
 
 enum class eEntityType
 {
-	e_None = -1, e_Player, e_Fireball, e_Slime = 65, e_Coin = 66, e_Snail = 68,
+	e_None = -1,
+	e_Player,
+	e_Fireball,
+	e_Slime = 65,
+	e_Coin = 66,
+	e_Snail = 68,
 };
 
 // Every entity will have 4 collision areas as well as

@@ -7,10 +7,9 @@ Slime::Slime(const int entityID, const Vector2 startingPosition, const bool canA
 		eDirection::e_Left,
 		canAvoidEdges)
 {
-	m_entityType = eEntityType::e_Slime;
 	// Create the Animations
 	// Walk animation
-	
+
 	AddAnimation(animations::SLIME_WALK, true, 500.f);
 	AddAnimation(animations::SLIME_SQUASHED, false, 2000.f);
 	AddAnimation(animations::SLIME_SHELL_HIT, false, 1000.f);
@@ -36,11 +35,33 @@ void Slime::CheckEntityCollisions(Entity& other)
 	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
 	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
-		// If player's feet are on the top of the enemy, squash it
-		if (currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
+		if (other.GetEntityType() == eEntityType::e_Player)
 		{
-			m_currentEntityState = eEntityState::e_Dead;
-			SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
+			// If player's feet are on the top of the enemy, squash it
+			if (currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox))
+			{
+				// Don't squash if already dead
+				if (m_currentEntityState != eEntityState::e_ProjectileHit)
+				{
+					m_currentEntityState = eEntityState::e_Dead;
+					SetAnimationIndex(static_cast<int>(GetCurrentEntityState()));
+				}
+			}
+		}
+		// Check against fireballs
+		else if (other.GetEntityType() == eEntityType::e_Fireball)
+		{
+			if (currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+				currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+			{
+				if (m_currentEntityState != eEntityState::e_ProjectileHit)
+				{
+					m_currentEntityState = eEntityState::e_ProjectileHit;
+					SetAnimationIndex(static_cast<int>(m_currentEntityState));
+				}
+			}
 		}
 	}
 }

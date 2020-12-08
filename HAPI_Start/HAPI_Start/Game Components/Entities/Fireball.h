@@ -6,16 +6,6 @@ enum class eFireBallState
 	e_Exploding
 };
 
-inline const char* to_string(const eFireBallState e)
-{
-	switch (e)
-	{
-		case eFireBallState::e_Bouncing: return "e_Bouncing";
-		case eFireBallState::e_Exploding: return "e_Exploding";
-		default: return "unknown";
-	}
-}
-
 class Fireball : public Entity
 {
 public:

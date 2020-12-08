@@ -66,7 +66,19 @@ void Game::UpdateEnemies(std::vector<T>& enemyContainer, const float deltaTime)
 			if (enemy.GetCurrentEntityState() != eEntityState::e_Dead)
 			{
 				m_player.CheckEntityCollisions(enemy);
+				
 				enemy.CheckEntityCollisions(m_player);
+
+				// Check against the fireballs
+				for(auto& fireball : m_player.GetFireBallPool())
+				{
+					if (fireball.GetActiveState())
+					{
+						std::cout << "Checking Fireball: " << fireball.GetEntityID() << std::endl;
+						enemy.CheckEntityCollisions(fireball);
+					}
+				}
+				
 				// Check for snail shell collisions
 				for (auto& snail : m_snails)
 				{

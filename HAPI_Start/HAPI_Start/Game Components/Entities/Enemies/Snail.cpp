@@ -81,6 +81,22 @@ void Snail::CheckEntityCollisions(Entity& other)
 				SetAnimationIndex(static_cast<int>(m_snailState));
 			}
 		}
+		// Check against fireballs
+		else if (other.GetEntityType() == eEntityType::e_Fireball)
+		{
+			std::cout << "SNAIL: " << m_entityID << " COLLIDED WITH FIREBALL: " << other.GetEntityID() << std::endl;
+			if (currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+				currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+			{
+				if (m_currentEntityState != eEntityState::e_ProjectileHit)
+				{
+					m_currentEntityState = eEntityState::e_ProjectileHit;
+					SetAnimationIndex(static_cast<int>(m_currentEntityState));
+				}
+			}
+		}
 	}
 }
 
