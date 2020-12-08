@@ -8,6 +8,16 @@ enum class ePlayerState
 	e_Idle, e_Walking, e_Jumping, e_Climbing
 };
 
+enum class ePowerUpType
+{
+	e_FireThrower
+};
+
+enum class ePowerUpState
+{
+	e_Normal, e_FireThrower
+};
+
 class Player final : public Entity
 {
 public:
@@ -26,6 +36,10 @@ public:
 	ePlayerState GetCurrentPlayerState() const;
 	void SetPlayerState(ePlayerState state);
 
+	ePowerUpState GetPowerUpState() const;
+	void PowerUp(ePowerUpType pType);
+	void PowerDown();
+	
 	std::vector<Fireball>& GetFireBallPool();
 
 private:
@@ -34,6 +48,7 @@ private:
 	bool m_canShoot;
 	float m_shotCoolDown;
 	ePlayerState m_currentPlayerState;
+	ePowerUpState m_currentPowerUpState;
 	eDirection m_moveDirectionLimit;
 
 	std::vector<Fireball> m_fireballPool;

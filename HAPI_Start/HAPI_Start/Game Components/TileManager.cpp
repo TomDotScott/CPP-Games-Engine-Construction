@@ -162,6 +162,9 @@ void TileManager::RenderTiles(const float playerOffset)
 					case eTileType::e_RightArrow:
 						spriteIdentifier = "Arrow_Sign";
 						break;
+					case eTileType::e_FireGem:
+						spriteIdentifier = "Gem_Fire";
+						break;
 					default:;
 					}
 					Graphics::GetInstance().DrawSprite(spriteIdentifier, tilePos);
@@ -177,16 +180,23 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 	/* TOP COLLISIONS */
 	if (player.GetPosition().y > static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f)
 	{
-		const int headX = ((static_cast<int>(playerCollisionBoxes.m_topCollisionBox.TOP_LEFT.x)) /
+		const int playerPosX = ((static_cast<int>(player.GetPosition().x)) /
 			constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
 
-		const int headY = static_cast<int>(playerCollisionBoxes.m_topCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellWidth;
-
-		if (m_levelData[headY][headX].m_canCollide)
+		const int playerPosY = static_cast<int>(player.GetPosition().y) / constants::k_spriteSheetCellWidth;
+		
+		Tile& currentTile = m_levelData[playerPosY][playerPosX];
+		
+		const auto currentTileCollisionBox = BoundsRectangle(
+			{ currentTile.m_position },
+			{ currentTile.m_position.x + constants::k_spriteSheetCellWidth, currentTile.m_position.y + constants::k_spriteSheetCellWidth }
+		);
+		
+		if (currentTile.m_canCollide && 
+			player.GetCurrentCollisionBoxes().m_topCollisionBox.Overlapping(currentTileCollisionBox))
 		{
 			player.SetVelocity({ player.GetVelocity().x });
 
-			Tile& currentTile = m_levelData[headY][headX];
 			switch (currentTile.m_type)
 			{
 			case eTileType::e_CrateBlock:
@@ -196,11 +206,23 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 				break;
 			case eTileType::e_BoxedCoinBlock:
 				currentTile.m_type = eTileType::e_CoinBlock;
+				break;
 			case eTileType::e_ItemBlock:
+				// make the tile above it a pickup for the player
+				m_levelData[playerPosY - 1][playerPosX] = Tile(
+					eTileType::e_FireGem,
+					{ currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellWidth },
+					false
+				);
 				currentTile.m_type = eTileType::e_BrickBlock;
 				break;
 			default:;
 			}
+		}else if(currentTile.m_type == eTileType::e_FireGem && player.GetCurrentCollisionBoxes().m_globalBounds.Overlapping(currentTileCollisionBox))
+		{
+			currentTile.m_type = eTileType::e_Air;
+			currentTile.m_canCollide = false;
+			player.PowerUp(ePowerUpType::e_FireThrower);
 		}
 	}
 

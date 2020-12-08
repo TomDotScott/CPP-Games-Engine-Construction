@@ -14,14 +14,23 @@ Player::Player(const Vector2 startingPosition) :
 	m_canShoot(false),
 	m_shotCoolDown(constants::k_fireBallCoolDownTimer),
 	m_currentPlayerState(ePlayerState::e_Jumping),
+	m_currentPowerUpState(ePowerUpState::e_Normal),
 	m_moveDirectionLimit(eDirection::e_None)
 {
 	m_entityType = eEntityType::e_Player;
 
+	// FOR NORMAL SIZED
 	AddAnimation(animations::PLAYER_IDLE, true, 1000.f);
 	AddAnimation(animations::PLAYER_WALK);
 	AddAnimation(animations::PLAYER_JUMP);
 	AddAnimation(animations::PLAYER_CLIMB);
+
+	// FOR FIRE-THROWER POWER-UP
+	AddAnimation(animations::PLAYER_POWER_UP_IDLE, true, 1000.f);
+	AddAnimation(animations::PLAYER_POWER_UP_WALK);
+	AddAnimation(animations::PLAYER_POWER_UP_JUMP);
+	AddAnimation(animations::PLAYER_POWER_UP_CLIMB);
+
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -66,7 +75,7 @@ void Player::Update(const float deltaTime)
 		m_currentPlayerState = ePlayerState::e_Idle;
 	}
 
-	SetAnimationIndex(static_cast<int>(m_currentPlayerState));
+	SetAnimationIndex(4 * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 	PlayAnimation(deltaTime);
 
 	// Update the fireballs
@@ -98,25 +107,29 @@ void Player::Render()
 
 void Player::CheckEntityCollisions(Entity& other)
 {
-	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
-	// Check the global boxes
-	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+	if (other.GetCurrentEntityState() != eEntityState::e_Dead)
 	{
-		// If touching the left or right...
-		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-			currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+		const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+		// Check the global boxes
+		if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 		{
-			// TODO: Kill the player
+			// If touching the bottom...
+			if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
+				(other.GetEntityType() == eEntityType::e_Snail || other.GetEntityType() == eEntityType::e_Slime)
+				)
+			{
+				// Jump
+				Jump(m_jumpForce / 2);
+				return;
+			}
 
-		}
-		// If touching the bottom...
-		if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
-			(other.GetEntityType() == eEntityType::e_Snail || other.GetEntityType() == eEntityType::e_Slime)
-			)
-		{
-			// Jump
-			Jump(m_jumpForce / 2);
+			// If touching the left or right...
+			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+			{
+				PowerDown();
+			}
 		}
 	}
 }
@@ -129,6 +142,42 @@ ePlayerState Player::GetCurrentPlayerState() const
 void Player::SetPlayerState(const ePlayerState state)
 {
 	m_currentPlayerState = state;
+}
+
+ePowerUpState Player::GetPowerUpState() const
+{
+	return m_currentPowerUpState;
+}
+
+void Player::PowerUp(const ePowerUpType pType)
+{
+	switch (pType)
+	{
+	case ePowerUpType::e_FireThrower:
+		if (m_currentPowerUpState != ePowerUpState::e_FireThrower)
+		{
+			m_currentPowerUpState = ePowerUpState::e_FireThrower;
+		} else
+		{
+			// TODO: GIVE POINT BONUS IF COLLECTING AN ALREADY EQUIPPED POWER-UP
+		}
+		break;
+	default:;
+	}
+}
+
+void Player::PowerDown()
+{
+	switch (m_currentPowerUpState)
+	{
+	case ePowerUpState::e_Normal:
+		// TODO: KILL THE PLAYER
+		break;
+	case ePowerUpState::e_FireThrower:
+		m_currentPowerUpState = ePowerUpState::e_Normal;
+		break;
+	default:;
+	}
 }
 
 std::vector<Fireball>& Player::GetFireBallPool()
@@ -178,11 +227,11 @@ void Player::Shoot()
 	if (m_shotCoolDown >= constants::k_fireBallCoolDownTimer)
 	{
 		// Find the first inactive fireball and initialise it 
-		for (int i = 0; i < m_fireballPool.size(); i++)
+		for (auto& ball : m_fireballPool)
 		{
-			if (m_fireballPool[i].GetActiveState() == false)
+			if (ball.GetActiveState() == false)
 			{
-				m_fireballPool[i].Initialise(m_position, m_currentDirection);
+				ball.Initialise(m_position, m_currentDirection);
 				m_canShoot = false;
 				m_shotCoolDown = 0.f;
 				return;

@@ -106,7 +106,6 @@ void Game::Render()
 		}
 	}
 
-	
 	m_player.Render();
 }
 
@@ -151,12 +150,15 @@ void Game::HandleKeyBoardInput()
 
 	if (GetKey(eKeyCode::W))
 	{
-		m_player.SetCanShoot(true);
-	}else
+		if (m_player.GetPowerUpState() == ePowerUpState::e_FireThrower)
+		{
+			m_player.SetCanShoot(true);
+		}
+	} else
 	{
 		m_player.SetCanShoot(false);
 	}
-	
+
 	eDirection playerMoveDir = eDirection::e_None;
 	if (GetKey(eKeyCode::A) || GetKey(eKeyCode::LEFT))
 	{
@@ -269,7 +271,7 @@ bool Game::Initialise()
 	CreateSprite("Gem_1");
 	CreateSprite("Gem_2");
 	CreateSprite("Gem_3");
-	CreateSprite("Gem_4");
+	CreateSprite("Gem_Fire");
 	CreateSprite("UI_0");
 	CreateSprite("UI_1");
 	CreateSprite("UI_2");

@@ -31,7 +31,7 @@ enum class eTileType
 	e_ItemBlock = 50, e_BrickBlock = 51, e_Bush = 52, e_OpenDoorMid = 55,
 	e_OpenDoorTop = 56, e_Plant = 57, e_Mushroom1 = 60, e_Mushroom2 = 61,
 	e_Rock = 62, e_Spikes = 63, e_FlagPole = 64, e_Slime = 65, e_Coin = 66,
-	e_Snail = 68, e_RightArrow = 69
+	e_Snail = 68, e_RightArrow = 69, e_FireGem
 };
 
 struct Tile

@@ -74,7 +74,6 @@ void Game::UpdateEnemies(std::vector<T>& enemyContainer, const float deltaTime)
 				{
 					if (fireball.GetActiveState())
 					{
-						std::cout << "Checking Fireball: " << fireball.GetEntityID() << std::endl;
 						enemy.CheckEntityCollisions(fireball);
 					}
 				}
