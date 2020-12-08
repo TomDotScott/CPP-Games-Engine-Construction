@@ -24,11 +24,13 @@ Snail::Snail(const int entityID, const Vector2 startingPos) :
 
 void Snail::Update(const float deltaTime)
 {
-	if (m_snailState == eSnailState::e_Walking || m_snailState == eSnailState::e_Sliding)
+	switch (m_snailState)
 	{
+	case eSnailState::e_Walking:;
+	case eSnailState::e_Sliding:
 		Move(deltaTime);
-	} else
-	{
+		break;
+	case eSnailState::e_Squashed:
 		if (m_inShellDuration < 5000.f)
 		{
 			m_inShellDuration += deltaTime;
@@ -38,7 +40,10 @@ void Snail::Update(const float deltaTime)
 			m_canAvoidEdges = true;
 			SetAnimationIndex(static_cast<int>(m_snailState));
 		}
+		break;
+	default:;
 	}
+
 	PlayAnimation(deltaTime);
 }
 
@@ -84,16 +89,17 @@ void Snail::CheckEntityCollisions(Entity& other)
 		// Check against fireballs
 		else if (other.GetEntityType() == eEntityType::e_Fireball)
 		{
-			std::cout << "SNAIL: " << m_entityID << " COLLIDED WITH FIREBALL: " << other.GetEntityID() << std::endl;
 			if (currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
 				currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
 				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 			{
-				if (m_currentEntityState != eEntityState::e_ProjectileHit)
+				if (m_snailState != eSnailState::e_ProjectileHit)
 				{
-					m_currentEntityState = eEntityState::e_ProjectileHit;
-					SetAnimationIndex(static_cast<int>(m_currentEntityState));
+					m_snailState = eSnailState::e_ProjectileHit;
+					SetAnimationIndex(static_cast<int>(m_snailState));
+
+					m_currentEntityState = eEntityState::e_Dead;
 				}
 			}
 		}
@@ -108,8 +114,10 @@ void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
 			currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
 		{
-			m_snailState = eSnailState::e_ShellHit;
+			m_snailState = eSnailState::e_ProjectileHit;
 			SetAnimationIndex(static_cast<int>(m_snailState));
+
+			m_currentEntityState = eEntityState::e_Dead;
 		}
 	}
 }
@@ -122,8 +130,9 @@ eSnailState Snail::GetSnailState() const
 void Snail::Squash()
 {
 	m_snailState = eSnailState::e_Cracking;
-	m_currentEntityState = eEntityState::e_Dead;
 	SetAnimationIndex(static_cast<int>(m_snailState));
+
+	m_currentEntityState = eEntityState::e_Dead;
 }
 
 void Snail::Move(const float deltaTime)

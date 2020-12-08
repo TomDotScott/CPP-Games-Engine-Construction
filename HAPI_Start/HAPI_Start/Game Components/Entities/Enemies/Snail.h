@@ -6,7 +6,7 @@
 // If not, after some time, it can get back up and walk again
 enum class eSnailState
 {
-	e_Walking, e_Squashed, e_Sliding, e_ShellHit, e_Cracking
+	e_Walking, e_Squashed, e_Sliding, e_ProjectileHit, e_Cracking
 };
 
 class Snail final : public Enemy

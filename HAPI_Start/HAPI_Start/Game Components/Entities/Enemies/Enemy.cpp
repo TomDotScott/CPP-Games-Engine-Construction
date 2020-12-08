@@ -2,7 +2,7 @@
 #include "../Graphics/Graphics.h"
 
 Enemy::Enemy(const eEntityType type, const int entityID, const Vector2 startingPosition, const Vector2 size, const eDirection startDir, const bool canAvoidEdges) :
-	Entity(type, 
+	Entity(type,
 		entityID,
 		size,
 		startDir,
@@ -16,8 +16,7 @@ Enemy::Enemy(const eEntityType type, const int entityID, const Vector2 startingP
 
 void Enemy::Render(const float playerOffset)
 {
-	if (GetCurrentAnimationState() == eAnimationState::e_Started ||
-		GetCurrentAnimationState() == eAnimationState::e_Paused)
+	if (GetCurrentAnimationState() != eAnimationState::e_Ended)
 	{
 		Graphics::GetInstance().DrawSprite(
 			GetCurrentAnimationFrameIdentifier(),
