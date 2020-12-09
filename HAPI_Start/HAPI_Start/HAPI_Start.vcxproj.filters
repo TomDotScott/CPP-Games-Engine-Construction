@@ -63,6 +63,9 @@
     <ClCompile Include="Game Components\Entities\Fireball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game Components\SoundManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HAPI\HAPI_InputCodes.h">
@@ -125,6 +128,9 @@
     <ClInclude Include="Game Components\Entities\Fireball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game Components\SoundManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="HAPI\HAPI_Debug64.lib" />
@@ -132,5 +138,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="HAPI\Reference\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Data\HelloThere.mp3" />
   </ItemGroup>
 </Project>

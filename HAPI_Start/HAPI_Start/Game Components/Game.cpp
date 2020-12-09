@@ -2,6 +2,8 @@
 #include "../Graphics/Graphics.h"
 #include <fstream>
 
+#include "SoundManager.h"
+
 Game::Game() :
 	PLAYER_WON(false),
 	PLAYER_LOST(false),
@@ -20,6 +22,8 @@ Game::Game() :
 		HAPI.UserMessage("An Error Occured", "AN ERROR OCCURED");
 		HAPI.Close();
 	}
+
+	SoundManager::GetInstance().PlaySFX("Music");
 }
 
 void Game::Update()
@@ -203,6 +207,12 @@ bool Game::Initialise()
 		HAPI.UserMessage("Spritesheet Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
+
+	if (!SoundManager::GetInstance().CreateSoundEffect("Music", "Data/Music.wav"))
+	{
+		return false;
+	}
+	
 
 	CreateSprite("Player_Walk_Top_1");
 	CreateSprite("Player_Walk_Body_1");
