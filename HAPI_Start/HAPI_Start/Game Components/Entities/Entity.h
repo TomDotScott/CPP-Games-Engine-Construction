@@ -91,7 +91,7 @@ protected:
 
 	virtual void Move(float deltaTime) = 0;
 	
-	void AddAnimation(std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
+	void AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
 	void PlayAnimation(float deltaTime);
 	void SetAnimationIndex(int animationIndex);
 	std::string GetCurrentAnimationFrameIdentifier();

@@ -23,7 +23,8 @@ void Enemy::Render(const float playerOffset)
 			{
 				m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
 				m_position.y
-			}
+			}, 
+			m_currentDirection == eDirection::e_Right
 		);
 	}
 }

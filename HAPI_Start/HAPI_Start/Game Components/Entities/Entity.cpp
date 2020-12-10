@@ -78,7 +78,7 @@ int Entity::GetEntityID() const
 	return m_entityID;
 }
 
-void Entity::AddAnimation(std::vector<std::string>& animationFrameIdentifiers, const bool looping, const float frameLength)
+void Entity::AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, const bool looping, const float frameLength)
 {
 	auto anim = AnimationPlayer(animationFrameIdentifiers, looping, frameLength);
 	m_animations.emplace_back(anim);

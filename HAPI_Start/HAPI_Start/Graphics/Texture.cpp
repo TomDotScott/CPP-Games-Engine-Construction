@@ -1,7 +1,7 @@
 ﻿#include "Texture.h"
 #include "../Utilities/Constants.h"
 
-Texture::Texture() : m_textureData(), m_size(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth)
+Texture::Texture() : m_textureData(), m_size(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize)
 {
 }
 
@@ -30,22 +30,66 @@ void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePositi
 	TextureClipBlit(screen, texturePosition);
 }
 
-void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const Vector2 spritePosition, const bool flipped) const
+void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const Vector2 spritePosition, bool flipped)
 {
+	if (flipped)
+	{
+		FlipSprite(spriteSheetIndex, constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize);
+	}
+	
 	HAPISPACE::BYTE* screenStart{
 		screen + (static_cast<int>(spritePosition.x) + static_cast<int>(spritePosition.y) * constants::k_screenWidth) * 4
 	};
 
 	HAPISPACE::BYTE* spriteStart{
-		m_textureData + (constants::k_spriteSheetCellWidth * constants::k_spriteSheetCellWidth * 4) * spriteSheetIndex
+		m_textureData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetIndex
 	};
 
-	SpriteClipBlit(screenStart, spriteStart, spriteSheetIndex, spritePosition, flipped);
+	SpriteClipBlit(screenStart, spriteStart, spriteSheetIndex, spritePosition);
+
+	// works on the entire spritesheet so we need to flip back
+	if (flipped)
+	{
+		FlipSprite(spriteSheetIndex, constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize);
+	}
 }
 
 Vector2 Texture::GetSize() const
 {
 	return{ m_size };
+}
+
+void Texture::FlipSprite(int spriteSheetLocation, const int width, const int height)
+{
+	HAPISPACE::BYTE* spriteData{
+		m_textureData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetLocation
+	};
+
+	const int imgWidthHalf = width / 2;
+
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < imgWidthHalf; x++)
+		{
+			const int xy1 = (x + y * width) * 4;
+			const int xy2 = ((width - 1 - x) + y * width) * 4;
+
+			const auto red = spriteData[xy1];
+			const auto green = spriteData[xy1 + 1];
+			const auto blue = spriteData[xy1 + 2];
+			const auto alpha = spriteData[xy1 + 3];
+
+			spriteData[xy1] = spriteData[xy2];
+			spriteData[xy1 + 1] = spriteData[xy2 + 1];
+			spriteData[xy1 + 2] = spriteData[xy2 + 2];
+			spriteData[xy1 + 3] = spriteData[xy2 + 3];
+
+			spriteData[xy2] = red;
+			spriteData[xy2 + 1] = green;
+			spriteData[xy2 + 2] = blue;
+			spriteData[xy2 + 3] = alpha;
+		}
+	}
 }
 
 void Texture::TextureAlphaBlit(HAPISPACE::BYTE* screen, const Vector2 position) const
@@ -171,15 +215,15 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const
 	}
 }
 
-void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const Vector2 position, const bool flipped) const
+void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData) const
 {
-	const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellWidth * 4 };
+	const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellSize * 4 };
 
-	const int spriteInc{ static_cast<int>(m_size.x) * 4 - constants::k_spriteSheetCellWidth * 4 };
+	const int spriteInc{ static_cast<int>(m_size.x) * 4 - constants::k_spriteSheetCellSize * 4 };
 
-	for (int y = 0; y < constants::k_spriteSheetCellWidth; y++)
+	for (int y = 0; y < constants::k_spriteSheetCellSize; y++)
 	{
-		for (int x = 0; x < constants::k_spriteSheetCellWidth; x++)
+		for (int x = 0; x < constants::k_spriteSheetCellSize; x++)
 		{
 			const HAPISPACE::BYTE a{ spriteData[3] };
 			// Only draw pixels if needed
@@ -205,12 +249,12 @@ void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spr
 	}
 }
 
-void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, Vector2 position, const bool flipped) const
+void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, Vector2 position) const
 {
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	const Vector2 temp = position;
-	const BoundsRectangle spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellWidth), static_cast<float>(constants::k_spriteSheetCellWidth) });
+	const BoundsRectangle spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellSize), static_cast<float>(constants::k_spriteSheetCellSize) });
 
 	const BoundsRectangle screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
 
@@ -226,7 +270,7 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 		// If the object is completely onscreen then alphablit...
 		if (clippedRect.IsCompletelyInside(screenBounds))
 		{
-			SpriteAlphaBlit(screenStart, spriteData, position, flipped);
+			SpriteAlphaBlit(screenStart, spriteData);
 		} else
 		{
 			// we must be offscreen...
@@ -244,13 +288,13 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 
 
 			const int spriteOffset{
-				(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellWidth) * 4
+				(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellSize) * 4
 			};
 
 			HAPISPACE::BYTE* spritePtr = spriteData + spriteOffset;
 
 			const int spriteInc{
-				((constants::k_spriteSheetCellWidth - static_cast<int>(clippedRect.GetSize().x))) * 4
+				((constants::k_spriteSheetCellSize - static_cast<int>(clippedRect.GetSize().x))) * 4
 			};
 
 			// Start blitting...
@@ -281,5 +325,4 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 			}
 		}
 	}
-
 }

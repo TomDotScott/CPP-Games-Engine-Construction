@@ -5,7 +5,7 @@
 Player::Player(const Vector2 startingPosition) :
 	Entity(eEntityType::e_Player,
 		-1,
-		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth + 13),
+		Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize + 13),
 		eDirection::e_None,
 		startingPosition,
 		{ Vector2::ZERO }),
@@ -65,9 +65,9 @@ void Player::Update(const float deltaTime)
 	m_position = m_position + m_velocity;
 
 	// Can't go off the top of the screen
-	if (m_position.y < constants::k_spriteSheetCellWidth)
+	if (m_position.y < constants::k_spriteSheetCellSize)
 	{
-		m_position.y = constants::k_spriteSheetCellWidth;
+		m_position.y = constants::k_spriteSheetCellSize;
 	}
 
 	if (m_currentDirection == eDirection::e_None && m_currentPlayerState != ePlayerState::e_Jumping && !m_shouldJumpNextFrame)
@@ -90,19 +90,18 @@ void Player::Update(const float deltaTime)
 
 void Player::Render()
 {
+	// Glitches if direction is none so default to facing forward
+	const eDirection dir = m_currentDirection == eDirection::e_None ? eDirection::e_Right : m_currentDirection;
+
 	Graphics::GetInstance().DrawSprite(
 		GetTopIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellWidth
-		},
-		true
-	);
+		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left
+		);
 
 	Graphics::GetInstance().DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
-		},
-		true
-	);
+		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, dir == eDirection::e_Left
+		);
 }
 
 void Player::CheckEntityCollisions(Entity& other)

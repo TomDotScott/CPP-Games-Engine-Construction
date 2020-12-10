@@ -184,15 +184,15 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 			constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 
 		const int playerPosY = static_cast<int>(player.GetPosition().y) / constants::k_spriteSheetCellSize;
-		
+
 		Tile& currentTile = m_levelData[playerPosY][playerPosX];
-		
+
 		const auto currentTileCollisionBox = BoundsRectangle(
 			{ currentTile.m_position },
 			{ currentTile.m_position.x + constants::k_spriteSheetCellSize, currentTile.m_position.y + constants::k_spriteSheetCellSize }
 		);
-		
-		if (currentTile.m_canCollide && 
+
+		if (currentTile.m_canCollide &&
 			player.GetCurrentCollisionBoxes().m_topCollisionBox.Overlapping(currentTileCollisionBox))
 		{
 			player.SetVelocity({ player.GetVelocity().x });
@@ -218,7 +218,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 				break;
 			default:;
 			}
-		}else if(currentTile.m_type == eTileType::e_FireGem && player.GetCurrentCollisionBoxes().m_globalBounds.Overlapping(currentTileCollisionBox))
+		} else if (currentTile.m_type == eTileType::e_FireGem && player.GetCurrentCollisionBoxes().m_globalBounds.Overlapping(currentTileCollisionBox))
 		{
 			currentTile.m_type = eTileType::e_Air;
 			currentTile.m_canCollide = false;
@@ -369,11 +369,11 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	if (fireballX >= 0 && fireballX <= static_cast<int>(m_levelData[0].size()) && fireballY <= 15 && fireballY >= 0)
 	{
 		auto& groundTile = m_levelData[fireballY][fireballX];
-		
-		const auto groundTileBoxes = BoundsRectangle({ groundTile.m_position },
-			{ groundTile.m_position.x + constants::k_spriteSheetCellSize, groundTile.m_position.y + constants::k_spriteSheetCellSize});
 
-		if (fireballBottom.Translate({static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes) 
+		const auto groundTileBoxes = BoundsRectangle({ groundTile.m_position },
+			{ groundTile.m_position.x + constants::k_spriteSheetCellSize, groundTile.m_position.y + constants::k_spriteSheetCellSize });
+
+		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes)
 			&& groundTile.m_canCollide)
 		{
 			fireball.Bounce();

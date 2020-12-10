@@ -9,7 +9,6 @@
 #include "TileManager.h"
 
 enum class eKeyCode;
-
 class Game
 {
 public:
