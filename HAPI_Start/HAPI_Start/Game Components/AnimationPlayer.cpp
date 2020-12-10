@@ -1,5 +1,5 @@
 ﻿#include "AnimationPlayer.h"
-AnimationPlayer::AnimationPlayer(std::vector<std::string>& frames, const bool looping, const float duration) :
+AnimationPlayer::AnimationPlayer(const std::vector<std::string>& frames, const bool looping, const float duration) :
 	m_frames(frames),
 	m_currentFrame(0),
 	m_duration(duration),
