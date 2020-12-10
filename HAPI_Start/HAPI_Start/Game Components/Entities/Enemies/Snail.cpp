@@ -3,7 +3,7 @@ Snail::Snail(const int entityID, const Vector2 startingPos) :
 	Enemy(eEntityType::e_Snail,
 		entityID,
 		startingPos,
-		Vector2(constants::k_spriteSheetCellWidth, 36),
+		Vector2(constants::k_spriteSheetCellSize, 36),
 		eDirection::e_Left,
 		true),
 	m_speedMultiplier(0.5f),

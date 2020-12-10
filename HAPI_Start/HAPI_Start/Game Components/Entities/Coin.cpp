@@ -3,7 +3,7 @@
 Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
 	Entity(eEntityType::e_Coin,
 		entityID,
-		{ constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth },
+		{ constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize },
 		eDirection::e_None,
 		position,
 		{ 0, 1 },

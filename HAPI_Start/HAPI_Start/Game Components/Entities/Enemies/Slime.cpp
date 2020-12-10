@@ -3,7 +3,7 @@ Slime::Slime(const int entityID, const Vector2 startingPosition, const bool canA
 	Enemy(eEntityType::e_Slime,
 		entityID,
 		startingPosition,
-		{ static_cast<float>(constants::k_spriteSheetCellWidth), static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f },
+		{ static_cast<float>(constants::k_spriteSheetCellSize), static_cast<float>(constants::k_spriteSheetCellSize) / 2.f },
 		eDirection::e_Left,
 		canAvoidEdges)
 {

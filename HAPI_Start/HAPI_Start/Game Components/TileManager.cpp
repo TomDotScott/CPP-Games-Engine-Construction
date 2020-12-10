@@ -35,8 +35,8 @@ bool TileManager::LoadLevel(const std::string& filename)
 				const auto tileString = atoi(val.c_str());
 
 				const Vector2 tilePosition{
-					static_cast<float>(c * constants::k_spriteSheetCellWidth - 10 * constants::k_spriteSheetCellWidth),
-					static_cast<float>(r * constants::k_spriteSheetCellWidth)
+					static_cast<float>(c * constants::k_spriteSheetCellSize - 10 * constants::k_spriteSheetCellSize),
+					static_cast<float>(r * constants::k_spriteSheetCellSize)
 				};
 
 				const auto tileType = static_cast<eTileType>(tileString);
@@ -82,7 +82,7 @@ void TileManager::RenderTiles(const float playerOffset)
 					currentTile.m_position.x - playerOffset + static_cast<float>(constants::k_screenWidth) / 2.f,
 					currentTile.m_position.y
 				};
-				if (tilePos.x > -constants::k_spriteSheetCellWidth && tilePos.x <= constants::k_screenWidth)
+				if (tilePos.x > -constants::k_spriteSheetCellSize && tilePos.x <= constants::k_screenWidth)
 				{
 					std::string spriteIdentifier;
 					switch (currentTile.m_type)
@@ -178,18 +178,18 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 {
 	const CollisionBoxes playerCollisionBoxes = player.GetCurrentCollisionBoxes();
 	/* TOP COLLISIONS */
-	if (player.GetPosition().y > static_cast<float>(constants::k_spriteSheetCellWidth) / 2.f)
+	if (player.GetPosition().y > static_cast<float>(constants::k_spriteSheetCellSize) / 2.f)
 	{
 		const int playerPosX = ((static_cast<int>(player.GetPosition().x)) /
-			constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+			constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 
-		const int playerPosY = static_cast<int>(player.GetPosition().y) / constants::k_spriteSheetCellWidth;
+		const int playerPosY = static_cast<int>(player.GetPosition().y) / constants::k_spriteSheetCellSize;
 		
 		Tile& currentTile = m_levelData[playerPosY][playerPosX];
 		
 		const auto currentTileCollisionBox = BoundsRectangle(
 			{ currentTile.m_position },
-			{ currentTile.m_position.x + constants::k_spriteSheetCellWidth, currentTile.m_position.y + constants::k_spriteSheetCellWidth }
+			{ currentTile.m_position.x + constants::k_spriteSheetCellSize, currentTile.m_position.y + constants::k_spriteSheetCellSize }
 		);
 		
 		if (currentTile.m_canCollide && 
@@ -211,7 +211,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 				// make the tile above it a pickup for the player
 				m_levelData[playerPosY - 1][playerPosX] = Tile(
 					eTileType::e_FireGem,
-					{ currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellWidth },
+					{ currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellSize },
 					false
 				);
 				currentTile.m_type = eTileType::e_BrickBlock;
@@ -231,14 +231,14 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 	bool hasCollided = false;
 
 	// LEFT
-	int playerXTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x)) / constants::k_spriteSheetCellWidth) +
+	int playerXTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x)) / constants::k_spriteSheetCellSize) +
 		constants::k_maxTilesHorizontal / 2;
-	int playerYTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellWidth);
+	int playerYTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellSize);
 
 	if (m_levelData[playerYTile][playerXTile].m_canCollide)
 	{
 		// Work out the amount of overlap in the X direction
-		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x -
+		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x -
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
 		if (abs(xOverlap) > 32.f)
@@ -249,14 +249,14 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 	}
 
 	// RIGHT
-	playerXTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x)) / constants::k_spriteSheetCellWidth) +
+	playerXTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x)) / constants::k_spriteSheetCellSize) +
 		constants::k_maxTilesHorizontal / 2;
-	playerYTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellWidth);
+	playerYTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellSize);
 
 	if (m_levelData[playerYTile][playerXTile].m_canCollide)
 	{
 		// Work out the amount of overlap in the X direction
-		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x -
+		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x -
 			static_cast<float>(constants::k_screenWidth / 2.f);
 
 		if (abs(xOverlap) > 8.f)
@@ -274,16 +274,16 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 
 	/* BOTTOM COLLISIONS */
 	const int feetX = ((static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.x)) /
-		constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
-	const int feetY = static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellWidth;
+		constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+	const int feetY = static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
 
 	if (m_levelData[feetY][feetX].m_canCollide)
 	{
 		// Work out the amount of overlap in the Y direction
-		const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellWidth) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
+		const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
 		if (abs(yOverlap) > 16.f)
 		{
-			player.SetPosition({ player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellWidth });
+			player.SetPosition({ player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellSize });
 		}
 		player.SetPlayerState(ePlayerState::e_Walking);
 	} else
@@ -304,9 +304,9 @@ void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
 {
 	const auto enemyPos = enemy.GetPosition();
 
-	const int enemyXTile = ((static_cast<int>(enemyPos.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+	const int enemyXTile = ((static_cast<int>(enemyPos.x)) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 
-	const int enemyYTile = static_cast<int>(enemyPos.y) / constants::k_spriteSheetCellWidth;
+	const int enemyYTile = static_cast<int>(enemyPos.y) / constants::k_spriteSheetCellSize;
 
 	if (enemyYTile > 0 && enemyYTile < constants::k_maxTilesVertical)
 	{
@@ -361,9 +361,9 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	// COLLISIONS WITH THE GROUND
 	auto fireballBottom = fireball.GetCurrentCollisionBoxes().m_bottomCollisionBox;
 
-	int fireballX = ((static_cast<int>(fireballBottom.TOP_LEFT.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+	int fireballX = ((static_cast<int>(fireballBottom.TOP_LEFT.x)) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 
-	int fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellWidth;
+	int fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellSize;
 
 
 	if (fireballX >= 0 && fireballX <= static_cast<int>(m_levelData[0].size()) && fireballY <= 15 && fireballY >= 0)
@@ -371,7 +371,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 		auto& groundTile = m_levelData[fireballY][fireballX];
 		
 		const auto groundTileBoxes = BoundsRectangle({ groundTile.m_position },
-			{ groundTile.m_position.x + constants::k_spriteSheetCellWidth, groundTile.m_position.y + constants::k_spriteSheetCellWidth});
+			{ groundTile.m_position.x + constants::k_spriteSheetCellSize, groundTile.m_position.y + constants::k_spriteSheetCellSize});
 
 		if (fireballBottom.Translate({static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes) 
 			&& groundTile.m_canCollide)
@@ -383,9 +383,9 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	// COLLISIONS TO THE RIGHT
 	auto fireballRight = fireball.GetCurrentCollisionBoxes().m_rightCollisionBox;
 
-	fireballX = ((static_cast<int>(fireballBottom.BOTTOM_RIGHT.x)) / constants::k_spriteSheetCellWidth) + constants::k_maxTilesHorizontal / 2;
+	fireballX = ((static_cast<int>(fireballBottom.BOTTOM_RIGHT.x)) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 
-	fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellWidth;
+	fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellSize;
 
 
 	if (fireballX >= 0 && fireballX <= m_levelData[0].size() && fireballY <= 15 && fireballY >= 0)
@@ -393,7 +393,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 		auto& sideTile = m_levelData[fireballY][fireballX + 1];
 
 		const auto sideTileBounds = BoundsRectangle({ sideTile.m_position },
-			{ sideTile.m_position.x + constants::k_spriteSheetCellWidth, sideTile.m_position.y + constants::k_spriteSheetCellWidth });
+			{ sideTile.m_position.x + constants::k_spriteSheetCellSize, sideTile.m_position.y + constants::k_spriteSheetCellSize });
 
 		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal / 2), 0 }).Overlapping(sideTileBounds)
 			&& sideTile.m_canCollide)

@@ -3,7 +3,7 @@ Fireball::Fireball(const int entityID) :
 	Entity(
 		eEntityType::e_Fireball,
 		entityID,
-		Vector2(constants::k_spriteSheetCellWidth, constants::k_spriteSheetCellWidth)
+		Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize)
 	),
 	m_activeState(false),
 	m_jumpForce(1.5f),
