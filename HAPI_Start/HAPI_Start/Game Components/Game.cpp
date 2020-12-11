@@ -33,18 +33,34 @@ void Game::Update()
 	HandleKeyBoardInput();
 	HandleControllerInput();
 
+	// UPDATE ENTITIES
+	
 	m_player.Update(deltaTime);
-
-	for (auto& coin : m_coins)
-	{
-		coin.Update(deltaTime);
-		coin.CheckEntityCollisions(m_player);
-	}
-
+	
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
+	UpdateEnemies(m_coins, deltaTime);
 
+	// CHECK ENTITY-LEVEL COLLISIONS 
 	m_tileManager.CheckPlayerLevelCollisions(m_player);
+	for(auto& slime : m_slimes)
+	{
+		m_tileManager.CheckEnemyLevelCollisions(slime);
+	}
+	
+	for (auto& snail : m_snails)
+	{
+		m_tileManager.CheckEnemyLevelCollisions(snail);
+	}
+
+	// CHECK ENTITY-ENTITY COLLISIONS
+	CheckEnemyCollisions(m_slimes);
+	CheckEnemyCollisions(m_snails);
+
+	for(auto& c : m_coins)
+	{
+		c.CheckEntityCollisions(m_player);
+	}
 
 	// Scroll the background
 	if (m_player.GetCurrentDirection() == eDirection::e_Right && m_player.GetMoveDirectionLimit() != eDirection::e_Right)

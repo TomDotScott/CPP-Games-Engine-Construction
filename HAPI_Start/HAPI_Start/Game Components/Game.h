@@ -46,46 +46,55 @@ private:
 	void HandleControllerInput();
 	bool Initialise();
 	template<typename T>
-	void UpdateEnemies(std::vector<T>& enemyContainer, float deltaTime);
+	void UpdateEnemies(std::vector<T>& enemies, float deltaTime);
+	template<typename T>
+	void CheckEnemyCollisions(std::vector<T>& enemies);
 };
 
 template <typename T>
-void Game::UpdateEnemies(std::vector<T>& enemyContainer, const float deltaTime)
+void Game::UpdateEnemies(std::vector<T>& enemies, const float deltaTime)
 {
 	// Only work on snails and slimes...
 	const float playerOffset = m_player.GetPosition().x;
-	for (auto& enemy : enemyContainer)
+	for (auto& enemy : enemies)
 	{
 		// Only update enemies if they're onscreen and alive
 		if (enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset < constants::k_screenWidth &&
 			enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset > 0)
 		{
 			enemy.Update(deltaTime);
-			m_tileManager.CheckEnemyLevelCollisions(enemy);
-			if (enemy.GetCurrentEntityState() != eEntityState::e_Dead)
-			{
-				m_player.CheckEntityCollisions(enemy);
-				
-				enemy.CheckEntityCollisions(m_player);
+		}
+	}
+}
 
-				// Check against the fireballs
-				for(auto& fireball : m_player.GetFireBallPool())
+template <typename T>
+void Game::CheckEnemyCollisions(std::vector<T>& enemies)
+{
+	for (auto& enemy : enemies)
+	{
+		if (enemy.GetCurrentEntityState() != eEntityState::e_Dead)
+		{
+			m_player.CheckEntityCollisions(enemy);
+
+			enemy.CheckEntityCollisions(m_player);
+
+			// Check against the fireballs
+			for (auto& fireball : m_player.GetFireBallPool())
+			{
+				if (fireball.GetActiveState())
 				{
-					if (fireball.GetActiveState())
-					{
-						enemy.CheckEntityCollisions(fireball);
-					}
+					enemy.CheckEntityCollisions(fireball);
 				}
-				
-				// Check for snail shell collisions
-				for (auto& snail : m_snails)
+			}
+
+			// Check for snail shell collisions
+			for (auto& snail : m_snails)
+			{
+				if (snail.GetSnailState() == eSnailState::e_Sliding)
 				{
-					if (snail.GetSnailState() == eSnailState::e_Sliding)
+					if (enemy.GetEntityID() != snail.GetEntityID())
 					{
-						if (enemy.GetEntityID() != snail.GetEntityID())
-						{
-							enemy.CheckSnailShellCollisions(snail.GetCurrentCollisionBoxes());
-						}
+						enemy.CheckSnailShellCollisions(snail.GetCurrentCollisionBoxes());
 					}
 				}
 			}
