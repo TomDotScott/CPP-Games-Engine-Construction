@@ -38,7 +38,6 @@ void Game::Update()
 	for (auto& coin : m_coins)
 	{
 		coin.Update(deltaTime);
-		m_player.CheckEntityCollisions(coin);
 		coin.CheckEntityCollisions(m_player);
 	}
 

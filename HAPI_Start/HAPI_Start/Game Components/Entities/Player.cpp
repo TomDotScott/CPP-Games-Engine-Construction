@@ -96,38 +96,41 @@ void Player::Render()
 	Graphics::GetInstance().DrawSprite(
 		GetTopIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left
-		);
+	);
 
 	Graphics::GetInstance().DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, dir == eDirection::e_Left
-		);
+	);
 }
 
 void Player::CheckEntityCollisions(Entity& other)
 {
-	if (other.GetCurrentEntityState() != eEntityState::e_Dead)
+	// Player can only collide with Snails or Slimes
+	// Since coin-player collisions are dealt with in Coin.cpp
+	if (other.GetEntityType() == eEntityType::e_Snail || other.GetEntityType() == eEntityType::e_Slime)
 	{
-		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-		const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
-		// Check the global boxes
-		if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+		if (other.GetCurrentEntityState() != eEntityState::e_Dead)
 		{
-			// If touching the bottom...
-			if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox) &&
-				(other.GetEntityType() == eEntityType::e_Snail || other.GetEntityType() == eEntityType::e_Slime)
-				)
+			const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+			const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+			// Check the global boxes
+			if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 			{
-				// Jump
-				Jump(m_jumpForce / 2);
-				return;
-			}
+				// If touching the bottom...
+				if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+				{
+					// Jump
+					Jump(m_jumpForce / 2);
+					return;
+				}
 
-			// If touching the left or right...
-			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-				currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
-			{
-				PowerDown();
+				// If touching the left or right...
+				if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+					currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+				{
+					PowerDown();
+				}
 			}
 		}
 	}
