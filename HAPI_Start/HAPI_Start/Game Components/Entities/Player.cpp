@@ -260,13 +260,13 @@ std::string Player::GetTopIdentifier()
 
 CollisionBoxes Player::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = BoundsRectangle({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = BoundsRectangle({ 16, 0 }, { 46, 8 });
+	auto topBottomCollisionBox = CollisionBox({ 16, 0 }, { 46, 8 });
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = BoundsRectangle({ 5, 8 }, { 31, 68 });
+	auto leftRightCollisionBox = CollisionBox({ 5, 8 }, { 31, 68 });
 	leftRightCollisionBox.Translate(m_position);
 
 	return{ entityCollisionBox,

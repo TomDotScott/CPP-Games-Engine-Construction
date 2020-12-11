@@ -187,7 +187,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 
 		Tile& currentTile = m_levelData[playerPosY][playerPosX];
 
-		const auto currentTileCollisionBox = BoundsRectangle(
+		const auto currentTileCollisionBox = CollisionBox(
 			{ currentTile.m_position },
 			{ currentTile.m_position.x + constants::k_spriteSheetCellSize, currentTile.m_position.y + constants::k_spriteSheetCellSize }
 		);
@@ -370,7 +370,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	{
 		auto& groundTile = m_levelData[fireballY][fireballX];
 
-		const auto groundTileBoxes = BoundsRectangle({ groundTile.m_position },
+		const auto groundTileBoxes = CollisionBox({ groundTile.m_position },
 			{ groundTile.m_position.x + constants::k_spriteSheetCellSize, groundTile.m_position.y + constants::k_spriteSheetCellSize });
 
 		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes)
@@ -392,7 +392,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	{
 		auto& sideTile = m_levelData[fireballY][fireballX + 1];
 
-		const auto sideTileBounds = BoundsRectangle({ sideTile.m_position },
+		const auto sideTileBounds = CollisionBox({ sideTile.m_position },
 			{ sideTile.m_position.x + constants::k_spriteSheetCellSize, sideTile.m_position.y + constants::k_spriteSheetCellSize });
 
 		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal / 2), 0 }).Overlapping(sideTileBounds)

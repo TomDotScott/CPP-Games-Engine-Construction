@@ -39,7 +39,7 @@
     <ClCompile Include="Graphics\Texture.cpp" />
     <ClCompile Include="Game Components\TileManager.cpp" />
     <ClCompile Include="Game Components\SoundManager.cpp" />
-    <ClCompile Include="Utilities\BoundsRectangle.cpp" />
+    <ClCompile Include="Utilities\CollisionBox.cpp" />
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +53,7 @@
     <ClInclude Include="Game Components\Entities\Enemies\Snail.h" />
     <ClInclude Include="Game Components\TileManager.h" />
     <ClInclude Include="Game Components\SoundManager.h" />
-    <ClInclude Include="Utilities\BoundsRectangle.h" />
+    <ClInclude Include="Utilities\CollisionBox.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entities\Entity.h" />
     <ClInclude Include="Game Components\Game.h" />

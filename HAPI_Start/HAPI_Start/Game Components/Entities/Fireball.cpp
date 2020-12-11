@@ -67,13 +67,13 @@ void Fireball::CheckEntityCollisions(Entity& other)
 
 CollisionBoxes Fireball::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = BoundsRectangle({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = BoundsRectangle({ 21, 20 }, { 43, 24 });
+	auto topBottomCollisionBox = CollisionBox({ 21, 20 }, { 43, 24 });
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = BoundsRectangle({ 21, 24 }, { 32, 40 });
+	auto leftRightCollisionBox = CollisionBox({ 21, 24 }, { 32, 40 });
 	leftRightCollisionBox.Translate(m_position);
 
 	return{ entityCollisionBox,

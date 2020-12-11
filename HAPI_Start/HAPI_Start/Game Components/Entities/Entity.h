@@ -2,7 +2,7 @@
 #include <string>
 #include "../AnimationPlayer.h"
 #include "../Animations.h"
-#include "../Utilities/BoundsRectangle.h"
+#include "../Utilities/CollisionBox.h"
 #include "../Utilities/Vector.h"
 #include "../Utilities/Constants.h"
 
@@ -31,11 +31,11 @@ enum class eEntityType
 struct CollisionBoxes
 {
 	CollisionBoxes() = default;
-	BoundsRectangle m_globalBounds;
-	BoundsRectangle m_topCollisionBox;
-	BoundsRectangle m_leftCollisionBox;
-	BoundsRectangle m_rightCollisionBox;
-	BoundsRectangle m_bottomCollisionBox;
+	CollisionBox m_globalBounds;
+	CollisionBox m_topCollisionBox;
+	CollisionBox m_leftCollisionBox;
+	CollisionBox m_rightCollisionBox;
+	CollisionBox m_bottomCollisionBox;
 };
 
 class Entity

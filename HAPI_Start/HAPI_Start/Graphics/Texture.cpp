@@ -133,12 +133,12 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	Vector2 temp = position;
-	const BoundsRectangle textureBounds({}, m_size);
+	const CollisionBox textureBounds({}, m_size);
 
-	const BoundsRectangle screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
+	const CollisionBox screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
 
 	// Create a copy to clip with 
-	BoundsRectangle clippedRect(textureBounds);
+	CollisionBox clippedRect(textureBounds);
 
 	//Translate to screen space
 	clippedRect.Translate(temp);
@@ -254,12 +254,12 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
 	const Vector2 temp = position;
-	const BoundsRectangle spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellSize), static_cast<float>(constants::k_spriteSheetCellSize) });
+	const CollisionBox spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellSize), static_cast<float>(constants::k_spriteSheetCellSize) });
 
-	const BoundsRectangle screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
+	const CollisionBox screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
 
 	// Create a copy to clip with 
-	BoundsRectangle clippedRect(spriteBounds);
+	CollisionBox clippedRect(spriteBounds);
 
 	//Translate to screen space
 	clippedRect.Translate(temp);

@@ -46,13 +46,13 @@ void Coin::CheckEntityCollisions(Entity& other)
 
 CollisionBoxes Coin::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = BoundsRectangle({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = BoundsRectangle({ 12, 11 }, { 51, 16 });
+	auto topBottomCollisionBox = CollisionBox({ 12, 11 }, { 51, 16 });
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = BoundsRectangle({ 12, 16 }, { 32, 46 });
+	auto leftRightCollisionBox = CollisionBox({ 12, 16 }, { 32, 46 });
 	leftRightCollisionBox.Translate(m_position);
 
 	return{ entityCollisionBox,

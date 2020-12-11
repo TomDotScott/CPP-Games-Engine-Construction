@@ -74,16 +74,16 @@ void Slime::Squash()
 
 CollisionBoxes Slime::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = BoundsRectangle(Vector2::ZERO, m_size);
+	auto entityCollisionBox = CollisionBox(Vector2::ZERO, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topCollisionBox = BoundsRectangle({ 21.f, 5.f }, { 43.f, 9.f });
+	auto topCollisionBox = CollisionBox({ 21.f, 5.f }, { 43.f, 9.f });
 	topCollisionBox.Translate(m_position);
 
-	auto bottomCollisionBox = BoundsRectangle({ 6.f, 28.f }, { 58.f, 32.f });
+	auto bottomCollisionBox = CollisionBox({ 6.f, 28.f }, { 58.f, 32.f });
 	bottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = BoundsRectangle({ 6.f, 9.f }, { 32.f, 28.f });
+	auto leftRightCollisionBox = CollisionBox({ 6.f, 9.f }, { 32.f, 28.f });
 	leftRightCollisionBox.Translate(m_position);
 
 	return{ entityCollisionBox,

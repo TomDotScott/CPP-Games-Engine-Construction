@@ -146,16 +146,16 @@ void Snail::Move(const float deltaTime)
 
 CollisionBoxes Snail::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = BoundsRectangle(Vector2::ZERO, m_size);
+	auto entityCollisionBox = CollisionBox(Vector2::ZERO, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topCollisionBox = BoundsRectangle({ 22.f, 0.f }, { 52.f, 7.f });
+	auto topCollisionBox = CollisionBox({ 22.f, 0.f }, { 52.f, 7.f });
 	topCollisionBox.Translate(m_position);
 
-	auto bottomCollisionBox = BoundsRectangle({ 7.f, 30.f }, { 75.f, 36.f });
+	auto bottomCollisionBox = CollisionBox({ 7.f, 30.f }, { 75.f, 36.f });
 	bottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = BoundsRectangle({ 7.f, 7.f }, { 32.f, 30.f });
+	auto leftRightCollisionBox = CollisionBox({ 7.f, 7.f }, { 32.f, 30.f });
 	leftRightCollisionBox.Translate(m_position);
 
 	return{ entityCollisionBox,

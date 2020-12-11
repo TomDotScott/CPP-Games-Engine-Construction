@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <HAPI_lib.h>
-#include "../Utilities/BoundsRectangle.h"
+#include "../Utilities/CollisionBox.h"
 #include "../Utilities/Vector.h"
 
 class Texture
