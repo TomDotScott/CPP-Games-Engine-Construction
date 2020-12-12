@@ -59,6 +59,13 @@ const std::vector<std::string> animations::COIN_SPIN
 	"Coin_5" , "Coin_6" , "Coin_7" , "Coin_8"
 };
 
+/* GEM BEGIN */
+const std::vector<std::string> animations::GEM_SPIN
+{
+	"Gem_1", "Gem_2" , "Gem_3" , "Gem_4" ,
+	"Gem_5" , "Gem_6" , "Gem_7" , "Gem_8"
+};
+
 /* SNAIL BEGIN */
 const std::vector<std::string> animations::SNAIL_WALK
 {

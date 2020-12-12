@@ -21,8 +21,11 @@ namespace animations
 	extern const std::vector<std::string> FIREBALL_SPIN;
 	extern const std::vector<std::string> FIREBALL_EXPLOSION;
 	
-	// THE COINS
+	// COINS
 	extern const std::vector<std::string> COIN_SPIN;
+
+	// GEMS
+	extern const std::vector<std::string> GEM_SPIN;
 	
 	// THE SNAILS
 	extern const std::vector<std::string> SNAIL_WALK;

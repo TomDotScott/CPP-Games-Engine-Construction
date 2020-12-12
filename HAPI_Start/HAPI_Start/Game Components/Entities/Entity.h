@@ -21,6 +21,7 @@ enum class eEntityType
 	e_None = -1,
 	e_Player,
 	e_Fireball,
+	e_FireGem,
 	e_Slime = 65,
 	e_Coin = 66,
 	e_Snail = 68,

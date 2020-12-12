@@ -13,7 +13,6 @@ Game::Game() :
 	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
 	m_gameScore(0),
-	m_currentSprite(0),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None)
 {
@@ -33,14 +32,48 @@ void Game::Update()
 	HandleKeyBoardInput();
 	HandleControllerInput();
 
-	// UPDATE ENTITIES
+	// SEE IF THERE ARE ANY COINS OR GEMS TO SET VISIBLE
+	auto& newEntityLocations = m_tileManager.GetEntityLocations();
+	while (!newEntityLocations.empty())
+	{
+		const auto& front = newEntityLocations.front();
+		switch (front.first)
+		{
+		case eEntityType::e_FireGem:
+			// Find the first inactive pickup in the pickup pool
+			for (auto& gem : m_pickUpPool)
+			{
+				if(gem.GetActiveState() == false)
+				{
+					gem.Initialise(front.second);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		// dequeue the element
+		newEntityLocations.pop();
+	}
+
 	
+	// UPDATE ENTITIES
 	m_player.Update(deltaTime);
 	
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
 	UpdateEnemies(m_coins, deltaTime);
 
+	// UPDATE ANY ACTIVE PICKUPS
+	for(auto& pickup : m_pickUpPool)
+	{
+		if(pickup.GetActiveState())
+		{
+			pickup.Update(deltaTime);
+		}
+	}
+
+	
 	// CHECK ENTITY-LEVEL COLLISIONS 
 	m_tileManager.CheckPlayerLevelCollisions(m_player);
 	for(auto& slime : m_slimes)
@@ -60,6 +93,15 @@ void Game::Update()
 	for(auto& c : m_coins)
 	{
 		c.CheckEntityCollisions(m_player);
+	}
+
+	for (auto& pickup : m_pickUpPool)
+	{
+		if (pickup.GetActiveState())
+		{
+			pickup.CheckEntityCollisions(m_player);
+			m_player.CheckEntityCollisions(pickup);
+		}
 	}
 
 	// Scroll the background
@@ -125,6 +167,14 @@ void Game::Render()
 		}
 	}
 
+	for(auto& pickup : m_pickUpPool)
+	{
+		if(pickup.GetActiveState())
+		{
+			pickup.Render(playerXOffset);
+		}
+	}
+
 	m_player.Render();
 }
 
@@ -136,11 +186,12 @@ int Game::GenerateNextEntityId()
 
 void Game::CreateSprite(const std::string& spriteSheetIdentifier)
 {
-	if (!Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, m_currentSprite))
+	static int currentSpriteID = 0;
+	if (!Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, currentSpriteID))
 	{
 		HAPI.Close();
 	}
-	m_currentSprite++;
+	currentSpriteID++;
 }
 
 float Game::DeltaTime() const
@@ -289,14 +340,18 @@ bool Game::Initialise()
 	CreateSprite("Coin_6");
 	CreateSprite("Coin_7");
 	CreateSprite("Coin_8");
+	CreateSprite("Gem_1");
+	CreateSprite("Gem_2");
+	CreateSprite("Gem_3");
+	CreateSprite("Gem_4");
+	CreateSprite("Gem_5");
+	CreateSprite("Gem_6");
+	CreateSprite("Gem_7");
+	CreateSprite("Gem_8");
 	CreateSprite("Flag_Up_1");
 	CreateSprite("Flag_Up_2");
 	CreateSprite("Flag_Down");
 	CreateSprite("Flag_Pole");
-	CreateSprite("Gem_1");
-	CreateSprite("Gem_2");
-	CreateSprite("Gem_3");
-	CreateSprite("Gem_Fire");
 	CreateSprite("UI_0");
 	CreateSprite("UI_1");
 	CreateSprite("UI_2");
@@ -370,6 +425,12 @@ bool Game::Initialise()
 			break;
 		default: break;
 		}
+	}
+
+	// Create items for the object poolers
+	for(int i = 0; i < 10; ++i)
+	{
+		m_pickUpPool.emplace_back(GenerateNextEntityId(), Vector2::CENTRE, false);
 	}
 
 	m_player.SetPosition(Vector2::CENTRE);

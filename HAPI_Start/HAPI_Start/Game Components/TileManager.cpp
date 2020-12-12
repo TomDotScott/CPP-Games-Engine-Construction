@@ -208,21 +208,12 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 				currentTile.m_type = eTileType::e_CoinBlock;
 				break;
 			case eTileType::e_ItemBlock:
-				// make the tile above it a pickup for the player
-				m_levelData[playerPosY - 1][playerPosX] = Tile(
-					eTileType::e_FireGem,
-					{ currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellSize },
-					false
-				);
+				m_entityLocations.push({ eEntityType::e_FireGem, {currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellSize } });
+				
 				currentTile.m_type = eTileType::e_BrickBlock;
 				break;
 			default:;
 			}
-		} else if (currentTile.m_type == eTileType::e_FireGem && player.GetCurrentCollisionBoxes().m_globalBounds.Overlapping(currentTileCollisionBox))
-		{
-			currentTile.m_type = eTileType::e_Air;
-			currentTile.m_canCollide = false;
-			player.PowerUp(ePowerUpType::e_FireThrower);
 		}
 	}
 

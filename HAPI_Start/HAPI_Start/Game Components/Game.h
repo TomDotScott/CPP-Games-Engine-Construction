@@ -5,6 +5,7 @@
 #include "Entities/Coin.h"
 #include "Entities/Enemies/Slime.h"
 #include "Entities/Enemies/Snail.h"
+#include "Entities/PickUpGem.h"
 #include "Entities/Player.h"
 #include "TileManager.h"
 
@@ -30,7 +31,6 @@ private:
 	clock_t m_gameClock;
 	
 	int m_gameScore;
-	int m_currentSprite;
 	
 	Vector2 m_backgroundPosition;
 	eDirection m_backgroundMoveDir;
@@ -38,6 +38,7 @@ private:
 	std::vector<Slime> m_slimes;
 	std::vector<Snail> m_snails;
 	std::vector<Coin> m_coins;
+	std::vector<PickUpGem> m_pickUpPool;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;

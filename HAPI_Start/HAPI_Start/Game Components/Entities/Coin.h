@@ -1,7 +1,7 @@
 #pragma once
 #include "Entity.h"
 
-class Coin : public Entity
+class Coin final : public Entity
 {
 public:
 	explicit Coin(const int entityID, Vector2 position, bool visible);
@@ -15,7 +15,6 @@ public:
 
 private:
 	float m_lifeTime;
-
 	bool m_isVisible;
 
 	void Move(float deltaTime) override;

@@ -106,19 +106,29 @@ void Player::Render()
 
 void Player::CheckEntityCollisions(Entity& other)
 {
-	// Player can only collide with Snails or Slimes
-	// Since coin-player collisions are dealt with in Coin.cpp
-	if (other.GetEntityType() == eEntityType::e_Snail || other.GetEntityType() == eEntityType::e_Slime)
+	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+	// Check the global boxes
+	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
-		if (other.GetCurrentEntityState() != eEntityState::e_Dead)
+		switch (other.GetEntityType())
 		{
-			const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-			const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
-			// Check the global boxes
-			if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+		case eEntityType::e_FireGem:
+			// collide from any angle
+			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+			{
+				PowerUp(ePowerUpType::e_FireThrower);
+			}
+			break;
+		case eEntityType::e_Slime:
+		case eEntityType::e_Snail:
+			if (other.GetCurrentEntityState() != eEntityState::e_Dead)
 			{
 				// If touching the bottom...
-				if (GetCurrentCollisionBoxes().m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+				if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 				{
 					// Jump
 					Jump(m_jumpForce / 2);
@@ -132,6 +142,8 @@ void Player::CheckEntityCollisions(Entity& other)
 					PowerDown();
 				}
 			}
+			break;
+		default:;
 		}
 	}
 }
