@@ -45,7 +45,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					tileType == eTileType::e_Coin ||
 					tileType == eTileType::e_Snail)
 				{
-					m_entityLocations.push_back({ static_cast<const eEntityType>(tileString), tilePosition });
+					m_entityLocations.push({ static_cast<const eEntityType>(tileString), tilePosition });
 					row.emplace_back(eTileType::e_Air, tilePosition, false);
 				} else
 				{
@@ -403,7 +403,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	}
 }
 
-entity_locations TileManager::GetEntityLocations() const
+std::queue<std::pair<eEntityType, Vector2>>& TileManager::GetEntityLocations()
 {
 	return m_entityLocations;
 }

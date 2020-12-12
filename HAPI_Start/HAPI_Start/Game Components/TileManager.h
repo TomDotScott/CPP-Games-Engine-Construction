@@ -1,11 +1,11 @@
 #pragma once
 #include <vector>
+#include <queue>
 #include "../Utilities/Vector.h"
 #include "Entities/Enemies/Enemy.h"
 #include "Entities/Entity.h"
 #include "Entities/Player.h"
 struct Tile;
-using entity_locations = std::vector<std::pair<eEntityType, Vector2>>;
 
 class TileManager
 {
@@ -15,11 +15,11 @@ public:
 	void CheckPlayerLevelCollisions(Player& player);
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void CheckFireballLevelCollisions(Fireball& fireball);
-	entity_locations GetEntityLocations() const;
+	std::queue<std::pair<eEntityType, Vector2>>& GetEntityLocations();
 	
 private:
 	std::vector<std::vector<Tile>> m_levelData;
-	entity_locations m_entityLocations;
+	std::queue<std::pair<eEntityType, Vector2>> m_entityLocations;
 };
 
 enum class eTileType

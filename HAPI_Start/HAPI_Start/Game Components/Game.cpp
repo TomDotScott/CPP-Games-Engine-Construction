@@ -227,7 +227,7 @@ bool Game::Initialise()
 	{
 		return false;
 	}
-	
+
 
 	CreateSprite("Player_Walk_Top_1");
 	CreateSprite("Player_Walk_Body_1");
@@ -350,20 +350,23 @@ bool Game::Initialise()
 		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
-	const auto entityLocations = m_tileManager.GetEntityLocations();
+	auto& entityLocations = m_tileManager.GetEntityLocations();
 
-	for (auto& entityLocation : entityLocations)
-	{
-		switch (entityLocation.first)
+	// Dequeue every entity location
+	while (!entityLocations.empty()){
+		const auto location = entityLocations.front();
+		entityLocations.pop();
+		
+		switch (location.first)
 		{
 		case eEntityType::e_Coin:
-			m_coins.emplace_back(GenerateNextEntityId(), entityLocation.second, true);
+			m_coins.emplace_back(GenerateNextEntityId(), location.second, true);
 			break;
 		case eEntityType::e_Slime:
-			m_slimes.emplace_back(GenerateNextEntityId(), entityLocation.second, entityLocation.second.y == 768.f ? true : false);
+			m_slimes.emplace_back(GenerateNextEntityId(), location.second, location.second.y == 768.f ? true : false);
 			break;
 		case eEntityType::e_Snail:
-			m_snails.emplace_back(GenerateNextEntityId(), entityLocation.second);
+			m_snails.emplace_back(GenerateNextEntityId(), location.second);
 			break;
 		default: break;
 		}
