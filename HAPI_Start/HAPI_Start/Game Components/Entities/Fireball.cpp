@@ -9,7 +9,7 @@ Fireball::Fireball(const int entityID) :
 	m_jumpForce(1.5f),
 	m_fireBallState(eFireBallState::e_Bouncing)
 {
-	AddAnimation(animations::FIREBALL_SPIN, true, 50.f);
+	AddAnimation(animations::FIREBALL_SPIN, true, 150.f);
 	AddAnimation(animations::FIREBALL_EXPLOSION, false, 25.f);
 }
 

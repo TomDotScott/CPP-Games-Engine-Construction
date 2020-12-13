@@ -42,28 +42,24 @@ const std::vector<std::string> animations::PLAYER_POWER_UP_CLIMB
 /* FIREBALL BEGIN */
 const std::vector<std::string> animations::FIREBALL_SPIN
 {
-	"Fireball_1", "Fireball_2", "Fireball_3", "Fireball_4",
-	"Fireball_5", "Fireball_6", "Fireball_7", "Fireball_8"
+	"Fireball_1", "Fireball_2", "Fireball_3", "Fireball_4"
 };
 
 const std::vector<std::string> animations::FIREBALL_EXPLOSION
 {
-	"Explosion_1", "Explosion_2", "Explosion_3", "Explosion_4",
-	"Explosion_5", "Explosion_6", "Explosion_7", "Explosion_8",
+	"Explosion_1", "Explosion_2", "Explosion_3", "Explosion_4", "Explosion_5", "Explosion_6", "Explosion_7", "Explosion_8",
 };
 
 /* COIN BEGIN */
 const std::vector<std::string> animations::COIN_SPIN
 {
-	"Coin_1", "Coin_2" , "Coin_3" , "Coin_4" ,
-	"Coin_5" , "Coin_6" , "Coin_7" , "Coin_8"
+	"Coin_1", "Coin_2" , "Coin_3" , "Coin_4", "Coin_5" , "Coin_6" , "Coin_7" , "Coin_8"
 };
 
 /* GEM BEGIN */
 const std::vector<std::string> animations::GEM_SPIN
 {
-	"Gem_1", "Gem_2" , "Gem_3" , "Gem_4" ,
-	"Gem_5" , "Gem_6" , "Gem_7" , "Gem_8"
+	"Gem_1", "Gem_2" , "Gem_3" , "Gem_4" , "Gem_5" , "Gem_6"
 };
 
 /* SNAIL BEGIN */
@@ -84,8 +80,7 @@ const std::vector<std::string> animations::SNAIL_SHELL_HIT
 
 const std::vector<std::string> animations::SNAIL_SHELL_CRACK
 {
-	"Snail_Shell", "Snail_Shell_Crack_1",
-	"Snail_Shell_Crack_2" , "Snail_Shell_Crack_3"
+	"Snail_Shell", "Snail_Shell_Crack_1", "Snail_Shell_Crack_2" , "Snail_Shell_Crack_3"
 };
 
 /* SLIME BEGIN */

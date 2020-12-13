@@ -263,12 +263,12 @@ void Game::HandleControllerInput()
 
 bool Game::Initialise()
 {
-	if (!Graphics::GetInstance().CreateTexture("Data/PlatformerBackground.tga", "Background"))
+	if (!Graphics::GetInstance().CreateTexture("Data/PlatformerBackgroundPixelised.tga", "Background"))
 	{
 		HAPI.UserMessage("Background Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
-	if (!Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheet.tga"))
+	if (!Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheetPixelised.tga"))
 	{
 		HAPI.UserMessage("Spritesheet Could Not Be Loaded", "An Error Occurred");
 		return false;
@@ -312,10 +312,6 @@ bool Game::Initialise()
 	CreateSprite("Fireball_2");
 	CreateSprite("Fireball_3");
 	CreateSprite("Fireball_4");
-	CreateSprite("Fireball_5");
-	CreateSprite("Fireball_6");
-	CreateSprite("Fireball_7");
-	CreateSprite("Fireball_8");
 	CreateSprite("Explosion_1");
 	CreateSprite("Explosion_2");
 	CreateSprite("Explosion_3");
@@ -346,8 +342,6 @@ bool Game::Initialise()
 	CreateSprite("Gem_4");
 	CreateSprite("Gem_5");
 	CreateSprite("Gem_6");
-	CreateSprite("Gem_7");
-	CreateSprite("Gem_8");
 	CreateSprite("Flag_Up_1");
 	CreateSprite("Flag_Up_2");
 	CreateSprite("Flag_Down");
@@ -362,9 +356,9 @@ bool Game::Initialise()
 	CreateSprite("UI_7");
 	CreateSprite("UI_8");
 	CreateSprite("UI_9");
-	CreateSprite("UI_Heart_Empty");
-	CreateSprite("UI_Heart_Half");
 	CreateSprite("UI_Heart_Full");
+	CreateSprite("UI_Heart_Half");
+	CreateSprite("UI_Heart_Empty");
 	CreateSprite("UI_Lives");
 	CreateSprite("UI_Coins");
 	CreateSprite("UI_X");
@@ -397,9 +391,6 @@ bool Game::Initialise()
 	CreateSprite("Door_Closed_Mid");
 	CreateSprite("Door_Open_Top");
 	CreateSprite("Door_Open_Mid");
-	CreateSprite("UI_Key_Not_Found");
-	CreateSprite("UI_Key_Found");
-	CreateSprite("Key");
 	if (!m_tileManager.LoadLevel("./Data/Level1.csv"))
 	{
 		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
