@@ -41,6 +41,7 @@
     <ClCompile Include="Game Components\TileManager.cpp" />
     <ClCompile Include="Audio\SoundManager.cpp" />
     <ClCompile Include="Audio\SoundDevice.cpp" />
+    <ClCompile Include="SoundBuffer.cpp" />
     <ClCompile Include="Utilities\CollisionBox.cpp" />
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
@@ -57,6 +58,7 @@
     <ClInclude Include="Game Components\TileManager.h" />
     <ClInclude Include="Audio\SoundManager.h" />
     <ClInclude Include="Audio\SoundDevice.h" />
+    <ClInclude Include="SoundBuffer.h" />
     <ClInclude Include="Utilities\CollisionBox.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entities\Entity.h" />

@@ -4,7 +4,7 @@
 class SoundDevice
 {
 public:
-	static SoundDevice* GetSoundDevice();
+	static SoundDevice* GetInstance();
 private:
 	SoundDevice();
 	~SoundDevice();

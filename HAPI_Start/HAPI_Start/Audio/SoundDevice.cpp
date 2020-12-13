@@ -2,7 +2,7 @@
 
 #include "HAPI_lib.h"
 
-SoundDevice* SoundDevice::GetSoundDevice()
+SoundDevice* SoundDevice::GetInstance()
 {
 	static auto* sndDevice = new SoundDevice();
 	return sndDevice;

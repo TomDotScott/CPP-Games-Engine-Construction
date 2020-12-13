@@ -5,6 +5,7 @@
 
 #include "../Audio/SoundDevice.h"
 #include "../Audio/SoundManager.h"
+#include "../SoundBuffer.h"
 
 
 Game::Game() :
@@ -25,8 +26,8 @@ Game::Game() :
 		HAPI.Close();
 	}
 
-	/*SoundManager::GetInstance().PlaySFX("Music");*/
-	SoundDevice* soundDevice = SoundDevice::GetSoundDevice();
+	SoundDevice* soundDevice = SoundDevice::GetInstance();
+	auto bufferTest = SoundBuffer::GetInstance()->AddSoundEffect("Data/Music.wav");
 }
 
 void Game::Update()
