@@ -2,7 +2,10 @@
 #include "../Graphics/Graphics.h"
 #include <fstream>
 
-#include "SoundManager.h"
+
+#include "../Audio/SoundDevice.h"
+#include "../Audio/SoundManager.h"
+
 
 Game::Game() :
 	PLAYER_WON(false),
@@ -22,7 +25,8 @@ Game::Game() :
 		HAPI.Close();
 	}
 
-	SoundManager::GetInstance().PlaySFX("Music");
+	/*SoundManager::GetInstance().PlaySFX("Music");*/
+	SoundDevice* soundDevice = SoundDevice::GetSoundDevice();
 }
 
 void Game::Update()

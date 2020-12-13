@@ -60,13 +60,16 @@
     <ClCompile Include="Game Components\Entities\Fireball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game Components\SoundManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities\CollisionBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game Components\Entities\PickUpGem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\SoundManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\SoundDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,13 +131,16 @@
     <ClInclude Include="Game Components\Entities\Fireball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game Components\SoundManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities\CollisionBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Components\Entities\PickUpGem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\SoundManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\SoundDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
