@@ -72,7 +72,7 @@
     <ClCompile Include="Audio\SoundDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SoundBuffer.cpp">
+    <ClCompile Include="Audio\SoundBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,7 +146,7 @@
     <ClInclude Include="Audio\SoundDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundBuffer.h">
+    <ClInclude Include="Audio\SoundBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
