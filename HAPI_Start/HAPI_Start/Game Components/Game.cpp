@@ -2,10 +2,9 @@
 #include "../Graphics/Graphics.h"
 #include <fstream>
 
-
+#include "../Audio/SoundBuffer.h"
 #include "../Audio/SoundDevice.h"
-#include "../Audio/SoundManager.h"
-#include "../SoundBuffer.h"
+#include "../Audio/SoundSource.h"
 
 
 Game::Game() :
@@ -28,6 +27,9 @@ Game::Game() :
 
 	SoundDevice* soundDevice = SoundDevice::GetInstance();
 	auto bufferTest = SoundBuffer::GetInstance()->AddSoundEffect("Data/Music.wav");
+	SoundSource source;
+
+	source.Play(bufferTest);
 }
 
 void Game::Update()
@@ -278,12 +280,6 @@ bool Game::Initialise()
 		HAPI.UserMessage("Spritesheet Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
-
-	if (!SoundManager::GetInstance().CreateSoundEffect("Music", "Data/Music.wav"))
-	{
-		return false;
-	}
-
 
 	CreateSprite("Player_Walk_Top_1");
 	CreateSprite("Player_Walk_Body_1");
