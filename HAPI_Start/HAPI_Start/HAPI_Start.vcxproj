@@ -42,6 +42,7 @@
     <ClCompile Include="Audio\SoundSource.cpp" />
     <ClCompile Include="Audio\SoundDevice.cpp" />
     <ClCompile Include="Audio\SoundBuffer.cpp" />
+    <ClCompile Include="Audio\SoundManager.cpp" />
     <ClCompile Include="Utilities\CollisionBox.cpp" />
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
@@ -59,6 +60,7 @@
     <ClInclude Include="Audio\SoundSource.h" />
     <ClInclude Include="Audio\SoundDevice.h" />
     <ClInclude Include="Audio\SoundBuffer.h" />
+    <ClInclude Include="Audio\SoundManager.h" />
     <ClInclude Include="Utilities\CollisionBox.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entities\Entity.h" />

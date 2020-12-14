@@ -1,10 +1,11 @@
 #pragma once
 #include <AL/alc.h>
 
-class SoundDevice
+#include "../Design Patterns/Singleton.h"
+
+class SoundDevice : public Singleton<SoundDevice>
 {
-public:
-	static SoundDevice* GetInstance();
+	friend class Singleton<SoundDevice>;
 private:
 	SoundDevice();
 	~SoundDevice();
@@ -12,4 +13,3 @@ private:
 	ALCdevice* p_ALCDevice;
 	ALCcontext* p_ALCContext;
 };
-

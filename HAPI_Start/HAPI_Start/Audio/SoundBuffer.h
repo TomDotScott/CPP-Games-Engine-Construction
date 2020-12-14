@@ -2,11 +2,12 @@
 #include <AL/al.h>
 #include <string>
 #include <vector>
+#include "../Design Patterns/Singleton.h"
 
-class SoundBuffer
+class SoundBuffer : public Singleton<SoundBuffer>
 {
+	friend class Singleton<SoundBuffer>;
 public:
-	static SoundBuffer* GetInstance();
 
 	ALuint AddSoundEffect(const char* filename);
 	bool RemoveSoundEffect(const ALuint& buffer);

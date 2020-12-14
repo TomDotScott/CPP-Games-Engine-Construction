@@ -2,12 +2,6 @@
 
 #include "HAPI_lib.h"
 
-SoundDevice* SoundDevice::GetInstance()
-{
-	static auto* sndDevice = new SoundDevice();
-	return sndDevice;
-}
-
 SoundDevice::SoundDevice()
 {
 	// Open the default device 

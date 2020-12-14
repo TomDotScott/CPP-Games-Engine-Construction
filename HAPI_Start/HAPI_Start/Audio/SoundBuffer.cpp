@@ -5,12 +5,6 @@
 
 #include "HAPI_lib.h"
 
-SoundBuffer* SoundBuffer::GetInstance()
-{
-	static auto* buffer = new SoundBuffer();
-	return buffer;
-}
-
 // Loads the named audio file into an OpenAL buffer object,
 // and returns the new buffer ID
 ALuint SoundBuffer::AddSoundEffect(const char* filename)
@@ -130,7 +124,7 @@ bool SoundBuffer::RemoveSoundEffect(const ALuint& buffer)
 SoundBuffer::~SoundBuffer()
 {
 	// Clear all the buffers
-	alDeleteBuffers(m_soundEffectBuffers.size(), m_soundEffectBuffers.data());
+	alDeleteBuffers(m_soundEffectBuffers.size(), static_cast<const ALuint*>(m_soundEffectBuffers.data()));
 	
 	// Erase the vector
 	m_soundEffectBuffers.clear();
