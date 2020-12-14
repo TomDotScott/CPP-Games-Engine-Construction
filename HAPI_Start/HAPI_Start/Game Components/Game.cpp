@@ -2,9 +2,7 @@
 #include "../Graphics/Graphics.h"
 #include <fstream>
 
-#include "../Audio/SoundBuffer.h"
-#include "../Audio/SoundDevice.h"
-#include "../Audio/SoundSource.h"
+#include "../Audio/SoundManager.h"
 
 
 Game::Game() :
@@ -25,11 +23,8 @@ Game::Game() :
 		HAPI.Close();
 	}
 
-	SoundDevice* soundDevice = SoundDevice::GetInstance();
-	auto bufferTest = SoundBuffer::GetInstance()->AddSoundEffect("Data/Music.wav");
-	SoundSource source;
-
-	source.Play(bufferTest);
+	SoundManager::GetInstance().AddSoundEffect("Music", "Data/Music.wav");
+	SoundManager::GetInstance().PlaySoundEffect("Music");
 }
 
 void Game::Update()
