@@ -2,6 +2,8 @@
 #include "../Graphics/Graphics.h"
 #include <fstream>
 
+
+#include "../Audio/Music.h"
 #include "../Audio/SoundManager.h"
 
 
@@ -23,8 +25,15 @@ Game::Game() :
 		HAPI.Close();
 	}
 
-	SoundManager::GetInstance().AddSoundEffect("Music", "Data/Music.wav");
-	SoundManager::GetInstance().PlaySoundEffect("Music");
+	/*SoundManager::GetInstance().AddSoundEffect("Music", "Data/Music.wav");
+	SoundManager::GetInstance().PlaySoundEffect("Music");*/
+
+	Music music("Data/Music.wav");
+	music.Play();
+	while(1)
+	{
+		music.UpdateBufferStream();
+	}
 }
 
 void Game::Update()

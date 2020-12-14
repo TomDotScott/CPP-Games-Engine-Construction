@@ -20,6 +20,10 @@ namespace constants
 	constexpr float k_gravity = 25.f;
 
 	constexpr float k_fireBallCoolDownTimer = 0.5f;
+
+	// Music Info
+	constexpr int k_bufferSamples = 8192;
+	constexpr int k_numBuffers = 4;
 	
 	inline int rand_range(const int min, const int max)
 	{
