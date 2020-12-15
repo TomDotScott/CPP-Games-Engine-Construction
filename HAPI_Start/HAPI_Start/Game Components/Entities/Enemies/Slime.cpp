@@ -60,6 +60,7 @@ void Slime::CheckEntityCollisions(Entity& other)
 				{
 					m_currentEntityState = eEntityState::e_ProjectileHit;
 					SetAnimationIndex(static_cast<int>(m_currentEntityState));
+					PlaySFX("Entity_Fireball_Hit");
 				}
 			}
 		}

@@ -38,6 +38,10 @@ void Coin::CheckEntityCollisions(Entity& other)
 				currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
 			{
+				if(m_isVisible)
+				{
+					PlaySFX("Coin");
+				}
 				m_isVisible = false;
 			}
 		}

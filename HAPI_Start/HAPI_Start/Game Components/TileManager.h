@@ -16,7 +16,7 @@ public:
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void CheckFireballLevelCollisions(Fireball& fireball);
 	std::queue<std::pair<eEntityType, Vector2>>& GetEntityLocations();
-	
+
 private:
 	std::vector<std::vector<Tile>> m_levelData;
 	std::queue<std::pair<eEntityType, Vector2>> m_entityLocations;
@@ -39,12 +39,14 @@ struct Tile
 	Tile(const eTileType type, const Vector2 position, const bool canCollide) :
 		m_type(type),
 		m_position(position),
-		m_canCollide(canCollide)
+		m_canCollide(canCollide),
+		m_canBeDestroyed(true)
 	{
 	}
 
 	eTileType m_type;
 	Vector2 m_position;
 	bool m_canCollide;
+	bool m_canBeDestroyed;
 };
 

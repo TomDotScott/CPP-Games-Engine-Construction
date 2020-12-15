@@ -98,8 +98,8 @@ void Snail::CheckEntityCollisions(Entity& other)
 				{
 					m_snailState = eSnailState::e_ProjectileHit;
 					SetAnimationIndex(static_cast<int>(m_snailState));
-
 					m_currentEntityState = eEntityState::e_Dead;
+					PlaySFX("Entity_Fireball_Hit");
 				}
 			}
 		}
@@ -118,6 +118,7 @@ void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 			SetAnimationIndex(static_cast<int>(m_snailState));
 
 			m_currentEntityState = eEntityState::e_Dead;
+			PlaySFX("Entity_Shell_Hit");
 		}
 	}
 }

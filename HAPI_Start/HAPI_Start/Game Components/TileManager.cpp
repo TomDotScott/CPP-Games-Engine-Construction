@@ -1,6 +1,8 @@
 #include "TileManager.h"
 #include <fstream>
 #include <sstream>
+
+#include "../Audio/SoundManager.h"
 #include "../Graphics/Graphics.h"
 
 bool TileManager::LoadLevel(const std::string& filename)
@@ -200,17 +202,26 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 			switch (currentTile.m_type)
 			{
 			case eTileType::e_CrateBlock:
+				if(currentTile.m_canBeDestroyed)
+				{
+					currentTile.m_type = eTileType::e_Air;
+					currentTile.m_canCollide = false;
+					SoundManager::GetInstance().PlaySoundEffect("Block_Break");
+				}
+				break;
 			case eTileType::e_CoinBlock:
-				currentTile.m_type = eTileType::e_Air;
-				currentTile.m_canCollide = false;
+				currentTile.m_type = eTileType::e_CrateBlock;
+				currentTile.m_canBeDestroyed = false;
+				SoundManager::GetInstance().PlaySoundEffect("Coin");
 				break;
 			case eTileType::e_BoxedCoinBlock:
 				currentTile.m_type = eTileType::e_CoinBlock;
+				SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
 				break;
 			case eTileType::e_ItemBlock:
 				m_entityLocations.push({ eEntityType::e_FireGem, {currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellSize } });
-				
 				currentTile.m_type = eTileType::e_BrickBlock;
+				SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
 				break;
 			default:;
 			}

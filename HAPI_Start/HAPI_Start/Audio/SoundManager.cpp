@@ -12,7 +12,7 @@ bool SoundManager::AddSoundEffect(const std::string& sfxName, const std::string&
 	} else
 	{
 		// Create a buffer
-		const auto sfxBuffer = SoundBuffer::GetInstance().AddSoundEffect("Data/Music.wav");
+		const auto sfxBuffer = SoundBuffer::GetInstance().AddSoundEffect(filename.c_str());
 
 		// Add the buffer to the map
 		m_soundBuffers[sfxName] = sfxBuffer;

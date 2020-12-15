@@ -94,6 +94,7 @@ protected:
 	
 	void AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
 	void PlayAnimation(float deltaTime);
+	void PlaySFX(const std::string& sfxName);
 	void SetAnimationIndex(int animationIndex);
 	std::string GetCurrentAnimationFrameIdentifier();
 	eAnimationState GetCurrentAnimationState() const;

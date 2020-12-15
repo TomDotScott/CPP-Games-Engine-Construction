@@ -55,6 +55,7 @@ void Player::Update(const float deltaTime)
 		if (m_shouldJumpNextFrame)
 		{
 			Jump(m_jumpForce);
+			PlaySFX("Player_Jump");
 			m_shouldJumpNextFrame = false;
 		}
 	} else if (m_currentPlayerState == ePlayerState::e_Jumping)
@@ -121,6 +122,7 @@ void Player::CheckEntityCollisions(Entity& other)
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 			{
 				PowerUp(ePowerUpType::e_FireThrower);
+				PlaySFX("Player_Power_Up");
 			}
 			break;
 		case eEntityType::e_Slime:
@@ -132,6 +134,7 @@ void Player::CheckEntityCollisions(Entity& other)
 				{
 					// Jump
 					Jump(m_jumpForce / 2);
+					PlaySFX("Entity_Squash");
 					return;
 				}
 
@@ -140,6 +143,7 @@ void Player::CheckEntityCollisions(Entity& other)
 					currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
 				{
 					PowerDown();
+					PlaySFX("Player_Power_Down");
 				}
 			}
 			break;
@@ -248,6 +252,7 @@ void Player::Shoot()
 				ball.Initialise(m_position, m_currentDirection);
 				m_canShoot = false;
 				m_shotCoolDown = 0.f;
+				PlaySFX("Fireball_Shoot");
 				return;
 			}
 		}

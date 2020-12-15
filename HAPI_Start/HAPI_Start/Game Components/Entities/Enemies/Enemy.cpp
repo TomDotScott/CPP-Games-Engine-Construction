@@ -53,6 +53,7 @@ void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 		{
 			m_currentEntityState = eEntityState::e_ProjectileHit;
 			SetAnimationIndex(static_cast<int>(m_currentEntityState));
+			PlaySFX("Entity_Shell_Hit");
 		}
 	}
 }

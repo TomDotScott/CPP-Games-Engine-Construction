@@ -1,4 +1,6 @@
 ﻿#include "Entity.h"
+
+#include "../../Audio/SoundManager.h"
 #include "../Graphics/Graphics.h"
 
 Entity::Entity(
@@ -87,6 +89,11 @@ void Entity::AddAnimation(const std::vector<std::string>& animationFrameIdentifi
 void Entity::PlayAnimation(const float deltaTime)
 {
 	m_animations[m_animationIndex].Play(deltaTime);
+}
+
+void Entity::PlaySFX(const std::string& sfxName)
+{
+	SoundManager::GetInstance().PlaySoundEffect(sfxName);
 }
 
 void Entity::SetAnimationIndex(const int animationIndex)

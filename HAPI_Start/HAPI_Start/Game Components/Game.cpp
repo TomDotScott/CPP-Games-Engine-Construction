@@ -400,11 +400,11 @@ bool Game::Initialise()
 	// Load SFX
 	SoundManager::GetInstance().AddSoundEffect("Block_Break", "Res/SFX/Block_Break.wav");
 	SoundManager::GetInstance().AddSoundEffect("Block_Bump", "Res/SFX/Block_Bump.wav");
-	SoundManager::GetInstance().AddSoundEffect("Brick_Break", "Res/SFX/Brick_Bump.wav");
+	SoundManager::GetInstance().AddSoundEffect("Brick_Break", "Res/SFX/Brick_Break.wav");
 	SoundManager::GetInstance().AddSoundEffect("Coin", "Res/SFX/Coin.wav");
 	SoundManager::GetInstance().AddSoundEffect("Entity_Shell_Hit", "Res/SFX/Entity_Shell_Hit.wav");
 	SoundManager::GetInstance().AddSoundEffect("Entity_Squash", "Res/SFX/Entity_Squash.wav");
-	SoundManager::GetInstance().AddSoundEffect("Fireball_Entity_Hit", "Res/SFX/Fireball_Entity_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Entity_Fireball_Hit", "Res/SFX/Entity_Fireball_Hit.wav");
 	SoundManager::GetInstance().AddSoundEffect("Fireball_Explosion", "Res/SFX/Fireball_Explosion.wav");
 	SoundManager::GetInstance().AddSoundEffect("Fireball_Shoot", "Res/SFX/Fireball_Shoot.wav");
 	SoundManager::GetInstance().AddSoundEffect("Fireball_Wall_Hit", "Res/SFX/Fireball_Wall_Hit.wav");
@@ -412,6 +412,7 @@ bool Game::Initialise()
 	SoundManager::GetInstance().AddSoundEffect("Player_Jump", "Res/SFX/Player_Jump.wav");
 	SoundManager::GetInstance().AddSoundEffect("Player_Power_Down", "Res/SFX/Player_Power_Down.wav");
 	SoundManager::GetInstance().AddSoundEffect("Player_Power_Up", "Res/SFX/Player_Power_Up.wav");
+	SoundManager::GetInstance().AddSoundEffect("Power_Up_Reveal", "Res/SFX/Power_Up_Reveal.wav");
 	SoundManager::GetInstance().AddSoundEffect("Shell_Hit_Wall", "Res/SFX/Shell_Hit_Wall.wav");
 	
 	// Load the level

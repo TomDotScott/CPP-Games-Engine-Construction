@@ -37,6 +37,7 @@ void Fireball::Explode()
 		m_fireBallState = eFireBallState::e_Exploding;
 		SetAnimationIndex(static_cast<int>(m_fireBallState));
 		m_animations[m_animationIndex].ResetAnimation();
+		PlaySFX("Fireball_Explosion");
 	}
 }
 
