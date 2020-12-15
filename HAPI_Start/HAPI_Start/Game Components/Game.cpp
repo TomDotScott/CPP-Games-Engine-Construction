@@ -4,7 +4,6 @@
 #include "../Audio/SoundManager.h"
 #include "../Graphics/Graphics.h"
 
-
 Game::Game() :
 	PLAYER_WON(false),
 	PLAYER_LOST(false),
@@ -323,6 +322,8 @@ bool Game::Initialise()
 	CreateSprite("Grass_Centre");
 	CreateSprite("Grass_Right");
 	CreateSprite("Dirt");
+	CreateSprite("Grass_Cliff_Left");
+	CreateSprite("Grass_Cliff_Right");
 	CreateSprite("Stone_Left");
 	CreateSprite("Stone_Centre");
 	CreateSprite("Stone_Right");
@@ -413,7 +414,7 @@ bool Game::Initialise()
 	SoundManager::GetInstance().AddMusic("Level_One", "Res/Music/Level1.wav");
 	
 	// Load the level
-	if (!m_tileManager.LoadLevel("Res/Levels/Level1.csv"))
+	if (!m_tileManager.LoadLevel("Res/Levels/Level2.csv"))
 	{
 		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
 		return false;

@@ -86,7 +86,7 @@ void TileManager::RenderTiles(const float playerOffset)
 				};
 				if (tilePos.x > -constants::k_spriteSheetCellSize && tilePos.x <= constants::k_screenWidth)
 				{
-					std::string spriteIdentifier;
+					std::string spriteIdentifier = "EmptyString";
 					switch (currentTile.m_type)
 					{
 					case eTileType::e_Air:
@@ -143,6 +143,12 @@ void TileManager::RenderTiles(const float playerOffset)
 					case eTileType::e_OpenDoorTop:
 						spriteIdentifier = "Door_Open_Top";
 						break;
+					case eTileType::e_ClosedDoorMid:
+						spriteIdentifier = "Door_Closed_Mid";
+						break;
+					case eTileType::e_ClosedDoorTop:
+						spriteIdentifier = "Door_Closed_Top";
+						break;
 					case eTileType::e_Plant:
 						spriteIdentifier = "Plant";
 						break;
@@ -164,8 +170,11 @@ void TileManager::RenderTiles(const float playerOffset)
 					case eTileType::e_RightArrow:
 						spriteIdentifier = "Arrow_Sign";
 						break;
-					case eTileType::e_FireGem:
-						spriteIdentifier = "Gem_Fire";
+					case eTileType::e_GrassCliffLeft:
+						spriteIdentifier = "Grass_Cliff_Left";
+						break;
+					case eTileType::e_GrassCliffRight:
+						spriteIdentifier = "Grass_Cliff_Right";
 						break;
 					default:;
 					}
@@ -202,7 +211,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 			switch (currentTile.m_type)
 			{
 			case eTileType::e_CrateBlock:
-				if(currentTile.m_canBeDestroyed)
+				if (currentTile.m_canBeDestroyed)
 				{
 					currentTile.m_type = eTileType::e_Air;
 					currentTile.m_canCollide = false;
@@ -310,7 +319,7 @@ void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
 
 	const int enemyYTile = static_cast<int>(enemyPos.y) / constants::k_spriteSheetCellSize;
 
-	if (enemyYTile > 0 && enemyYTile < constants::k_maxTilesVertical)
+	if (enemyYTile > 0 && enemyYTile + 1 < constants::k_maxTilesVertical)
 	{
 		// Stop falling if there is a walkable block below
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide)
@@ -368,7 +377,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	int fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellSize;
 
 
-	if (fireballX >= 0 && fireballX <= static_cast<int>(m_levelData[0].size()) && fireballY <= 15 && fireballY >= 0)
+	if (fireballX >= 0 && fireballX <= static_cast<int>(m_levelData[0].size()) && fireballY < 15 && fireballY >= 0)
 	{
 		auto& groundTile = m_levelData[fireballY][fireballX];
 
@@ -390,7 +399,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	fireballY = static_cast<int>(fireballBottom.BOTTOM_RIGHT.y) / constants::k_spriteSheetCellSize;
 
 
-	if (fireballX >= 0 && fireballX <= m_levelData[0].size() && fireballY <= 15 && fireballY >= 0)
+	if (fireballX >= 0 && fireballX <= m_levelData[0].size() && fireballY < 15 && fireballY >= 0)
 	{
 		auto& sideTile = m_levelData[fireballY][fireballX + 1];
 
