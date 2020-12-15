@@ -45,15 +45,18 @@ void Enemy::SetIsFalling(const bool isFalling)
 
 void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 {
-	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-	if (currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
+	if (m_currentEntityState == eEntityState::e_Alive)
 	{
-		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
-			currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
+		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+		if (currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
 		{
-			m_currentEntityState = eEntityState::e_ProjectileHit;
-			SetAnimationIndex(static_cast<int>(m_currentEntityState));
-			PlaySFX("Entity_Shell_Hit");
+			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
+			{
+				m_currentEntityState = eEntityState::e_ProjectileHit;
+				SetAnimationIndex(static_cast<int>(m_currentEntityState));
+				PlaySFX("Entity_Shell_Hit");
+			}
 		}
 	}
 }

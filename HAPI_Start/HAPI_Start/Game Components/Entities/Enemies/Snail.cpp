@@ -108,17 +108,20 @@ void Snail::CheckEntityCollisions(Entity& other)
 
 void Snail::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 {
-	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-	if (currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
+	if (m_snailState == eSnailState::e_Walking)
 	{
-		if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
-			currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
+		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+		if (currentCollisionBoxes.m_globalBounds.Overlapping(snailShellCollisionBoxes.m_globalBounds))
 		{
-			m_snailState = eSnailState::e_ProjectileHit;
-			SetAnimationIndex(static_cast<int>(m_snailState));
+			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(snailShellCollisionBoxes.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(snailShellCollisionBoxes.m_leftCollisionBox))
+			{
+				m_snailState = eSnailState::e_ProjectileHit;
+				SetAnimationIndex(static_cast<int>(m_snailState));
 
-			m_currentEntityState = eEntityState::e_Dead;
-			PlaySFX("Entity_Shell_Hit");
+				m_currentEntityState = eEntityState::e_Dead;
+				PlaySFX("Entity_Shell_Hit");
+			}
 		}
 	}
 }
