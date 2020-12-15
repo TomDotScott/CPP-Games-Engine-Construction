@@ -127,7 +127,7 @@ void Player::CheckEntityCollisions(Entity& other)
 			break;
 		case eEntityType::e_Slime:
 		case eEntityType::e_Snail:
-			if (other.GetCurrentEntityState() != eEntityState::e_Dead)
+			if (other.GetCurrentEntityState() == eEntityState::e_Alive)
 			{
 				// If touching the bottom...
 				if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
