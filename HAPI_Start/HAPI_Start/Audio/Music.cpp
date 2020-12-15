@@ -113,7 +113,7 @@ void Music::Play()
 	}
 }
 
-void Music::UpdateBufferStream()
+void Music::UpdateBufferStream() const
 {
 	// Clear any errors
 	alGetError();

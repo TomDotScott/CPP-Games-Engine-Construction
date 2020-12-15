@@ -1,10 +1,8 @@
 #include "Game.h"
-#include "../Graphics/Graphics.h"
 #include <fstream>
-
-
 #include "../Audio/Music.h"
 #include "../Audio/SoundManager.h"
+#include "../Graphics/Graphics.h"
 
 
 Game::Game() :
@@ -25,14 +23,7 @@ Game::Game() :
 		HAPI.Close();
 	}
 
-	
-
-	/*Music music("Data/Music.wav");
-	music.Play();
-	while(1)
-	{
-		music.UpdateBufferStream();
-	}*/
+	SoundManager::GetInstance().PlayMusic("Level_One");
 }
 
 void Game::Update()
@@ -135,6 +126,9 @@ void Game::Update()
 
 	// Reset the clock
 	m_gameClock = clock();
+
+	// Update the music buffer so that music plays
+	SoundManager::GetInstance().UpdateMusicBufferStream();
 }
 
 void Game::Render()
@@ -414,6 +408,9 @@ bool Game::Initialise()
 	SoundManager::GetInstance().AddSoundEffect("Player_Power_Up", "Res/SFX/Player_Power_Up.wav");
 	SoundManager::GetInstance().AddSoundEffect("Power_Up_Reveal", "Res/SFX/Power_Up_Reveal.wav");
 	SoundManager::GetInstance().AddSoundEffect("Shell_Hit_Wall", "Res/SFX/Shell_Hit_Wall.wav");
+
+	// Load music
+	SoundManager::GetInstance().AddMusic("Level_One", "Res/Music/Level1.wav");
 	
 	// Load the level
 	if (!m_tileManager.LoadLevel("Res/Levels/Level1.csv"))

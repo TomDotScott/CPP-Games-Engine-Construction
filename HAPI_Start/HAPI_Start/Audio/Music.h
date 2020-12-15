@@ -12,7 +12,7 @@ public:
 
 	void Play();
 
-	void UpdateBufferStream();
+	void UpdateBufferStream() const;
 
 
 private:
