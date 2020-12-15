@@ -25,15 +25,14 @@ Game::Game() :
 		HAPI.Close();
 	}
 
-	/*SoundManager::GetInstance().AddSoundEffect("Music", "Data/Music.wav");
-	SoundManager::GetInstance().PlaySoundEffect("Music");*/
+	
 
-	Music music("Data/Music.wav");
+	/*Music music("Data/Music.wav");
 	music.Play();
 	while(1)
 	{
 		music.UpdateBufferStream();
-	}
+	}*/
 }
 
 void Game::Update()
@@ -274,17 +273,18 @@ void Game::HandleControllerInput()
 
 bool Game::Initialise()
 {
-	if (!Graphics::GetInstance().CreateTexture("Data/PlatformerBackgroundPixelised.tga", "Background"))
+	if (!Graphics::GetInstance().CreateTexture("Res/Graphics/PlatformerBackgroundPixelised.tga", "Background"))
 	{
 		HAPI.UserMessage("Background Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
-	if (!Graphics::GetInstance().CreateSpriteSheet("Data/GameSpriteSheetPixelised.tga"))
+	if (!Graphics::GetInstance().CreateSpriteSheet("Res/Graphics/GameSpriteSheetPixelised.tga"))
 	{
 		HAPI.UserMessage("Spritesheet Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
 
+	// Load the sprites 
 	CreateSprite("Player_Walk_Top_1");
 	CreateSprite("Player_Walk_Body_1");
 	CreateSprite("Player_Walk_Top_2");
@@ -396,11 +396,32 @@ bool Game::Initialise()
 	CreateSprite("Door_Closed_Mid");
 	CreateSprite("Door_Open_Top");
 	CreateSprite("Door_Open_Mid");
-	if (!m_tileManager.LoadLevel("./Data/Level1.csv"))
+
+	// Load SFX
+	SoundManager::GetInstance().AddSoundEffect("Block_Break", "Res/SFX/Block_Break.wav");
+	SoundManager::GetInstance().AddSoundEffect("Block_Bump", "Res/SFX/Block_Bump.wav");
+	SoundManager::GetInstance().AddSoundEffect("Brick_Break", "Res/SFX/Brick_Bump.wav");
+	SoundManager::GetInstance().AddSoundEffect("Coin", "Res/SFX/Coin.wav");
+	SoundManager::GetInstance().AddSoundEffect("Entity_Shell_Hit", "Res/SFX/Entity_Shell_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Entity_Squash", "Res/SFX/Entity_Squash.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Entity_Hit", "Res/SFX/Fireball_Entity_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Explosion", "Res/SFX/Fireball_Explosion.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Shoot", "Res/SFX/Fireball_Shoot.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Wall_Hit", "Res/SFX/Fireball_Wall_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Flag", "Res/SFX/Flag.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Jump", "Res/SFX/Player_Jump.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Power_Down", "Res/SFX/Player_Power_Down.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Power_Up", "Res/SFX/Player_Power_Up.wav");
+	SoundManager::GetInstance().AddSoundEffect("Shell_Hit_Wall", "Res/SFX/Shell_Hit_Wall.wav");
+	
+	// Load the level
+	if (!m_tileManager.LoadLevel("Res/Levels/Level1.csv"))
 	{
 		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
+
+	// Spawn the enemies
 	auto& entityLocations = m_tileManager.GetEntityLocations();
 
 	// Dequeue every entity location
@@ -424,6 +445,7 @@ bool Game::Initialise()
 	}
 
 	// Create items for the object poolers
+	
 	for(int i = 0; i < 10; ++i)
 	{
 		m_pickUpPool.emplace_back(GenerateNextEntityId(), Vector2::CENTRE, false);
