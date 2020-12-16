@@ -39,6 +39,8 @@ public:
 	ePowerUpState GetPowerUpState() const;
 	void PowerUp(ePowerUpType pType);
 	void PowerDown();
+
+	void Reset();
 	
 	std::vector<Fireball>& GetFireBallPool();
 

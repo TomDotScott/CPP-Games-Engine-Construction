@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="Nano's Adventure" tilewidth="128" tileheight="128" tilecount="31" columns="0">
+<tileset version="1.4" tiledversion="1.4.2" name="Nano's Adventure" tilewidth="128" tileheight="128" tilecount="33" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Ground/Grass/grassCenter.png"/>
@@ -93,5 +93,11 @@
  </tile>
  <tile id="69">
   <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Tiles/signRight.png"/>
+ </tile>
+ <tile id="70">
+  <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Ground/Grass/grassCliff_left.png"/>
+ </tile>
+ <tile id="71">
+  <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Ground/Grass/grassCliff_right.png"/>
  </tile>
 </tileset>

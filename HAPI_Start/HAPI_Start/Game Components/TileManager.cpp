@@ -7,12 +7,30 @@
 
 bool TileManager::LoadLevel(const std::string& filename)
 {
+	m_shouldLoadNextLevel = false;
+	
+	// Clear the level data if it exists
+	if (!m_levelData.empty())
+	{
+		m_levelData.clear();
+	}
+
+	// Clear the entity locations, if they exist
+	if(!m_entityLocations.empty())
+	{
+		while(!m_entityLocations.empty())
+		{
+			m_entityLocations.pop();
+		}
+	}
+
 	std::ifstream file(filename);
 	if (!file.is_open())
 	{
 		HAPI.UserMessage("Couldn't Open the File: " + filename + "\nCheck the location and try again", "An error occured");
 		return false;
 	}
+
 	while (!file.eof())
 	{
 		for (int r = 0; r < constants::k_maxTilesVertical; ++r)
@@ -56,7 +74,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					if (tileType == eTileType::e_Air || tileType == eTileType::e_Plant ||
 						tileType == eTileType::e_Rock || tileType == eTileType::e_Bush ||
 						tileType == eTileType::e_Mushroom1 || tileType == eTileType::e_Mushroom2 ||
-						tileType == eTileType::e_RightArrow)
+						tileType == eTileType::e_RightArrow || tileType == eTileType::e_FlagPole)
 					{
 						canCollide = false;
 					}
@@ -266,14 +284,21 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 
 	if (m_levelData[playerYTile][playerXTile].m_canCollide)
 	{
-		// Work out the amount of overlap in the X direction
-		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x -
-			static_cast<float>(constants::k_screenWidth / 2.f);
-
-		if (abs(xOverlap) > 8.f)
+		if(m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorMid 
+			|| m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorTop)
 		{
-			player.SetMoveDirectionLimit(eDirection::e_Right);
-			hasCollided = true;
+			m_shouldLoadNextLevel = true;
+		} else
+		{
+			// Work out the amount of overlap in the X direction
+			const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x -
+				static_cast<float>(constants::k_screenWidth / 2.f);
+
+			if (abs(xOverlap) > 8.f)
+			{
+				player.SetMoveDirectionLimit(eDirection::e_Right);
+				hasCollided = true;
+			}
 		}
 	}
 
@@ -309,6 +334,11 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 			CheckFireballLevelCollisions(fireball);
 		}
 	}
+}
+
+bool TileManager::ShouldLoadNextLevel() const
+{
+	return m_shouldLoadNextLevel;
 }
 
 void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)

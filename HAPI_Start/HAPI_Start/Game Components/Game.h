@@ -32,6 +32,9 @@ private:
 	
 	int m_gameScore;
 	
+	int m_currentLevel;
+	bool m_levelStarted;
+	
 	Vector2 m_backgroundPosition;
 	eDirection m_backgroundMoveDir;
 
@@ -46,6 +49,7 @@ private:
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 	bool Initialise();
+	bool LoadLevel(int levelNo);
 	template<typename T>
 	void UpdateEnemies(std::vector<T>& enemies, float deltaTime);
 	template<typename T>

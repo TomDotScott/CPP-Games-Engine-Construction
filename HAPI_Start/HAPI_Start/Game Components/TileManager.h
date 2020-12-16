@@ -13,6 +13,7 @@ public:
 	bool LoadLevel(const std::string& filename);
 	void RenderTiles(float playerOffset);
 	void CheckPlayerLevelCollisions(Player& player);
+	bool ShouldLoadNextLevel() const;
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void CheckFireballLevelCollisions(Fireball& fireball);
 	std::queue<std::pair<eEntityType, Vector2>>& GetEntityLocations();
@@ -20,6 +21,7 @@ public:
 private:
 	std::vector<std::vector<Tile>> m_levelData;
 	std::queue<std::pair<eEntityType, Vector2>> m_entityLocations;
+	bool m_shouldLoadNextLevel{ false };
 };
 
 enum class eTileType

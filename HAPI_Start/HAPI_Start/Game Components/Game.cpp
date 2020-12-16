@@ -13,25 +13,34 @@ Game::Game() :
 	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
 	m_gameScore(0),
+	m_currentLevel(0),
+	m_levelStarted(false),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None)
 {
 	if (!Initialise())
 	{
-		HAPI.UserMessage("An Error Occured", "AN ERROR OCCURED");
+		HAPI.UserMessage("An error occured during initialisation", "AN ERROR OCCURED");
 		HAPI.Close();
 	}
-
-	SoundManager::GetInstance().PlayMusic("Level_One");
 }
 
 void Game::Update()
 {
+	// See if the player has triggered the next level
+	if (m_tileManager.ShouldLoadNextLevel())
+	{
+		LoadLevel(++m_currentLevel);
+	}
+
 	const float deltaTime = DeltaTime();
 
-	HandleKeyBoardInput();
-	HandleControllerInput();
-
+	if (m_levelStarted)
+	{
+		HandleKeyBoardInput();
+		HandleControllerInput();
+	}
+	
 	// SEE IF THERE ARE ANY COINS OR GEMS TO SET VISIBLE
 	auto& newEntityLocations = m_tileManager.GetEntityLocations();
 	while (!newEntityLocations.empty())
@@ -43,7 +52,7 @@ void Game::Update()
 			// Find the first inactive pickup in the pickup pool
 			for (auto& gem : m_pickUpPool)
 			{
-				if(gem.GetActiveState() == false)
+				if (gem.GetActiveState() == false)
 				{
 					gem.Initialise(front.second);
 				}
@@ -56,31 +65,38 @@ void Game::Update()
 		newEntityLocations.pop();
 	}
 
-	
+
 	// UPDATE ENTITIES
 	m_player.Update(deltaTime);
+
+	// If the player has touched the ground, start the level
+	if(m_player.GetCurrentPlayerState() == ePlayerState::e_Idle && !m_levelStarted)
+	{
+		m_levelStarted = true;
+	}
+
 	
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
 	UpdateEnemies(m_coins, deltaTime);
 
 	// UPDATE ANY ACTIVE PICKUPS
-	for(auto& pickup : m_pickUpPool)
+	for (auto& pickup : m_pickUpPool)
 	{
-		if(pickup.GetActiveState())
+		if (pickup.GetActiveState())
 		{
 			pickup.Update(deltaTime);
 		}
 	}
 
-	
+
 	// CHECK ENTITY-LEVEL COLLISIONS 
 	m_tileManager.CheckPlayerLevelCollisions(m_player);
-	for(auto& slime : m_slimes)
+	for (auto& slime : m_slimes)
 	{
 		m_tileManager.CheckEnemyLevelCollisions(slime);
 	}
-	
+
 	for (auto& snail : m_snails)
 	{
 		m_tileManager.CheckEnemyLevelCollisions(snail);
@@ -90,7 +106,7 @@ void Game::Update()
 	CheckEnemyCollisions(m_slimes);
 	CheckEnemyCollisions(m_snails);
 
-	for(auto& c : m_coins)
+	for (auto& c : m_coins)
 	{
 		c.CheckEntityCollisions(m_player);
 	}
@@ -134,11 +150,31 @@ void Game::Render()
 {
 	Graphics::GetInstance().ClearScreen();
 
-	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-	Graphics::GetInstance().DrawTexture("Background", m_backgroundPosition);
-	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-	Graphics::GetInstance().DrawTexture("Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+	switch (m_currentLevel)
+	{
+	case 0:
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level1_Background", m_backgroundPosition);
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+		break;
+	case 1:
+		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level2_Background", m_backgroundPosition);
+		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+		break;
+	default:
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level1_Background", m_backgroundPosition);
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+		break;
+	}
+	
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
@@ -170,9 +206,9 @@ void Game::Render()
 		}
 	}
 
-	for(auto& pickup : m_pickUpPool)
+	for (auto& pickup : m_pickUpPool)
 	{
-		if(pickup.GetActiveState())
+		if (pickup.GetActiveState())
 		{
 			pickup.Render(playerXOffset);
 		}
@@ -266,11 +302,18 @@ void Game::HandleControllerInput()
 
 bool Game::Initialise()
 {
-	if (!Graphics::GetInstance().CreateTexture("Res/Graphics/PlatformerBackgroundPixelised.tga", "Background"))
+	if (!Graphics::GetInstance().CreateTexture("Res/Graphics/Level1_Background.tga", "Level1_Background"))
 	{
-		HAPI.UserMessage("Background Could Not Be Loaded", "An Error Occurred");
+		HAPI.UserMessage("Level1 background couldn't be loaded", "An Error Occurred");
 		return false;
 	}
+
+	if (!Graphics::GetInstance().CreateTexture("Res/Graphics/Level2_Background.tga", "Level2_Background"))
+	{
+		HAPI.UserMessage("Level1 background couldn't be loaded", "An Error Occurred");
+		return false;
+	}
+	
 	if (!Graphics::GetInstance().CreateSpriteSheet("Res/Graphics/GameSpriteSheetPixelised.tga"))
 	{
 		HAPI.UserMessage("Spritesheet Could Not Be Loaded", "An Error Occurred");
@@ -410,24 +453,61 @@ bool Game::Initialise()
 	SoundManager::GetInstance().AddSoundEffect("Power_Up_Reveal", "Res/SFX/Power_Up_Reveal.wav");
 	SoundManager::GetInstance().AddSoundEffect("Shell_Hit_Wall", "Res/SFX/Shell_Hit_Wall.wav");
 
-	// Load music
-	SoundManager::GetInstance().AddMusic("Level_One", "Res/Music/Level1.wav");
-	
+	// Create items for the object poolers
+	for (int i = 0; i < 10; ++i)
+	{
+		m_pickUpPool.emplace_back(GenerateNextEntityId(), Vector2::CENTRE, false);
+	}
+
+	if (!LoadLevel(0))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Game::LoadLevel(const int levelNo)
+{
+	// Clear the entity containers
+	m_slimes.clear();
+	m_snails.clear();
+	m_coins.clear();
+
+
 	// Load the level
-	if (!m_tileManager.LoadLevel("Res/Levels/Level2.csv"))
+	std::string name;
+	switch (levelNo)
+	{
+	case 0:
+		name = "Level1";
+		break;
+	case 1:
+		name = "Level2";
+		break;
+	default:
+		name = "Level1";
+	}
+
+	if (!m_tileManager.LoadLevel("Res/Levels/" + name + ".csv"))
 	{
 		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
 		return false;
 	}
 
+	// Load music
+	SoundManager::GetInstance().AddMusic(name, "Res/Music/" + name + ".wav");
+	SoundManager::GetInstance().PlayMusic(name);
+
 	// Spawn the enemies
 	auto& entityLocations = m_tileManager.GetEntityLocations();
 
 	// Dequeue every entity location
-	while (!entityLocations.empty()){
+	while (!entityLocations.empty())
+	{
 		const auto location = entityLocations.front();
 		entityLocations.pop();
-		
+
 		switch (location.first)
 		{
 		case eEntityType::e_Coin:
@@ -443,14 +523,10 @@ bool Game::Initialise()
 		}
 	}
 
-	// Create items for the object poolers
+	// Reset Player
+	m_player.Reset();
 	
-	for(int i = 0; i < 10; ++i)
-	{
-		m_pickUpPool.emplace_back(GenerateNextEntityId(), Vector2::CENTRE, false);
-	}
-
-	m_player.SetPosition(Vector2::CENTRE);
-
+	m_levelStarted = false;
+	
 	return true;
 }

@@ -198,6 +198,13 @@ void Player::PowerDown()
 	}
 }
 
+void Player::Reset()
+{
+	m_position = Vector2::CENTRE;
+	m_velocity = Vector2::ZERO;
+	m_currentDirection = eDirection::e_None;
+}
+
 std::vector<Fireball>& Player::GetFireBallPool()
 {
 	return m_fireballPool;
