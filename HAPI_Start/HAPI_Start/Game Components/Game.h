@@ -7,6 +7,7 @@
 #include "Entities/Enemies/Snail.h"
 #include "Entities/PickUpGem.h"
 #include "Entities/Player.h"
+#include "Text.h"
 #include "TileManager.h"
 
 enum class eKeyCode;
@@ -30,8 +31,6 @@ private:
 	Player m_player;
 	clock_t m_gameClock;
 	
-	int m_gameScore;
-	
 	int m_currentLevel;
 	bool m_levelStarted;
 	
@@ -42,6 +41,8 @@ private:
 	std::vector<Snail> m_snails;
 	std::vector<Coin> m_coins;
 	std::vector<PickUpGem> m_pickUpPool;
+
+	Text m_scoreText;
 	
 	void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;

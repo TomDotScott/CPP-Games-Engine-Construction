@@ -12,11 +12,11 @@ Game::Game() :
 	m_tileManager(),
 	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
-	m_gameScore(0),
 	m_currentLevel(0),
 	m_levelStarted(false),
 	m_backgroundPosition(Vector2::ZERO),
-	m_backgroundMoveDir(eDirection::e_None)
+	m_backgroundMoveDir(eDirection::e_None),
+	m_scoreText("Score: 00000000", HAPISPACE::HAPI_TColour::WHITE, { 1025, 0 })
 {
 	if (!Initialise())
 	{
@@ -40,7 +40,7 @@ void Game::Update()
 		HandleKeyBoardInput();
 		HandleControllerInput();
 	}
-	
+
 	// SEE IF THERE ARE ANY COINS OR GEMS TO SET VISIBLE
 	auto& newEntityLocations = m_tileManager.GetEntityLocations();
 	while (!newEntityLocations.empty())
@@ -70,12 +70,12 @@ void Game::Update()
 	m_player.Update(deltaTime);
 
 	// If the player has touched the ground, start the level
-	if(m_player.GetCurrentPlayerState() == ePlayerState::e_Idle && !m_levelStarted)
+	if (m_player.GetCurrentPlayerState() == ePlayerState::e_Idle && !m_levelStarted)
 	{
 		m_levelStarted = true;
 	}
 
-	
+
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
 	UpdateEnemies(m_coins, deltaTime);
@@ -150,31 +150,26 @@ void Game::Render()
 {
 	Graphics::GetInstance().ClearScreen();
 
+	std::string backgroundName;
 	switch (m_currentLevel)
 	{
 	case 0:
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level1_Background", m_backgroundPosition);
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+		backgroundName = "Level1_Background";
 		break;
 	case 1:
-		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level2_Background", m_backgroundPosition);
-		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level2_Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+		backgroundName = "Level2_Background";
 		break;
 	default:
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level1_Background", m_backgroundPosition);
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-		Graphics::GetInstance().DrawTexture("Level1_Background", { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+		backgroundName = "Level1_Background";
 		break;
 	}
-	
+
+	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+	Graphics::GetInstance().DrawTexture(backgroundName, m_backgroundPosition);
+	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
@@ -215,6 +210,9 @@ void Game::Render()
 	}
 
 	m_player.Render();
+
+	// Render UI on top of everything else
+	m_scoreText.Render();
 }
 
 int Game::GenerateNextEntityId()
@@ -313,10 +311,16 @@ bool Game::Initialise()
 		HAPI.UserMessage("Level1 background couldn't be loaded", "An Error Occurred");
 		return false;
 	}
-	
+
 	if (!Graphics::GetInstance().CreateSpriteSheet("Res/Graphics/GameSpriteSheetPixelised.tga"))
 	{
 		HAPI.UserMessage("Spritesheet Could Not Be Loaded", "An Error Occurred");
+		return false;
+	}
+
+	if (!HAPI.ChangeFontFromFile("Res/Graphics/Font.ttf"))
+	{
+		HAPI.UserMessage("Font couldn't be loaded", "An Error Occurred");
 		return false;
 	}
 
@@ -525,8 +529,8 @@ bool Game::LoadLevel(const int levelNo)
 
 	// Reset Player
 	m_player.Reset();
-	
+
 	m_levelStarted = false;
-	
+
 	return true;
 }
