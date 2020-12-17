@@ -1,4 +1,7 @@
 ﻿#include "Slime.h"
+
+#include "../Fireball.h"
+
 Slime::Slime(const int entityID, const Vector2 startingPosition, const bool canAvoidEdges) :
 	Enemy(eEntityType::e_Slime,
 		entityID,
@@ -58,6 +61,7 @@ void Slime::CheckEntityCollisions(Entity& other)
 			{
 				if (m_currentEntityState != eEntityState::e_ProjectileHit)
 				{
+					dynamic_cast<Fireball*>(&other)->Explode();
 					m_currentEntityState = eEntityState::e_ProjectileHit;
 					SetAnimationIndex(static_cast<int>(m_currentEntityState));
 					PlaySFX("Entity_Fireball_Hit");

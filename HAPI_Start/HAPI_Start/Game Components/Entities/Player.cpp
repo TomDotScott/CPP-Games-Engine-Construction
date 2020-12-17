@@ -217,7 +217,7 @@ void Player::PowerUp(const ePowerUpType pType)
 	switch (pType)
 	{
 	case ePowerUpType::e_Grower:
-		if (m_currentPowerUpState != ePowerUpState::e_Normal)
+		if (m_currentPowerUpState == ePowerUpState::e_Small)
 		{
 			m_currentPowerUpState = ePowerUpState::e_Normal;
 			m_score += 2000;
@@ -304,6 +304,7 @@ void Player::Reset()
 	m_position = Vector2::CENTRE;
 	m_velocity = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
+	m_currentPowerUpState = ePowerUpState::e_Normal;
 	m_isDead = false;
 }
 

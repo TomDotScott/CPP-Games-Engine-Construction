@@ -1,4 +1,7 @@
 ﻿#include "Snail.h"
+
+#include "../Fireball.h"
+
 Snail::Snail(const int entityID, const Vector2 startingPos) :
 	Enemy(eEntityType::e_Snail,
 		entityID,
@@ -96,6 +99,7 @@ void Snail::CheckEntityCollisions(Entity& other)
 			{
 				if (m_snailState != eSnailState::e_ProjectileHit)
 				{
+					dynamic_cast<Fireball*>(&other)->Explode();
 					m_snailState = eSnailState::e_ProjectileHit;
 					SetAnimationIndex(static_cast<int>(m_snailState));
 					m_currentEntityState = eEntityState::e_Dead;
