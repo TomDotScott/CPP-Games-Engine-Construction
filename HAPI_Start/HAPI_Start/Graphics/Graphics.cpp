@@ -98,13 +98,13 @@ void Graphics::DrawTexture(const std::string& name, const Vector2 position)
 	m_textureBuffer.at(name)->RenderTexture(m_screen, position);
 }
 
-void Graphics::DrawSprite(const std::string& name, const Vector2 position, const bool flipped)
+void Graphics::DrawSprite(const std::string& name, const Vector2 position, const bool flipped, const short alpha)
 {
 	if (m_spriteSheetLocations.find(name) == m_spriteSheetLocations.end())
 	{
 		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.", "Error Occured");
 	} else
 	{
-		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], position, flipped);
+		m_spriteSheet->RenderSprite(m_screen, m_spriteSheetLocations[name], position, flipped, alpha);
 	}
 }

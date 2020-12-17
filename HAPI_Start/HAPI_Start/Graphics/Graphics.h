@@ -19,7 +19,7 @@ public:
 
 	bool CreateSpriteSheet(const std::string& filename);
 	bool CreateSprite(const std::string& spriteName, int spriteLocation);
-	void DrawSprite(const std::string& name, Vector2 position, bool flipped = false);
+	void DrawSprite(const std::string& name, Vector2 position, bool flipped = false, short alpha = 255);
 
 private:
 	HAPISPACE::BYTE* m_screen;

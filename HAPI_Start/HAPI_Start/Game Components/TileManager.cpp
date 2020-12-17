@@ -313,18 +313,29 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 		constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 	const int feetY = static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
 
-	if (m_levelData[feetY][feetX].m_canCollide)
+	if (feetY < 15)
 	{
-		// Work out the amount of overlap in the Y direction
-		const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
-		if (abs(yOverlap) > 16.f)
+		if (m_levelData[feetY][feetX].m_canCollide)
 		{
-			player.SetPosition({ player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellSize });
+			if(m_levelData[feetY][feetX].m_type == eTileType::e_Spikes)
+			{
+				player.Kill();
+				return;
+			}
+			// Work out the amount of overlap in the Y direction
+			const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
+			if (abs(yOverlap) > 16.f)
+			{
+				player.SetPosition({ player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellSize });
+			}
+			player.SetPlayerState(ePlayerState::e_Walking);
+		} else
+		{
+			player.SetPlayerState(ePlayerState::e_Jumping);
 		}
-		player.SetPlayerState(ePlayerState::e_Walking);
-	} else
+	}else
 	{
-		player.SetPlayerState(ePlayerState::e_Jumping);
+		player.Kill();
 	}
 
 	for (auto& fireball : player.GetFireBallPool())

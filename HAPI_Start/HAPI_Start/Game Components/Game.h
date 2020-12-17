@@ -30,7 +30,7 @@ private:
 	
 	Player m_player;
 	clock_t m_gameClock;
-	
+	float m_levelTimer;
 	int m_currentLevel;
 	bool m_levelStarted;
 	
@@ -56,7 +56,7 @@ private:
 	bool Initialise();
 	bool LoadLevel(int levelNo);
 	void ScrollBackground();
-	void UpdateUI();
+	void UpdateUI(float deltaTime);
 	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);
 	template<typename T>
 	void UpdateEnemies(std::vector<T>& enemies, float deltaTime);

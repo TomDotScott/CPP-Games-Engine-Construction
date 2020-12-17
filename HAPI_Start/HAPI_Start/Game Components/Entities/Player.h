@@ -47,6 +47,9 @@ public:
 	int GetCoinCount() const;
 	
 	int GetLivesRemaining() const;
+
+	bool GetIsDead() const;
+	void Kill();
 	
 	void Reset();
 	
@@ -67,6 +70,10 @@ private:
 	int m_score;
 	int m_coinCount;
 	int m_livesRemaining;
+
+	float m_immuneTime;
+	bool m_immune;
+	bool m_isDead;
 	
 	std::vector<Fireball> m_fireballPool;
 	

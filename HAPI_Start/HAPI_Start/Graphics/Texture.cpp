@@ -30,7 +30,7 @@ void Texture::RenderTexture(HAPISPACE::BYTE* screen, const Vector2 texturePositi
 	TextureClipBlit(screen, texturePosition);
 }
 
-void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const Vector2 spritePosition, bool flipped)
+void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, const Vector2 spritePosition, const bool flipped, const short alpha)
 {
 	if (flipped)
 	{
@@ -45,7 +45,7 @@ void Texture::RenderSprite(HAPISPACE::BYTE* screen, const int spriteSheetIndex, 
 		m_textureData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetIndex
 	};
 
-	SpriteClipBlit(screenStart, spriteStart, spriteSheetIndex, spritePosition);
+	SpriteClipBlit(screenStart, spriteStart, spriteSheetIndex, spritePosition, alpha);
 
 	// works on the entire spritesheet so we need to flip back
 	if (flipped)
@@ -215,7 +215,7 @@ void Texture::TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const
 	}
 }
 
-void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData) const
+void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const short alpha) const
 {
 	const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellSize * 4 };
 
@@ -225,7 +225,13 @@ void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spr
 	{
 		for (int x = 0; x < constants::k_spriteSheetCellSize; x++)
 		{
-			const HAPISPACE::BYTE a{ spriteData[3] };
+			HAPISPACE::BYTE a{ spriteData[3] };
+			if (alpha != 255)
+			{
+				const float normalised = static_cast<float>(alpha) / 255.f;
+				a = static_cast<int>(static_cast<float>(a) * normalised);
+			}
+			
 			// Only draw pixels if needed
 			if (a > 0)
 			{
@@ -249,7 +255,7 @@ void Texture::SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spr
 	}
 }
 
-void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, Vector2 position) const
+void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, const int spriteSheetIndex, Vector2 position, const short alpha) const
 {
 	// BoundsRectangle takes in coordinates for the top left and bottom right
 	// My Vector2 class defaults to zeros
@@ -270,7 +276,7 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 		// If the object is completely onscreen then alphablit...
 		if (clippedRect.IsCompletelyInside(screenBounds))
 		{
-			SpriteAlphaBlit(screenStart, spriteData);
+			SpriteAlphaBlit(screenStart, spriteData, alpha);
 		} else
 		{
 			// we must be offscreen...
@@ -298,24 +304,30 @@ void Texture::SpriteClipBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spri
 			};
 
 			// Start blitting...
-			for (int y = 0; y < clippedRect.GetSize().y; y++)
+			for (int y = 0; y < static_cast<int>(clippedRect.GetSize().y); y++)
 			{
-				for (int x = 0; x < clippedRect.GetSize().x; x++)
+				for (int x = 0; x < static_cast<int>(clippedRect.GetSize().x); x++)
 				{
-					const HAPISPACE::BYTE alpha = spritePtr[3];
+					HAPISPACE::BYTE a = spritePtr[3];
+					if (alpha != 255)
+					{
+						const float normalised = static_cast<float>(alpha) / 255.f;
+						a = static_cast<int>(static_cast<float>(a) * normalised);
+					}
 					// Fully opaque
-					if (alpha == 255)
+					if (a == 255)
 					{
 						memcpy(screenStart, spritePtr, 4);
-					} else if (alpha > 0)
-					{ // Has alpha channel
+					} else if (a > 0)
+					{
+						// Has alpha channel
 						const HAPISPACE::BYTE red = spritePtr[0];
 						const HAPISPACE::BYTE green = spritePtr[1];
 						const HAPISPACE::BYTE blue = spritePtr[2];
 
-						screenStart[0] = screenStart[0] + ((alpha * (red - screenStart[0])) >> 8);
-						screenStart[1] = screenStart[1] + ((alpha * (green - screenStart[1])) >> 8);
-						screenStart[2] = screenStart[2] + ((alpha * (blue - screenStart[2])) >> 8);
+						screenStart[0] = screenStart[0] + ((a * (red - screenStart[0])) >> 8);
+						screenStart[1] = screenStart[1] + ((a * (green - screenStart[1])) >> 8);
+						screenStart[2] = screenStart[2] + ((a * (blue - screenStart[2])) >> 8);
 					}
 					spritePtr += 4;
 					screenStart += 4;

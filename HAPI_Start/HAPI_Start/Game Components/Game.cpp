@@ -12,6 +12,7 @@ Game::Game() :
 	m_tileManager(),
 	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
+	m_levelTimer(200.f),
 	m_currentLevel(0),
 	m_levelStarted(false),
 	m_backgroundPosition(Vector2::ZERO),
@@ -43,6 +44,12 @@ void Game::Update()
 	{
 		HandleKeyBoardInput();
 		HandleControllerInput();
+	}
+
+	// Reset player position if they died
+	if(m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
+	{
+		m_player.Reset();
 	}
 
 	// SEE IF THERE ARE ANY COINS OR GEMS TO SET VISIBLE
@@ -126,7 +133,7 @@ void Game::Update()
 
 	ScrollBackground();
 
-	UpdateUI();
+	UpdateUI(deltaTime);
 
 	// Reset the clock
 	m_gameClock = clock();
@@ -205,11 +212,11 @@ void Game::Render()
 	Graphics::GetInstance().DrawSprite("UI_Lives", { 394, 10 });
 	Graphics::GetInstance().DrawSprite("UI_X", { 435, 10 });
 	m_livesText.Render();
-	
+
 	Graphics::GetInstance().DrawSprite("UI_Coins", { 605, 10 });
 	Graphics::GetInstance().DrawSprite("UI_X", { 647, 10 });
 	m_coinsText.Render();
-	
+
 	m_worldText.Render();
 	m_timerText.Render();
 }
@@ -236,21 +243,35 @@ void Game::ScrollBackground()
 	}
 }
 
-void Game::UpdateUI()
+void Game::UpdateUI(const float deltaTime)
 {
 	// New Score Text...
 	m_scoreText.SetString("Score " + AddLeadingZeroes(std::to_string(m_player.GetScore()), 6));
 
 	// New Coins Text...
-	m_coinsText.SetString(AddLeadingZeroes(std::to_string(m_player.GetCoinCount()), 3));
+	m_coinsText.SetString(AddLeadingZeroes(std::to_string(m_player.GetCoinCount()), 2));
 
 	// New lives Text...
 	m_livesText.SetString(AddLeadingZeroes(std::to_string(m_player.GetLivesRemaining()), 2));
+
+	if (m_levelStarted)
+	{
+		m_levelTimer -= deltaTime / 1000;
+		const std::string timeRemaining = std::to_string(static_cast<int>(m_levelTimer));
+		m_timerText.SetString(AddLeadingZeroes(timeRemaining, 3));
+	}
 }
 
 std::string Game::AddLeadingZeroes(const std::string& string, const int amountOfZeroes)
 {
-	return std::string(amountOfZeroes - string.length(), '0') + string;
+	const int length = amountOfZeroes - static_cast<int>(string.length());
+	if (length > 0)
+	{
+		return std::string(length, '0') + string;
+	}else
+	{
+		return string;
+	}
 }
 
 
@@ -500,11 +521,15 @@ bool Game::Initialise()
 	SoundManager::GetInstance().AddSoundEffect("Fireball_Shoot", "Res/SFX/Fireball_Shoot.wav");
 	SoundManager::GetInstance().AddSoundEffect("Fireball_Wall_Hit", "Res/SFX/Fireball_Wall_Hit.wav");
 	SoundManager::GetInstance().AddSoundEffect("Flag", "Res/SFX/Flag.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Dead", "Res/SFX/Player_Dead.wav");
 	SoundManager::GetInstance().AddSoundEffect("Player_Jump", "Res/SFX/Player_Jump.wav");
 	SoundManager::GetInstance().AddSoundEffect("Player_Power_Down", "Res/SFX/Player_Power_Down.wav");
 	SoundManager::GetInstance().AddSoundEffect("Player_Power_Up", "Res/SFX/Player_Power_Up.wav");
 	SoundManager::GetInstance().AddSoundEffect("Power_Up_Reveal", "Res/SFX/Power_Up_Reveal.wav");
 	SoundManager::GetInstance().AddSoundEffect("Shell_Hit_Wall", "Res/SFX/Shell_Hit_Wall.wav");
+
+	SoundManager::GetInstance().AddMusic("Level1", "Res/Music/Level1.wav");
+	SoundManager::GetInstance().AddMusic("Level2", "Res/Music/Level2.wav");
 
 	// Create items for the object poolers
 	for (int i = 0; i < 10; ++i)
@@ -553,7 +578,6 @@ bool Game::LoadLevel(const int levelNo)
 	}
 
 	// Load music
-	SoundManager::GetInstance().AddMusic(name, "Res/Music/" + name + ".wav");
 	SoundManager::GetInstance().PlayMusic(name);
 
 	// Spawn the enemies
