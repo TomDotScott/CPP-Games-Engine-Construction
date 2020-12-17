@@ -17,7 +17,7 @@ public:
 	Game();
 	void Update();
 	void Render();
-	static int GenerateNextEntityId();
+	static int GenerateNextEntityID();
 
 	bool PLAYER_WON;
 	bool PLAYER_LOST;
@@ -43,14 +43,21 @@ private:
 	std::vector<PickUpGem> m_pickUpPool;
 
 	Text m_scoreText;
-	
-	void CreateSprite(const std::string& spriteSheetIdentifier);
+	Text m_livesText;
+	Text m_coinsText;
+	Text m_worldText;
+	Text m_timerText;
+
+	static void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;
 	bool GetKey(eKeyCode keyCode) const;
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 	bool Initialise();
 	bool LoadLevel(int levelNo);
+	void ScrollBackground();
+	void UpdateUI();
+	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);
 	template<typename T>
 	void UpdateEnemies(std::vector<T>& enemies, float deltaTime);
 	template<typename T>

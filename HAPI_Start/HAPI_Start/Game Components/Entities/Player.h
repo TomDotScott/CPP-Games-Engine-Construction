@@ -40,6 +40,14 @@ public:
 	void PowerUp(ePowerUpType pType);
 	void PowerDown();
 
+	void AddToScore(int points);
+	int GetScore() const;
+	
+	void AddCoin();
+	int GetCoinCount() const;
+	
+	int GetLivesRemaining() const;
+	
 	void Reset();
 	
 	std::vector<Fireball>& GetFireBallPool();
@@ -47,12 +55,19 @@ public:
 private:
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
+	
 	bool m_canShoot;
 	float m_shotCoolDown;
+	
 	ePlayerState m_currentPlayerState;
 	ePowerUpState m_currentPowerUpState;
+	
 	eDirection m_moveDirectionLimit;
 
+	int m_score;
+	int m_coinCount;
+	int m_livesRemaining;
+	
 	std::vector<Fireball> m_fireballPool;
 	
 	void Move(float deltaTime) override;

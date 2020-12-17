@@ -16,7 +16,11 @@ Game::Game() :
 	m_levelStarted(false),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None),
-	m_scoreText("Score: 00000000", HAPISPACE::HAPI_TColour::WHITE, { 1025, 0 })
+	m_scoreText("Score 000000", HAPISPACE::HAPI_TColour::WHITE, { 0, 10 }),
+	m_livesText(std::to_string(m_player.GetLivesRemaining()), HAPISPACE::HAPI_TColour::WHITE, { 467, 10 }),
+	m_coinsText("0", HAPISPACE::HAPI_TColour::WHITE, { 680, 10 }),
+	m_worldText("Level-1", HAPISPACE::HAPI_TColour::WHITE, { 856, 10 }),
+	m_timerText("100", HAPISPACE::HAPI_TColour::WHITE, { 1150, 10 })
 {
 	if (!Initialise())
 	{
@@ -120,24 +124,9 @@ void Game::Update()
 		}
 	}
 
-	// Scroll the background
-	if (m_player.GetCurrentDirection() == eDirection::e_Right && m_player.GetMoveDirectionLimit() != eDirection::e_Right)
-	{
-		m_backgroundPosition.x -= 1.f;
-		m_backgroundMoveDir = eDirection::e_Left;
-		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth)
-		{
-			m_backgroundPosition.x = 0;
-		}
-	} else if (m_player.GetCurrentDirection() == eDirection::e_Left && m_player.GetMoveDirectionLimit() != eDirection::e_Left)
-	{
-		m_backgroundPosition.x += 1.f;
-		m_backgroundMoveDir = eDirection::e_Right;
-		if (m_backgroundPosition.x > constants::k_backgroundTileWidth)
-		{
-			m_backgroundPosition.x = 0;
-		}
-	}
+	ScrollBackground();
+
+	UpdateUI();
 
 	// Reset the clock
 	m_gameClock = clock();
@@ -169,7 +158,6 @@ void Game::Render()
 	Graphics::GetInstance().DrawTexture(backgroundName, m_backgroundPosition);
 	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
 	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
-
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
@@ -213,9 +201,60 @@ void Game::Render()
 
 	// Render UI on top of everything else
 	m_scoreText.Render();
+
+	Graphics::GetInstance().DrawSprite("UI_Lives", { 394, 10 });
+	Graphics::GetInstance().DrawSprite("UI_X", { 435, 10 });
+	m_livesText.Render();
+	
+	Graphics::GetInstance().DrawSprite("UI_Coins", { 605, 10 });
+	Graphics::GetInstance().DrawSprite("UI_X", { 647, 10 });
+	m_coinsText.Render();
+	
+	m_worldText.Render();
+	m_timerText.Render();
 }
 
-int Game::GenerateNextEntityId()
+void Game::ScrollBackground()
+{
+	// Scroll the background
+	if (m_player.GetCurrentDirection() == eDirection::e_Right && m_player.GetMoveDirectionLimit() != eDirection::e_Right)
+	{
+		m_backgroundPosition.x -= 1.f;
+		m_backgroundMoveDir = eDirection::e_Left;
+		if (m_backgroundPosition.x < -constants::k_backgroundTileWidth)
+		{
+			m_backgroundPosition.x = 0;
+		}
+	} else if (m_player.GetCurrentDirection() == eDirection::e_Left && m_player.GetMoveDirectionLimit() != eDirection::e_Left)
+	{
+		m_backgroundPosition.x += 1.f;
+		m_backgroundMoveDir = eDirection::e_Right;
+		if (m_backgroundPosition.x > constants::k_backgroundTileWidth)
+		{
+			m_backgroundPosition.x = 0;
+		}
+	}
+}
+
+void Game::UpdateUI()
+{
+	// New Score Text...
+	m_scoreText.SetString("Score " + AddLeadingZeroes(std::to_string(m_player.GetScore()), 6));
+
+	// New Coins Text...
+	m_coinsText.SetString(AddLeadingZeroes(std::to_string(m_player.GetCoinCount()), 3));
+
+	// New lives Text...
+	m_livesText.SetString(AddLeadingZeroes(std::to_string(m_player.GetLivesRemaining()), 2));
+}
+
+std::string Game::AddLeadingZeroes(const std::string& string, const int amountOfZeroes)
+{
+	return std::string(amountOfZeroes - string.length(), '0') + string;
+}
+
+
+int Game::GenerateNextEntityID()
 {
 	static int currentEntityID = 0;
 	return ++currentEntityID;
@@ -403,6 +442,16 @@ bool Game::Initialise()
 	CreateSprite("UI_7");
 	CreateSprite("UI_8");
 	CreateSprite("UI_9");
+	CreateSprite("UI_C");
+	CreateSprite("UI_D");
+	CreateSprite("UI_E");
+	CreateSprite("UI_I");
+	CreateSprite("UI_L");
+	CreateSprite("UI_R");
+	CreateSprite("UI_S");
+	CreateSprite("UI_T");
+	CreateSprite("UI_V");
+	CreateSprite("UI_W");
 	CreateSprite("UI_Heart_Full");
 	CreateSprite("UI_Heart_Half");
 	CreateSprite("UI_Heart_Empty");
@@ -460,7 +509,7 @@ bool Game::Initialise()
 	// Create items for the object poolers
 	for (int i = 0; i < 10; ++i)
 	{
-		m_pickUpPool.emplace_back(GenerateNextEntityId(), Vector2::CENTRE, false);
+		m_pickUpPool.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, false);
 	}
 
 	if (!LoadLevel(0))
@@ -485,12 +534,16 @@ bool Game::LoadLevel(const int levelNo)
 	{
 	case 0:
 		name = "Level1";
+		m_worldText.SetString("Level 1");
 		break;
 	case 1:
 		name = "Level2";
+		m_worldText.SetString("Level 2");
 		break;
 	default:
 		name = "Level1";
+		m_worldText.SetString("Level 1");
+		break;
 	}
 
 	if (!m_tileManager.LoadLevel("Res/Levels/" + name + ".csv"))
@@ -515,13 +568,13 @@ bool Game::LoadLevel(const int levelNo)
 		switch (location.first)
 		{
 		case eEntityType::e_Coin:
-			m_coins.emplace_back(GenerateNextEntityId(), location.second, true);
+			m_coins.emplace_back(GenerateNextEntityID(), location.second, true);
 			break;
 		case eEntityType::e_Slime:
-			m_slimes.emplace_back(GenerateNextEntityId(), location.second, location.second.y == 768.f ? true : false);
+			m_slimes.emplace_back(GenerateNextEntityID(), location.second, location.second.y == 768.f ? true : false);
 			break;
 		case eEntityType::e_Snail:
-			m_snails.emplace_back(GenerateNextEntityId(), location.second);
+			m_snails.emplace_back(GenerateNextEntityID(), location.second);
 			break;
 		default: break;
 		}

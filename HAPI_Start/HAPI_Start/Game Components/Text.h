@@ -6,10 +6,11 @@
 class Text
 {
 public:
-	explicit Text(std::string text, HAPISPACE::HAPI_TColour colour, Vector2 position = Vector2::CENTRE, int size = 32, HAPISPACE::HAPI_TextStyle style = HAPISPACE::eRegular);
+	explicit Text(std::string text, HAPISPACE::HAPI_TColour colour, Vector2 position = Vector2::CENTRE, int size = 36, HAPISPACE::HAPI_TextStyle style = HAPISPACE::eRegular);
 
 	void Render() const;
-	
+
+	std::string& GetString();
 	void SetString(const std::string& text);
 	void SetPosition(Vector2 position);
 	void SetColour(HAPISPACE::HAPI_TColour colour);

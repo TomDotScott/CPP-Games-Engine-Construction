@@ -1,5 +1,7 @@
 #include "Coin.h"
 
+#include "Player.h"
+
 Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
 	Entity(eEntityType::e_Coin,
 		entityID,
@@ -41,6 +43,9 @@ void Coin::CheckEntityCollisions(Entity& other)
 				if(m_isVisible)
 				{
 					PlaySFX("Coin");
+					auto* player = dynamic_cast<Player*>(&other);
+					player->AddCoin();
+					player->AddToScore(200);
 				}
 				m_isVisible = false;
 			}

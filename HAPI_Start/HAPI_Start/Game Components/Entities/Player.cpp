@@ -15,7 +15,10 @@ Player::Player(const Vector2 startingPosition) :
 	m_shotCoolDown(constants::k_fireBallCoolDownTimer),
 	m_currentPlayerState(ePlayerState::e_Jumping),
 	m_currentPowerUpState(ePowerUpState::e_Normal),
-	m_moveDirectionLimit(eDirection::e_None)
+	m_moveDirectionLimit(eDirection::e_None),
+	m_score(0),
+	m_coinCount(0),
+	m_livesRemaining(3)
 {
 	m_entityType = eEntityType::e_Player;
 
@@ -34,7 +37,7 @@ Player::Player(const Vector2 startingPosition) :
 
 	for (int i = 0; i < 5; i++)
 	{
-		m_fireballPool.emplace_back(Game::GenerateNextEntityId());
+		m_fireballPool.emplace_back(Game::GenerateNextEntityID());
 	}
 }
 
@@ -135,6 +138,7 @@ void Player::CheckEntityCollisions(Entity& other)
 					// Jump
 					Jump(m_jumpForce / 2);
 					PlaySFX("Entity_Squash");
+					m_score += 200;
 					return;
 				}
 
@@ -147,7 +151,6 @@ void Player::CheckEntityCollisions(Entity& other)
 				}
 			}
 			break;
-		default:;
 		}
 	}
 }
@@ -175,9 +178,10 @@ void Player::PowerUp(const ePowerUpType pType)
 		if (m_currentPowerUpState != ePowerUpState::e_FireThrower)
 		{
 			m_currentPowerUpState = ePowerUpState::e_FireThrower;
+			m_score += 2000;
 		} else
 		{
-			// TODO: GIVE POINT BONUS IF COLLECTING AN ALREADY EQUIPPED POWER-UP
+			m_score += 1000;
 		}
 		break;
 	default:;
@@ -196,6 +200,31 @@ void Player::PowerDown()
 		break;
 	default:;
 	}
+}
+
+void Player::AddToScore(int points)
+{
+	m_score += points;
+}
+
+int Player::GetScore() const
+{
+	return m_score;
+}
+
+void Player::AddCoin()
+{
+	m_coinCount++;
+}
+
+int Player::GetCoinCount() const
+{
+	return m_coinCount;
+}
+
+int Player::GetLivesRemaining() const
+{
+	return m_livesRemaining;
 }
 
 void Player::Reset()
