@@ -143,9 +143,9 @@ void Snail::Move(const float deltaTime)
 {
 	if (m_isFalling)
 	{
-		m_velocity.y += constants::k_gravity * deltaTime;
+		m_velocity.y += 100 * constants::k_gravity * deltaTime;
 	}
-	m_position = m_position + m_velocity * (deltaTime / 1000.f) * m_speedMultiplier;
+	m_position = m_position + m_velocity * deltaTime * m_speedMultiplier;
 }
 
 CollisionBoxes Snail::GenerateCollisionBoxes()

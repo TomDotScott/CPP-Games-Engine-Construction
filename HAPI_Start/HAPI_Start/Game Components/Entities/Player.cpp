@@ -10,7 +10,8 @@ Player::Player(const Vector2 startingPosition) :
 		startingPosition,
 		{ Vector2::ZERO }
 	),
-	m_jumpForce(8.f),
+	m_movementSpeed(10.f),
+	m_jumpForce(9.f),
 	m_shouldJumpNextFrame(false),
 	m_canShoot(false),
 	m_shotCoolDown(constants::k_fireBallCoolDownTimer),
@@ -49,25 +50,23 @@ void Player::Update(const float deltaTime)
 {
 	Move(deltaTime);
 
-	m_shotCoolDown += deltaTime / 1000.f;
+	m_shotCoolDown += deltaTime;
 
 	if (m_canShoot)
 	{
 		Shoot();
 	}
 
-	if(m_immune)
+	if (m_immune)
 	{
-		m_immuneTime += deltaTime / 1000.f;
-		if(m_immuneTime >= 2.f)
+		m_immuneTime += deltaTime;
+		if (m_immuneTime >= 2.f)
 		{
 			m_immune = false;
 			m_immuneTime = 0.f;
 		}
-		
 	}
-	
-	
+
 	if (m_currentPlayerState == ePlayerState::e_Walking)
 	{
 		m_velocity.y = 0;
@@ -79,7 +78,7 @@ void Player::Update(const float deltaTime)
 		}
 	} else if (m_currentPlayerState == ePlayerState::e_Jumping)
 	{
-		m_velocity.y += constants::k_gravity * (deltaTime / 1000);
+		m_velocity.y += constants::k_gravity * deltaTime;
 	}
 
 	m_position = m_position + m_velocity;
@@ -306,10 +305,10 @@ void Player::Move(const float deltaTime)
 {
 	if (m_currentDirection == eDirection::e_Right && m_moveDirectionLimit != eDirection::e_Right)
 	{
-		m_position = m_position + (Vector2::RIGHT * deltaTime);
+		m_position = m_position + Vector2(m_movementSpeed * 100, m_velocity.y) * deltaTime;
 	} else if (m_currentDirection == eDirection::e_Left && m_moveDirectionLimit != eDirection::e_Left)
 	{
-		m_position = m_position + (Vector2::LEFT * deltaTime);
+		m_position = m_position + Vector2(-m_movementSpeed * 100, m_velocity.y) * deltaTime;
 	}
 }
 

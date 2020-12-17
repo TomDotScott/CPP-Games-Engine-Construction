@@ -21,7 +21,7 @@ void Slime::Update(const float deltaTime)
 	{
 		if (m_isFalling)
 		{
-			m_velocity.y += constants::k_gravity * (deltaTime / 10.f);
+			m_velocity.y += 100 * constants::k_gravity * deltaTime;
 		}
 		Move(deltaTime);
 	}

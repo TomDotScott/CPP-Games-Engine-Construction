@@ -22,7 +22,7 @@ void Coin::Update(const float deltaTime)
 {
 	if (m_isVisible)
 	{
-		m_lifeTime += deltaTime / 1000.f;
+		m_lifeTime += deltaTime;
 		PlayAnimation(deltaTime);
 	}
 }

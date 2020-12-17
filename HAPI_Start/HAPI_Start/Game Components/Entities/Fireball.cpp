@@ -6,7 +6,7 @@ Fireball::Fireball(const int entityID) :
 		Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize)
 	),
 	m_activeState(false),
-	m_jumpForce(1.5f),
+	m_jumpForce(3.f),
 	m_fireBallState(eFireBallState::e_Bouncing)
 {
 	AddAnimation(animations::FIREBALL_SPIN, true, 150.f);
@@ -20,7 +20,7 @@ void Fireball::Initialise(const Vector2 startPosition, const eDirection starting
 	m_animations[m_animationIndex].ResetAnimation();
 	m_position = startPosition;
 	m_velocity = (startingDirection == eDirection::e_Right ? Vector2::LEFT : Vector2::RIGHT) + Vector2::DOWN;
-	m_velocity.x *= 0.75f;
+	m_velocity.x *= 3.f;
 	m_activeState = true;
 }
 
@@ -87,6 +87,6 @@ CollisionBoxes Fireball::GenerateCollisionBoxes()
 
 void Fireball::Move(const float deltaTime)
 {
-	m_velocity.y += constants::k_gravity * (deltaTime / 1000.f);
-	m_position = m_position + m_velocity * deltaTime;
+	m_velocity.y += constants::k_gravity * deltaTime;
+	m_position = m_position + m_velocity;
 }

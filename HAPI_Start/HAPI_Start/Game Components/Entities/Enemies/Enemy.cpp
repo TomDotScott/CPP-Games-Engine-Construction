@@ -63,5 +63,5 @@ void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
 
 void Enemy::Move(const float deltaTime)
 {
-	m_position = m_position + m_velocity * (deltaTime / 1000.f);
+	m_position = m_position + m_velocity * deltaTime;
 }

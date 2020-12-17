@@ -256,7 +256,7 @@ void Game::UpdateUI(const float deltaTime)
 
 	if (m_levelStarted)
 	{
-		m_levelTimer -= deltaTime / 1000;
+		m_levelTimer -= deltaTime;
 		const std::string timeRemaining = std::to_string(static_cast<int>(m_levelTimer));
 		m_timerText.SetString(AddLeadingZeroes(timeRemaining, 3));
 	}
@@ -297,7 +297,7 @@ float Game::DeltaTime() const
 
 	const float ticksToMilliseconds = 1000.f / CLOCKS_PER_SEC;
 
-	return programTickCount * ticksToMilliseconds;
+	return (programTickCount * ticksToMilliseconds) / 1000.f;
 }
 
 bool Game::GetKey(const eKeyCode keyCode) const

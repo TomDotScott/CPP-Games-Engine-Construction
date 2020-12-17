@@ -42,29 +42,30 @@ public:
 
 	void AddToScore(int points);
 	int GetScore() const;
-	
+
 	void AddCoin();
 	int GetCoinCount() const;
-	
+
 	int GetLivesRemaining() const;
 
 	bool GetIsDead() const;
 	void Kill();
-	
+
 	void Reset();
-	
+
 	std::vector<Fireball>& GetFireBallPool();
 
 private:
+	float m_movementSpeed;
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
-	
+
 	bool m_canShoot;
 	float m_shotCoolDown;
-	
+
 	ePlayerState m_currentPlayerState;
 	ePowerUpState m_currentPowerUpState;
-	
+
 	eDirection m_moveDirectionLimit;
 
 	int m_score;
@@ -74,9 +75,9 @@ private:
 	float m_immuneTime;
 	bool m_immune;
 	bool m_isDead;
-	
+
 	std::vector<Fireball> m_fireballPool;
-	
+
 	void Move(float deltaTime) override;
 	void Jump(float jumpForce);
 	void Shoot();

@@ -1,20 +1,22 @@
 ﻿#include "AnimationPlayer.h"
-AnimationPlayer::AnimationPlayer(const std::vector<std::string>& frames, const bool looping, const float duration) :
-	m_frames(frames),
+#include <utility>
+
+AnimationPlayer::AnimationPlayer(std::vector<std::string> frames, const bool looping, const float duration) :
+	m_frames(std::move(frames)),
 	m_currentFrame(0),
 	m_duration(duration),
 	m_playTime(0.f),
 	m_looping(looping),
 	m_state(eAnimationState::e_Started)
 {
-
 }
 
 void AnimationPlayer::Play(const float deltaTime)
 {
 	if (m_state == eAnimationState::e_Started)
 	{
-		m_playTime += deltaTime;
+		// multiply by 1000 to go from seconds to milliseconds
+		m_playTime += deltaTime * 1000;
 		if (m_playTime >= m_duration)
 		{
 			m_playTime = 0.0f;
