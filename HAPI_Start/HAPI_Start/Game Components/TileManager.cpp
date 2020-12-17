@@ -8,7 +8,7 @@
 bool TileManager::LoadLevel(const std::string& filename)
 {
 	m_shouldLoadNextLevel = false;
-	
+
 	// Clear the level data if it exists
 	if (!m_levelData.empty())
 	{
@@ -16,9 +16,9 @@ bool TileManager::LoadLevel(const std::string& filename)
 	}
 
 	// Clear the entity locations, if they exist
-	if(!m_entityLocations.empty())
+	if (!m_entityLocations.empty())
 	{
-		while(!m_entityLocations.empty())
+		while (!m_entityLocations.empty())
 		{
 			m_entityLocations.pop();
 		}
@@ -246,7 +246,32 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 				SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
 				break;
 			case eTileType::e_ItemBlock:
-				m_entityLocations.push({ eEntityType::e_FireGem, {currentTile.m_position.x, currentTile.m_position.y - constants::k_spriteSheetCellSize } });
+				if (constants::rand_range(0, 100) <= 50)
+				{
+					m_entityLocations.push(
+						{
+							eEntityType::e_FireGem,
+							{
+								currentTile.m_position.x,
+								currentTile.m_position.y - constants::k_spriteSheetCellSize
+							}
+						}
+					);
+					std::cout << "Fire Gem Spawned" << std::endl;
+				} else
+				{
+					m_entityLocations.push(
+						{
+							eEntityType::e_GrowGem,
+							{
+								currentTile.m_position.x,
+								currentTile.m_position.y - constants::k_spriteSheetCellSize
+							}
+						}
+					);
+					std::cout << "Fire Grow Gem Spawned" << std::endl;
+				}
+
 				currentTile.m_type = eTileType::e_BrickBlock;
 				SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
 				break;
@@ -284,7 +309,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 
 	if (m_levelData[playerYTile][playerXTile].m_canCollide)
 	{
-		if(m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorMid 
+		if (m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorMid
 			|| m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorTop)
 		{
 			m_shouldLoadNextLevel = true;
@@ -317,7 +342,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 	{
 		if (m_levelData[feetY][feetX].m_canCollide)
 		{
-			if(m_levelData[feetY][feetX].m_type == eTileType::e_Spikes)
+			if (m_levelData[feetY][feetX].m_type == eTileType::e_Spikes)
 			{
 				player.Kill();
 				return;
@@ -333,7 +358,7 @@ void TileManager::CheckPlayerLevelCollisions(Player& player)
 		{
 			player.SetPlayerState(ePlayerState::e_Jumping);
 		}
-	}else
+	} else
 	{
 		player.Kill();
 	}

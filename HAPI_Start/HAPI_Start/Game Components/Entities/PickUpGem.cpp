@@ -1,15 +1,22 @@
 #include "PickUpGem.h"
-PickUpGem::PickUpGem(const int entityID, const Vector2 position, const bool visible) :
+
+#include "../../Graphics/Graphics.h"
+
+PickUpGem::PickUpGem(const int entityID, const Vector2 position, const ePowerUpType powerUpType, const bool visible) :
 	Entity(
-		eEntityType::e_FireGem,
+		powerUpType == ePowerUpType::e_FireThrower ? eEntityType::e_FireGem : eEntityType::e_GrowGem,
 		entityID,
 		{ constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize },
 		eDirection::e_None,
 		position
 	),
+	m_type(powerUpType),
 	m_activeState(visible)
 {
-	AddAnimation(animations::GEM_SPIN);
+	AddAnimation(animations::GROW_GEM_SPIN);
+	AddAnimation(animations::FIRE_GEM_SPIN);
+
+	SetAnimationIndex(static_cast<int>(m_type));
 }
 
 void PickUpGem::Update(const float deltaTime)
@@ -61,6 +68,24 @@ void PickUpGem::Initialise(Vector2 position)
 	m_activeState = true;
 }
 
+ePowerUpType PickUpGem::GetType() const
+{
+	return m_type;
+}
+
+void PickUpGem::SetPowerUpType(const ePowerUpType type)
+{
+	if(type == ePowerUpType::e_FireThrower)
+	{
+		m_entityType = eEntityType::e_FireGem;
+	}else
+	{
+		m_entityType = eEntityType::e_GrowGem;
+	}
+	m_type = type;
+	SetAnimationIndex(static_cast<int>(m_type));
+}
+
 void PickUpGem::SetActiveState(const bool visibility)
 {
 	m_activeState = visibility;
@@ -73,5 +98,5 @@ bool PickUpGem::GetActiveState() const
 
 void PickUpGem::Move(float deltaTime)
 {
-	
+
 }

@@ -22,6 +22,7 @@ enum class eEntityType
 	e_Player,
 	e_Fireball,
 	e_FireGem,
+	e_GrowGem,
 	e_Slime = 65,
 	e_Coin = 66,
 	e_Snail = 68,

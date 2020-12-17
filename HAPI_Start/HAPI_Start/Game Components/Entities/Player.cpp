@@ -10,6 +10,7 @@ Player::Player(const Vector2 startingPosition) :
 		startingPosition,
 		{ Vector2::ZERO }
 	),
+	m_numStates(5),
 	m_movementSpeed(10.f),
 	m_jumpForce(9.f),
 	m_shouldJumpNextFrame(false),
@@ -27,17 +28,26 @@ Player::Player(const Vector2 startingPosition) :
 {
 	m_entityType = eEntityType::e_Player;
 
+	// FOR SMALL SIZED
+	AddAnimation(animations::PLAYER_SMALL_IDLE, true, 1000.f);
+	AddAnimation(animations::PLAYER_SMALL_WALK);
+	AddAnimation(animations::PLAYER_SMALL_JUMP);
+	AddAnimation(animations::PLAYER_SMALL_CLIMB);
+	AddAnimation(animations::PLAYER_SMALL_DEAD, false, 1000.f);
+
 	// FOR NORMAL SIZED
 	AddAnimation(animations::PLAYER_IDLE, true, 1000.f);
 	AddAnimation(animations::PLAYER_WALK);
 	AddAnimation(animations::PLAYER_JUMP);
 	AddAnimation(animations::PLAYER_CLIMB);
+	AddAnimation(animations::PLAYER_DEAD, false, 1000.f);
 
 	// FOR FIRE-THROWER POWER-UP
 	AddAnimation(animations::PLAYER_POWER_UP_IDLE, true, 1000.f);
 	AddAnimation(animations::PLAYER_POWER_UP_WALK);
 	AddAnimation(animations::PLAYER_POWER_UP_JUMP);
 	AddAnimation(animations::PLAYER_POWER_UP_CLIMB);
+	AddAnimation(animations::PLAYER_POWER_UP_DEAD, false, 1000.f);
 
 
 	for (int i = 0; i < 5; i++)
@@ -94,9 +104,6 @@ void Player::Update(const float deltaTime)
 		m_currentPlayerState = ePlayerState::e_Idle;
 	}
 
-	SetAnimationIndex(4 * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
-	PlayAnimation(deltaTime);
-
 	// Update the fireballs
 	for (auto& ball : m_fireballPool)
 	{
@@ -105,6 +112,9 @@ void Player::Update(const float deltaTime)
 			ball.Update(deltaTime);
 		}
 	}
+
+	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
+	PlayAnimation(deltaTime);
 }
 
 void Player::Render()
@@ -112,11 +122,14 @@ void Player::Render()
 	// Glitches if direction is none so default to facing forward
 	const eDirection dir = m_currentDirection == eDirection::e_None ? eDirection::e_Right : m_currentDirection;
 
-	Graphics::GetInstance().DrawSprite(
-		GetTopIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left,
-		m_immune ? 100 : 255
-	);
+	if (m_currentPowerUpState != ePowerUpState::e_Small)
+	{
+		Graphics::GetInstance().DrawSprite(
+			GetTopIdentifier(),
+			{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left,
+			m_immune ? 100 : 255
+		);
+	}
 
 	Graphics::GetInstance().DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
@@ -134,6 +147,7 @@ void Player::CheckEntityCollisions(Entity& other)
 	{
 		switch (other.GetEntityType())
 		{
+		case eEntityType::e_GrowGem:
 		case eEntityType::e_FireGem:
 			// collide from any angle
 			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
@@ -141,7 +155,7 @@ void Player::CheckEntityCollisions(Entity& other)
 				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 			{
-				PowerUp(ePowerUpType::e_FireThrower);
+				PowerUp(other.GetEntityType() == eEntityType::e_FireGem ? ePowerUpType::e_FireThrower : ePowerUpType::e_Grower);
 				PlaySFX("Player_Power_Up");
 			}
 			break;
@@ -202,6 +216,16 @@ void Player::PowerUp(const ePowerUpType pType)
 {
 	switch (pType)
 	{
+	case ePowerUpType::e_Grower:
+		if (m_currentPowerUpState != ePowerUpState::e_Normal)
+		{
+			m_currentPowerUpState = ePowerUpState::e_Normal;
+			m_score += 2000;
+		} else
+		{
+			m_score += 1000;
+		}
+		break;
 	case ePowerUpType::e_FireThrower:
 		if (m_currentPowerUpState != ePowerUpState::e_FireThrower)
 		{
@@ -214,15 +238,20 @@ void Player::PowerUp(const ePowerUpType pType)
 		break;
 	default:;
 	}
+	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 }
 
 void Player::PowerDown()
 {
 	switch (m_currentPowerUpState)
 	{
-	case ePowerUpState::e_Normal:
+	case ePowerUpState::e_Small:
 		m_isDead = true;
 		m_livesRemaining -= 1;
+		break;
+	case ePowerUpState::e_Normal:
+		m_currentPowerUpState = ePowerUpState::e_Small;
+		m_immune = true;
 		break;
 	case ePowerUpState::e_FireThrower:
 		m_currentPowerUpState = ePowerUpState::e_Normal;
@@ -230,6 +259,8 @@ void Player::PowerDown()
 		break;
 	default:;
 	}
+
+	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 }
 
 void Player::AddToScore(const int points)

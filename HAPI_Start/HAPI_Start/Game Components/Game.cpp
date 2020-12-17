@@ -60,17 +60,28 @@ void Game::Update()
 		switch (front.first)
 		{
 		case eEntityType::e_FireGem:
-			// Find the first inactive pickup in the pickup pool
+		case eEntityType::e_GrowGem:
+				
 			for (auto& gem : m_pickUpPool)
 			{
 				if (gem.GetActiveState() == false)
 				{
+					if (front.first == eEntityType::e_FireGem)
+					{
+						gem.SetPowerUpType(ePowerUpType::e_FireThrower);
+						std::cout << "Gem set to fire" << std::endl;
+					}
+					else
+					{
+						gem.SetPowerUpType(ePowerUpType::e_Grower);
+						std::cout << "Gem set to grow" << std::endl;
+					}
 					gem.Initialise(front.second);
 				}
 			}
 			break;
-		default:
-			break;
+			
+		default: break;
 		}
 		// dequeue the element
 		newEntityLocations.pop();
@@ -385,6 +396,14 @@ bool Game::Initialise()
 	}
 
 	// Load the sprites 
+	CreateSprite("Player_Small_Dead_Body");
+	CreateSprite("Player_Small_Walk_Body_1");
+	CreateSprite("Player_Small_Walk_Body_2");
+	CreateSprite("Player_Small_Jump_Body_1");
+	CreateSprite("Player_Small_Idle_Body_1");
+	CreateSprite("Player_Small_Idle_Body_2");
+	CreateSprite("Player_Dead_Top");
+	CreateSprite("Player_Dead_Body");
 	CreateSprite("Player_Walk_Top_1");
 	CreateSprite("Player_Walk_Body_1");
 	CreateSprite("Player_Walk_Top_2");
@@ -399,6 +418,8 @@ bool Game::Initialise()
 	CreateSprite("Player_Climb_Body_1");
 	CreateSprite("Player_Climb_Top_2");
 	CreateSprite("Player_Climb_Body_2");
+	CreateSprite("Player_Power_Up_Dead_Top");
+	CreateSprite("Player_Power_Up_Dead_Body");
 	CreateSprite("Player_Power_Up_Walk_Top_1");
 	CreateSprite("Player_Power_Up_Walk_Body_1");
 	CreateSprite("Player_Power_Up_Walk_Top_2");
@@ -443,12 +464,18 @@ bool Game::Initialise()
 	CreateSprite("Coin_6");
 	CreateSprite("Coin_7");
 	CreateSprite("Coin_8");
-	CreateSprite("Gem_1");
-	CreateSprite("Gem_2");
-	CreateSprite("Gem_3");
-	CreateSprite("Gem_4");
-	CreateSprite("Gem_5");
-	CreateSprite("Gem_6");
+	CreateSprite("Gem_Fire_1");
+	CreateSprite("Gem_Fire_2");
+	CreateSprite("Gem_Fire_3");
+	CreateSprite("Gem_Fire_4");
+	CreateSprite("Gem_Fire_5");
+	CreateSprite("Gem_Fire_6");
+	CreateSprite("Gem_Grow_1");
+	CreateSprite("Gem_Grow_2");
+	CreateSprite("Gem_Grow_3");
+	CreateSprite("Gem_Grow_4");
+	CreateSprite("Gem_Grow_5");
+	CreateSprite("Gem_Grow_6");
 	CreateSprite("Flag_Up_1");
 	CreateSprite("Flag_Up_2");
 	CreateSprite("Flag_Down");
@@ -534,7 +561,7 @@ bool Game::Initialise()
 	// Create items for the object poolers
 	for (int i = 0; i < 10; ++i)
 	{
-		m_pickUpPool.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, false);
+		m_pickUpPool.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, ePowerUpType::e_Grower, false);
 	}
 
 	if (!LoadLevel(0))

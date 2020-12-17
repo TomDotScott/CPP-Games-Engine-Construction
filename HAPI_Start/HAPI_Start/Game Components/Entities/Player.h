@@ -3,19 +3,16 @@
 #include "Entity.h"
 #include "Fireball.h"
 
+enum class ePowerUpType;
+
 enum class ePlayerState
 {
-	e_Idle, e_Walking, e_Jumping, e_Climbing
-};
-
-enum class ePowerUpType
-{
-	e_FireThrower
+	e_Idle, e_Walking, e_Jumping, e_Climbing, e_Dead
 };
 
 enum class ePowerUpState
 {
-	e_Normal, e_FireThrower
+	e_Small, e_Normal, e_FireThrower
 };
 
 class Player final : public Entity
@@ -56,6 +53,7 @@ public:
 	std::vector<Fireball>& GetFireBallPool();
 
 private:
+	int m_numStates;
 	float m_movementSpeed;
 	float m_jumpForce;
 	bool m_shouldJumpNextFrame;

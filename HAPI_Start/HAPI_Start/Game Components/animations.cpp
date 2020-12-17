@@ -1,5 +1,34 @@
 #include "Animations.h"
 /* PLAYER BEGIN */
+// SMALL PLAYER
+const std::vector<std::string> animations::PLAYER_SMALL_DEAD{
+	"Player_Small_Dead"
+};
+
+const std::vector<std::string> animations::PLAYER_SMALL_IDLE
+{
+	"Player_Small_Idle_Body_1", "Player_Small_Idle_Body_2"
+};
+
+const std::vector<std::string> animations::PLAYER_SMALL_WALK
+{
+	"Player_Small_Walk_Body_1", "Player_Small_Walk_Body_2"
+};
+
+const std::vector<std::string> animations::PLAYER_SMALL_JUMP{
+	"Player_Small_Jump_Body_1"
+};
+
+const std::vector<std::string> animations::PLAYER_SMALL_CLIMB
+{
+	"Player_Small_Climb_Body_1", "Player_Climb_Body_2"
+};
+
+// NORMAL SIZED PLAYER
+const std::vector<std::string> animations::PLAYER_DEAD{
+	"Player_Dead"
+};
+
 const std::vector<std::string> animations::PLAYER_IDLE
 {
 	"Player_Idle_Body_1", "Player_Idle_Body_2"
@@ -20,6 +49,11 @@ const std::vector<std::string> animations::PLAYER_CLIMB
 };
 
 // POWERED UP PLAYER
+const std::vector<std::string> animations::PLAYER_POWER_UP_DEAD
+{
+	"Player_Power_Up_Dead_Body"
+};
+
 const std::vector<std::string> animations::PLAYER_POWER_UP_IDLE
 {
 	"Player_Power_Up_Idle_Body_1", "Player_Power_Up_Idle_Body_2"
@@ -57,9 +91,14 @@ const std::vector<std::string> animations::COIN_SPIN
 };
 
 /* GEM BEGIN */
-const std::vector<std::string> animations::GEM_SPIN
+const std::vector<std::string> animations::FIRE_GEM_SPIN
 {
-	"Gem_1", "Gem_2" , "Gem_3" , "Gem_4" , "Gem_5" , "Gem_6"
+	"Gem_Fire_1", "Gem_Fire_2" , "Gem_Fire_3" , "Gem_Fire_4" , "Gem_Fire_5" , "Gem_Fire_6"
+};
+
+const std::vector<std::string> animations::GROW_GEM_SPIN
+{
+	"Gem_Grow_1", "Gem_Grow_2" , "Gem_Grow_3" , "Gem_Grow_4" , "Gem_Grow_5" , "Gem_Grow_6"
 };
 
 /* SNAIL BEGIN */
