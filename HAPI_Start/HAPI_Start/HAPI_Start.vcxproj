@@ -66,6 +66,7 @@
     <ClInclude Include="Audio\Music.h" />
     <ClInclude Include="Game Components\Text.h" />
     <ClInclude Include="Graphics\Renderer.h" />
+    <ClInclude Include="Graphics\Texture.h" />
     <ClInclude Include="Utilities\CollisionBox.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entities\Entity.h" />
