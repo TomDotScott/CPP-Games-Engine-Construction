@@ -8,6 +8,7 @@ class Graphics : public Singleton<Graphics>
 {
 	friend class Singleton<Graphics>;
 public:
+	void Initialise();
 	void ClearScreen(HAPISPACE::HAPI_TColour col) const;
 	void ClearScreen() const;
 
@@ -19,6 +20,7 @@ public:
 
 	bool CreateSpriteSheet(const std::string& filename);
 	bool CreateSprite(const std::string& spriteName, int spriteLocation);
+	bool CreateSprite(const std::string& spriteName);
 	void DrawSprite(const std::string& name, Vector2 position, bool flipped = false, short alpha = 255);
 
 private:
@@ -27,7 +29,8 @@ private:
 
 	std::unordered_map<std::string, int> m_spriteSheetLocations;
 	Texture* m_spriteSheet;
-
+	int m_nextSpritesheetLocation;
+	
 	Graphics();
 	~Graphics();
 };

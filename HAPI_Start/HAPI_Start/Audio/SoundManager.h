@@ -9,6 +9,8 @@ class SoundManager : public Singleton<SoundManager>
 {
 	friend class Singleton<SoundManager>;
 public:
+	void Initialise();
+	
 	bool AddSoundEffect(const std::string& sfxName, const std::string& fileName);
 	void PlaySoundEffect(const std::string& sfxName);
 	
