@@ -1,6 +1,6 @@
 #include "PickUpGem.h"
 
-#include "../../Graphics/Graphics.h"
+#include "../../Graphics/TextureManager.h"
 
 PickUpGem::PickUpGem(const int entityID, const Vector2 position, const ePowerUpType powerUpType, const bool visible) :
 	Entity(

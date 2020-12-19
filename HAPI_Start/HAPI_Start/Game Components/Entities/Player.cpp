@@ -1,6 +1,6 @@
 ﻿#include "Player.h"
 #include "../Game.h"
-#include "../Graphics/Graphics.h"
+#include "../Graphics/TextureManager.h"
 
 Player::Player(const Vector2 startingPosition) :
 	Entity(eEntityType::e_Player,
@@ -124,14 +124,14 @@ void Player::Render()
 
 	if (m_currentPowerUpState != ePowerUpState::e_Small)
 	{
-		Graphics::GetInstance().DrawSprite(
+		TextureManager::GetInstance().DrawSprite(
 			GetTopIdentifier(),
 			{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left,
 			m_immune ? 100 : 255
 		);
 	}
 
-	Graphics::GetInstance().DrawSprite(
+	TextureManager::GetInstance().DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, dir == eDirection::e_Left,
 		m_immune ? 100 : 255

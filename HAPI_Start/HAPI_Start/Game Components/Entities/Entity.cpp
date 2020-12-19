@@ -1,7 +1,7 @@
 ﻿#include "Entity.h"
 
 #include "../../Audio/SoundManager.h"
-#include "../Graphics/Graphics.h"
+#include "../Graphics/TextureManager.h"
 
 Entity::Entity(
 	eEntityType type, const int ID, const Vector2 size, const eDirection direction, const Vector2 position,
@@ -113,7 +113,7 @@ eAnimationState Entity::GetCurrentAnimationState() const
 
 void Entity::Render()
 {
-	Graphics::GetInstance().DrawSprite(
+	TextureManager::GetInstance().DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
 		}
@@ -122,7 +122,7 @@ void Entity::Render()
 
 void Entity::Render(const float playerOffset)
 {
-	Graphics::GetInstance().DrawSprite(
+	TextureManager::GetInstance().DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{
 			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,

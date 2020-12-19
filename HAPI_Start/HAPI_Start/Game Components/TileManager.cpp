@@ -3,7 +3,7 @@
 #include <sstream>
 
 #include "../Audio/SoundManager.h"
-#include "../Graphics/Graphics.h"
+#include "../Graphics/TextureManager.h"
 
 bool TileManager::LoadLevel(const std::string& filename)
 {
@@ -196,7 +196,7 @@ void TileManager::RenderTiles(const float playerOffset)
 						break;
 					default:;
 					}
-					Graphics::GetInstance().DrawSprite(spriteIdentifier, tilePos);
+					TextureManager::GetInstance().DrawSprite(spriteIdentifier, tilePos);
 				}
 			}
 		}

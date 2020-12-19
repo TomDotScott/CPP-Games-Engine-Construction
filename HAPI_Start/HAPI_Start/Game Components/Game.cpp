@@ -2,7 +2,7 @@
 #include <fstream>
 #include "../Audio/Music.h"
 #include "../Audio/SoundManager.h"
-#include "../Graphics/Graphics.h"
+#include "../Graphics/TextureManager.h"
 
 Game::Game() :
 	PLAYER_WON(false),
@@ -154,7 +154,7 @@ void Game::Update()
 
 void Game::Render()
 {
-	Graphics::GetInstance().ClearScreen();
+	TextureManager::GetInstance().ClearScreen();
 
 	std::string backgroundName;
 	switch (m_currentLevel)
@@ -169,11 +169,11 @@ void Game::Render()
 		break;
 	}
 
-	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-	Graphics::GetInstance().DrawTexture(backgroundName, m_backgroundPosition);
-	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-	Graphics::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+	TextureManager::GetInstance().DrawTexture(backgroundName, m_backgroundPosition);
+	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
@@ -218,12 +218,12 @@ void Game::Render()
 	// Render UI on top of everything else
 	m_scoreText.Render();
 
-	Graphics::GetInstance().DrawSprite("UI_Lives", { 394, 10 });
-	Graphics::GetInstance().DrawSprite("UI_X", { 435, 10 });
+	TextureManager::GetInstance().DrawSprite("UI_Lives", { 394, 10 });
+	TextureManager::GetInstance().DrawSprite("UI_X", { 435, 10 });
 	m_livesText.Render();
 
-	Graphics::GetInstance().DrawSprite("UI_Coins", { 605, 10 });
-	Graphics::GetInstance().DrawSprite("UI_X", { 647, 10 });
+	TextureManager::GetInstance().DrawSprite("UI_Coins", { 605, 10 });
+	TextureManager::GetInstance().DrawSprite("UI_X", { 647, 10 });
 	m_coinsText.Render();
 
 	m_worldText.Render();
@@ -293,7 +293,7 @@ int Game::GenerateNextEntityID()
 void Game::CreateSprite(const std::string& spriteSheetIdentifier)
 {
 	static int currentSpriteID = 0;
-	if (!Graphics::GetInstance().CreateSprite(spriteSheetIdentifier, currentSpriteID))
+	if (!TextureManager::GetInstance().CreateSprite(spriteSheetIdentifier, currentSpriteID))
 	{
 		HAPI.Close();
 	}
@@ -369,7 +369,7 @@ void Game::HandleControllerInput()
 
 bool Game::Initialise()
 {
-	Graphics::GetInstance().Initialise();
+	TextureManager::GetInstance().Initialise();
 	SoundManager::GetInstance().Initialise();
 
 	// Create items for the object poolers

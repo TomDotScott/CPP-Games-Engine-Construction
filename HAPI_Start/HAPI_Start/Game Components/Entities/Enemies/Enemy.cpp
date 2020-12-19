@@ -1,5 +1,5 @@
 ﻿#include "Enemy.h"
-#include "../Graphics/Graphics.h"
+#include "../Graphics/TextureManager.h"
 
 Enemy::Enemy(const eEntityType type, const int entityID, const Vector2 startingPosition, const Vector2 size, const eDirection startDir, const bool canAvoidEdges) :
 	Entity(type,
@@ -18,7 +18,7 @@ void Enemy::Render(const float playerOffset)
 {
 	if (GetCurrentAnimationState() != eAnimationState::e_Ended)
 	{
-		Graphics::GetInstance().DrawSprite(
+		TextureManager::GetInstance().DrawSprite(
 			GetCurrentAnimationFrameIdentifier(),
 			{
 				m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,

@@ -1,7 +1,7 @@
 #include "Text.h"
 #include <utility>
 
-#include "../Graphics/Graphics.h"
+#include "../Graphics/TextureManager.h"
 
 Text::Text(std::string text, const HAPISPACE::HAPI_TColour colour, const Vector2 position, const int size, const HAPISPACE::HAPI_TextStyle style) :
 	m_text(std::move(text)),
@@ -107,7 +107,7 @@ void Text::Render() const
 			break;
 		}
 
-		Graphics::GetInstance().DrawSprite(spriteName, { m_position.x + xOffset, m_position.y });
+		TextureManager::GetInstance().DrawSprite(spriteName, { m_position.x + xOffset, m_position.y });
 		xOffset += 28.f;
 	}
 }
