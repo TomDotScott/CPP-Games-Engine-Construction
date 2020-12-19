@@ -23,6 +23,11 @@ public:
 	bool PLAYER_LOST;
 
 private:
+	enum class eLevel
+	{
+		e_LevelOne, e_LevelTwo
+	};
+	
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
 
@@ -31,7 +36,7 @@ private:
 	Player m_player;
 	clock_t m_gameClock;
 	float m_levelTimer;
-	int m_currentLevel;
+	eLevel m_currentLevel;
 	bool m_levelStarted;
 	
 	Vector2 m_backgroundPosition;
@@ -54,7 +59,8 @@ private:
 	void HandleKeyBoardInput();
 	void HandleControllerInput();
 	bool Initialise();
-	bool LoadLevel(int levelNo);
+	void LoadNextLevel();
+	bool LoadLevel(eLevel level);
 	void ScrollBackground();
 	void UpdateUI(float deltaTime);
 	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);

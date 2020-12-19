@@ -13,7 +13,7 @@ Game::Game() :
 	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
 	m_levelTimer(200.f),
-	m_currentLevel(0),
+	m_currentLevel(eLevel::e_LevelOne),
 	m_levelStarted(false),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None),
@@ -35,7 +35,7 @@ void Game::Update()
 	// See if the player has triggered the next level
 	if (m_tileManager.ShouldLoadNextLevel())
 	{
-		LoadLevel(++m_currentLevel);
+		LoadNextLevel();
 	}
 
 	const float deltaTime = DeltaTime();
@@ -47,7 +47,7 @@ void Game::Update()
 	}
 
 	// Reset player position if they died
-	if(m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
+	if (m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
 	{
 		m_player.Reset();
 	}
@@ -61,7 +61,7 @@ void Game::Update()
 		{
 		case eEntityType::e_FireGem:
 		case eEntityType::e_GrowGem:
-				
+
 			for (auto& gem : m_pickUpPool)
 			{
 				if (gem.GetActiveState() == false)
@@ -70,8 +70,7 @@ void Game::Update()
 					{
 						gem.SetPowerUpType(ePowerUpType::e_FireThrower);
 						std::cout << "Gem set to fire" << std::endl;
-					}
-					else
+					} else
 					{
 						gem.SetPowerUpType(ePowerUpType::e_Grower);
 						std::cout << "Gem set to grow" << std::endl;
@@ -80,7 +79,7 @@ void Game::Update()
 				}
 			}
 			break;
-			
+
 		default: break;
 		}
 		// dequeue the element
@@ -160,14 +159,13 @@ void Game::Render()
 	std::string backgroundName;
 	switch (m_currentLevel)
 	{
-	case 0:
+	case eLevel::e_LevelOne:
 		backgroundName = "Level1_Background";
 		break;
-	case 1:
+	case eLevel::e_LevelTwo:
 		backgroundName = "Level2_Background";
 		break;
 	default:
-		backgroundName = "Level1_Background";
 		break;
 	}
 
@@ -279,7 +277,7 @@ std::string Game::AddLeadingZeroes(const std::string& string, const int amountOf
 	if (length > 0)
 	{
 		return std::string(length, '0') + string;
-	}else
+	} else
 	{
 		return string;
 	}
@@ -564,43 +562,54 @@ bool Game::Initialise()
 		m_pickUpPool.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, ePowerUpType::e_Grower, false);
 	}
 
-	if (!LoadLevel(0))
-	{
-		return false;
-	}
-
-	return true;
+	return LoadLevel(eLevel::e_LevelOne);
 }
 
-bool Game::LoadLevel(const int levelNo)
+void Game::LoadNextLevel()
+{
+	switch (m_currentLevel)
+	{
+	case eLevel::e_LevelOne:
+		if (!LoadLevel(eLevel::e_LevelTwo))
+		{
+			HAPI.UserMessage(("Level Two could not be loaded"), "An Error Occured");
+			HAPI.Close();
+		}
+		break;
+	case eLevel::e_LevelTwo:
+		break;
+	default:
+		break;
+	}
+}
+
+bool Game::LoadLevel(const eLevel level)
 {
 	// Clear the entity containers
 	m_slimes.clear();
 	m_snails.clear();
 	m_coins.clear();
 
-
 	// Load the level
 	std::string name;
-	switch (levelNo)
+	switch (level)
 	{
-	case 0:
+	case eLevel::e_LevelOne:
 		name = "Level1";
 		m_worldText.SetString("Level 1");
 		break;
-	case 1:
+	case eLevel::e_LevelTwo:
 		name = "Level2";
 		m_worldText.SetString("Level 2");
 		break;
 	default:
-		name = "Level1";
-		m_worldText.SetString("Level 1");
-		break;
+		HAPI.UserMessage(("Level not yet created"), "An Error Occured");
+		return false;
 	}
 
 	if (!m_tileManager.LoadLevel("Res/Levels/" + name + ".csv"))
 	{
-		HAPI.UserMessage("Level Data Could Not Be Loaded", "An Error Occurred");
+		HAPI.UserMessage("Level data for " + name + " could not be loaded", "An Error Occurred");
 		return false;
 	}
 
@@ -635,6 +644,8 @@ bool Game::LoadLevel(const int levelNo)
 	m_player.Reset();
 
 	m_levelStarted = false;
+
+	m_levelTimer = 200.f;
 
 	return true;
 }

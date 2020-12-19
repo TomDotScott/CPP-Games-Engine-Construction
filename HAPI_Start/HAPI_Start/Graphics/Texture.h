@@ -17,7 +17,7 @@ private:
 	HAPISPACE::BYTE* m_textureData;
 	Vector2 m_size;
 
-	void FlipSprite(int spriteSheetLocation, const int width, const int height);
+	void FlipSprite(int spriteSheetLocation, int width, int height) const;
 	void TextureAlphaBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
 	void TextureClipBlit(HAPISPACE::BYTE* screen, Vector2 position) const;
 	void SpriteAlphaBlit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, short alpha = 255) const;

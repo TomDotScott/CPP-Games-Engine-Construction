@@ -59,7 +59,7 @@ Vector2 Texture::GetSize() const
 	return{ m_size };
 }
 
-void Texture::FlipSprite(int spriteSheetLocation, const int width, const int height)
+void Texture::FlipSprite(const int spriteSheetLocation, const int width, const int height) const
 {
 	HAPISPACE::BYTE* spriteData{
 		m_textureData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetLocation
