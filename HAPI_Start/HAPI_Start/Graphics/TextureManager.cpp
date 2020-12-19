@@ -7,18 +7,7 @@ TextureManager::TextureManager() :
 	m_spriteSheetLocations(),
 	m_spriteSheet(),
 	m_nextSpritesheetLocation(0)
-{
-	int width = constants::k_screenWidth;
-	int height = constants::k_screenHeight;
-
-	if (!HAPI.Initialise(width, height, "Nano's Adventure"))
-	{
-		return;
-	}
-	HAPI.SetShowFPS(true);
-	
-	m_screen = HAPI.GetScreenPointer();
-}
+{}
 
 TextureManager::~TextureManager()
 {
@@ -28,8 +17,10 @@ TextureManager::~TextureManager()
 	}
 }
 
-void TextureManager::Initialise()
+void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 {
+	m_screen = screenPtr;
+	
 	//-----------------------TEXTURES-------------------------
 	CreateTexture("Res/Graphics/Level1_Background.tga", "Level1_Background");
 	CreateTexture("Res/Graphics/Level2_Background.tga", "Level2_Background");

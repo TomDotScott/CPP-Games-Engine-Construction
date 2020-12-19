@@ -90,7 +90,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 	return true;
 }
 
-void TileManager::RenderTiles(const float playerOffset)
+void TileManager::RenderTiles(TextureManager& textureManager, const float playerOffset)
 {
 	for (auto& row : m_levelData)
 	{
@@ -196,7 +196,7 @@ void TileManager::RenderTiles(const float playerOffset)
 						break;
 					default:;
 					}
-					TextureManager::GetInstance().DrawSprite(spriteIdentifier, tilePos);
+					textureManager.DrawSprite(spriteIdentifier, tilePos);
 				}
 			}
 		}

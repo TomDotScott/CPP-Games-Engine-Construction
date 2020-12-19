@@ -117,21 +117,21 @@ void Player::Update(const float deltaTime)
 	PlayAnimation(deltaTime);
 }
 
-void Player::Render()
+void Player::Render(TextureManager& textureManager)
 {
 	// Glitches if direction is none so default to facing forward
 	const eDirection dir = m_currentDirection == eDirection::e_None ? eDirection::e_Right : m_currentDirection;
 
 	if (m_currentPowerUpState != ePowerUpState::e_Small)
 	{
-		TextureManager::GetInstance().DrawSprite(
+		textureManager.DrawSprite(
 			GetTopIdentifier(),
 			{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left,
 			m_immune ? 100 : 255
 		);
 	}
 
-	TextureManager::GetInstance().DrawSprite(
+	textureManager.DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, dir == eDirection::e_Left,
 		m_immune ? 100 : 255

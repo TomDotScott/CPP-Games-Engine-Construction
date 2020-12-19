@@ -12,17 +12,8 @@ Text::Text(std::string text, const HAPISPACE::HAPI_TColour colour, const Vector2
 {
 }
 
-void Text::Render() const
+void Text::Render(TextureManager& textureManager) const
 {
-	/*HAPI.RenderText(
-		static_cast<int>(m_position.x),
-		static_cast<int>(m_position.y),
-		m_colour,
-		m_text,
-		m_characterSize,
-		m_style
-	);*/
-
 	float xOffset{ 0.f };
 	for (auto& character : m_text)
 	{
@@ -107,7 +98,7 @@ void Text::Render() const
 			break;
 		}
 
-		TextureManager::GetInstance().DrawSprite(spriteName, { m_position.x + xOffset, m_position.y });
+		textureManager.DrawSprite(spriteName, { m_position.x + xOffset, m_position.y });
 		xOffset += 28.f;
 	}
 }

@@ -5,7 +5,7 @@ class Enemy : public Entity
 {
 public:
 	explicit Enemy(eEntityType type, const int entityID, Vector2 startingPosition, Vector2 size, eDirection startDir, bool canAvoidEdges = false);
-	void Render(float playerOffset);
+	void Render(TextureManager& textureManager, float playerOffset) override;
 	bool CanAvoidEdges() const;
 	void SetIsFalling(bool isFalling);
 	virtual void CheckEntityCollisions(Entity& other) override = 0;

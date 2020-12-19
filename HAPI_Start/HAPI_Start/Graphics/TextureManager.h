@@ -6,10 +6,12 @@
 #include "../Utilities/Vector.h"
 #include "Texture.h"
 
-class TextureManager : public Singleton<TextureManager>
+class TextureManager
 {
-	friend class Singleton<TextureManager>;
 public:
+	TextureManager();
+	~TextureManager();
+
 	// Non-Copyable and Non-moveable
 	TextureManager(const TextureManager& other) = delete;
 	TextureManager(TextureManager&& other) noexcept = delete;
@@ -17,7 +19,8 @@ public:
 	TextureManager& operator=(const TextureManager& other) = delete;
 	TextureManager& operator=(TextureManager&& other) noexcept = delete;
 	
-	void Initialise();
+	void Initialise(HAPISPACE::BYTE* screenPtr);
+	
 	void ClearScreen(HAPISPACE::HAPI_TColour col) const;
 	void ClearScreen() const;
 
@@ -39,7 +42,4 @@ private:
 	std::unordered_map<std::string, int> m_spriteSheetLocations;
 	Texture* m_spriteSheet;
 	int m_nextSpritesheetLocation;
-	
-	TextureManager();
-	~TextureManager();
 };

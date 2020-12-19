@@ -4,8 +4,13 @@
 #include "../Graphics/TextureManager.h"
 
 Entity::Entity(
-	eEntityType type, const int ID, const Vector2 size, const eDirection direction, const Vector2 position,
-	const Vector2 velocity, const Vector2 acceleration
+	const eEntityType type, 
+	const int ID, 
+	const Vector2 size, 
+	const eDirection direction, 
+	const Vector2 position,
+	const Vector2 velocity, 
+	const Vector2 acceleration
 ) :
 	m_entityID(ID),
 	m_size(size),
@@ -111,18 +116,18 @@ eAnimationState Entity::GetCurrentAnimationState() const
 	return m_animations[m_animationIndex].GetCurrentAnimationState();
 }
 
-void Entity::Render()
+void Entity::Render(TextureManager& textureManager)
 {
-	TextureManager::GetInstance().DrawSprite(
+	textureManager.DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
 		}
 	);
 }
 
-void Entity::Render(const float playerOffset)
+void Entity::Render(TextureManager& textureManager, const float playerOffset)
 {
-	TextureManager::GetInstance().DrawSprite(
+	textureManager.DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{
 			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,

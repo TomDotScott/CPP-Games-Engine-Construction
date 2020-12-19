@@ -2,7 +2,6 @@
 #include <fstream>
 #include "../Audio/Music.h"
 #include "../Audio/SoundManager.h"
-#include "../Graphics/TextureManager.h"
 
 Game::Game() :
 	PLAYER_WON(false),
@@ -154,7 +153,7 @@ void Game::Update()
 
 void Game::Render()
 {
-	TextureManager::GetInstance().ClearScreen();
+	m_textureManager.ClearScreen();
 
 	std::string backgroundName;
 	switch (m_currentLevel)
@@ -169,39 +168,39 @@ void Game::Render()
 		break;
 	}
 
-	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-	TextureManager::GetInstance().DrawTexture(backgroundName, m_backgroundPosition);
-	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-	TextureManager::GetInstance().DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+	m_textureManager.DrawTexture(backgroundName, m_backgroundPosition);
+	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
-	m_tileManager.RenderTiles(playerXOffset);
+	m_tileManager.RenderTiles(m_textureManager, playerXOffset);
 
 	for (auto& coin : m_coins)
 	{
 		if (coin.GetIsVisible())
 		{
-			coin.Render(playerXOffset);
+			coin.Render(m_textureManager, playerXOffset);
 		}
 	}
 
 	for (auto& slime : m_slimes)
 	{
-		slime.Render(playerXOffset);
+		slime.Render(m_textureManager, playerXOffset);
 	}
 
 	for (auto& snail : m_snails)
 	{
-		snail.Render(playerXOffset);
+		snail.Render(m_textureManager, playerXOffset);
 	}
 
 	for (auto& ball : m_player.GetFireBallPool())
 	{
 		if (ball.GetActiveState())
 		{
-			ball.Render(playerXOffset);
+			ball.Render(m_textureManager, playerXOffset);
 		}
 	}
 
@@ -209,25 +208,25 @@ void Game::Render()
 	{
 		if (pickup.GetActiveState())
 		{
-			pickup.Render(playerXOffset);
+			pickup.Render(m_textureManager, playerXOffset);
 		}
 	}
 
-	m_player.Render();
+	m_player.Render(m_textureManager);
 
 	// Render UI on top of everything else
-	m_scoreText.Render();
+	m_scoreText.Render(m_textureManager);
 
-	TextureManager::GetInstance().DrawSprite("UI_Lives", { 394, 10 });
-	TextureManager::GetInstance().DrawSprite("UI_X", { 435, 10 });
-	m_livesText.Render();
+	m_textureManager.DrawSprite("UI_Lives", { 394, 10 });
+	m_textureManager.DrawSprite("UI_X", { 435, 10 });
+	m_livesText.Render(m_textureManager);
 
-	TextureManager::GetInstance().DrawSprite("UI_Coins", { 605, 10 });
-	TextureManager::GetInstance().DrawSprite("UI_X", { 647, 10 });
-	m_coinsText.Render();
+	m_textureManager.DrawSprite("UI_Coins", { 605, 10 });
+	m_textureManager.DrawSprite("UI_X", { 647, 10 });
+	m_coinsText.Render(m_textureManager);
 
-	m_worldText.Render();
-	m_timerText.Render();
+	m_worldText.Render(m_textureManager);
+	m_timerText.Render(m_textureManager);
 }
 
 void Game::ScrollBackground()
@@ -288,16 +287,6 @@ int Game::GenerateNextEntityID()
 {
 	static int currentEntityID = 0;
 	return ++currentEntityID;
-}
-
-void Game::CreateSprite(const std::string& spriteSheetIdentifier)
-{
-	static int currentSpriteID = 0;
-	if (!TextureManager::GetInstance().CreateSprite(spriteSheetIdentifier, currentSpriteID))
-	{
-		HAPI.Close();
-	}
-	currentSpriteID++;
 }
 
 float Game::DeltaTime() const
@@ -369,7 +358,18 @@ void Game::HandleControllerInput()
 
 bool Game::Initialise()
 {
-	TextureManager::GetInstance().Initialise();
+	int width = constants::k_screenWidth;
+	int height = constants::k_screenHeight;
+
+	if (!HAPI.Initialise(width, height, "Nano's Adventure"))
+	{
+		return false;
+	}
+	
+	HAPI.SetShowFPS(true);
+
+	m_textureManager.Initialise(HAPI.GetScreenPointer());
+	
 	SoundManager::GetInstance().Initialise();
 
 	// Create items for the object poolers

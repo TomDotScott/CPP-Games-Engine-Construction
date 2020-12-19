@@ -6,6 +6,8 @@
 #include "../Utilities/Vector.h"
 #include "../Utilities/Constants.h"
 
+class TextureManager;
+
 enum class eEntityState
 {
 	e_Alive, e_Dead, e_ProjectileHit
@@ -55,8 +57,8 @@ public:
 	virtual ~Entity() = default;
 
 	virtual void Update(float deltaTime) = 0;
-	virtual void Render();
-	virtual void Render(float playerOffset);
+	virtual void Render(TextureManager& textureManager);
+	virtual void Render(TextureManager& textureManager, float playerOffset);
 	virtual void CheckEntityCollisions(Entity& other) = 0;
 
 	// Different per entity and per animation frame...

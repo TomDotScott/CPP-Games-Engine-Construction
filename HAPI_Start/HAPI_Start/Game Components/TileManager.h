@@ -5,13 +5,14 @@
 #include "Entities/Enemies/Enemy.h"
 #include "Entities/Entity.h"
 #include "Entities/Player.h"
+class TextureManager;
 struct Tile;
 
 class TileManager
 {
 public:
 	bool LoadLevel(const std::string& filename);
-	void RenderTiles(float playerOffset);
+	void RenderTiles(TextureManager& textureManager, float playerOffset);
 	void CheckPlayerLevelCollisions(Player& player);
 	bool ShouldLoadNextLevel() const;
 	void CheckEnemyLevelCollisions(Enemy& enemy);

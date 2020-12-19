@@ -3,12 +3,14 @@
 #include <HAPI_lib.h>
 #include "../Utilities/Vector.h"
 
+class TextureManager;
+
 class Text
 {
 public:
 	explicit Text(std::string text, HAPISPACE::HAPI_TColour colour, Vector2 position = Vector2::CENTRE, int size = 36, HAPISPACE::HAPI_TextStyle style = HAPISPACE::eRegular);
 
-	void Render() const;
+	void Render(TextureManager& textureManager) const;
 
 	std::string& GetString();
 	void SetString(const std::string& text);

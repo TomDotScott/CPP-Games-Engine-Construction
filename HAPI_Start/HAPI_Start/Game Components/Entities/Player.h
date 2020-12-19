@@ -21,7 +21,7 @@ public:
 	explicit Player(Vector2 startingPosition);
 
 	void Update(float deltaTime) override;
-	void Render() override;
+	void Render(TextureManager& textureManager) override;
 	void CheckEntityCollisions(Entity& other) override;
 	void SetShouldJump(bool shouldJump);
 

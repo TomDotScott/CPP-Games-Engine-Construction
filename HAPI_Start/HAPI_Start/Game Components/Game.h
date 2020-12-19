@@ -2,6 +2,8 @@
 #include <ctime>
 #include <HAPI_lib.h>
 #include <unordered_map>
+
+#include "../Graphics/TextureManager.h"
 #include "Entities/Coin.h"
 #include "Entities/Enemies/Slime.h"
 #include "Entities/Enemies/Snail.h"
@@ -27,6 +29,8 @@ private:
 	{
 		e_LevelOne, e_LevelTwo
 	};
+
+	TextureManager m_textureManager;
 	
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
@@ -53,7 +57,6 @@ private:
 	Text m_worldText;
 	Text m_timerText;
 
-	static void CreateSprite(const std::string& spriteSheetIdentifier);
 	float DeltaTime() const;
 	bool GetKey(eKeyCode keyCode) const;
 	void HandleKeyBoardInput();

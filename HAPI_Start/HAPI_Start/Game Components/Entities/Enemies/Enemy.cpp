@@ -14,11 +14,11 @@ Enemy::Enemy(const eEntityType type, const int entityID, const Vector2 startingP
 {
 }
 
-void Enemy::Render(const float playerOffset)
+void Enemy::Render(TextureManager& textureManager, const float playerOffset)
 {
 	if (GetCurrentAnimationState() != eAnimationState::e_Ended)
 	{
-		TextureManager::GetInstance().DrawSprite(
+		textureManager.DrawSprite(
 			GetCurrentAnimationFrameIdentifier(),
 			{
 				m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
