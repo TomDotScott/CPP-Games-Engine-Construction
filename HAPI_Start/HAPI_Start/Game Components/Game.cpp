@@ -75,6 +75,7 @@ void Game::Update()
 						std::cout << "Gem set to grow" << std::endl;
 					}
 					gem.Initialise(front.second);
+					break;
 				}
 			}
 			break;

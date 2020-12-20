@@ -23,6 +23,12 @@ private:
 	std::vector<std::vector<Tile>> m_levelData;
 	std::queue<std::pair<eEntityType, Vector2>> m_entityLocations;
 	bool m_shouldLoadNextLevel{ false };
+
+	void CheckPlayerHeadCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
+	void CheckPlayerLeftCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
+	void CheckPlayerRightCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
+	void CheckPlayerBottomCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
+	
 };
 
 enum class eTileType
@@ -46,10 +52,15 @@ struct Tile
 		m_canCollide(canCollide),
 		m_canBeDestroyed(true)
 	{
+		m_tileCollisionBox = {
+			m_position,
+			{m_position.x + constants::k_spriteSheetCellSize, m_position.y + constants::k_spriteSheetCellSize}
+		};
 	}
 
 	eTileType m_type;
 	Vector2 m_position;
+	CollisionBox m_tileCollisionBox;
 	bool m_canCollide;
 	bool m_canBeDestroyed;
 };

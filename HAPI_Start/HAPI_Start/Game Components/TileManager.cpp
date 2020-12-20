@@ -86,7 +86,9 @@ bool TileManager::LoadLevel(const std::string& filename)
 			m_levelData.emplace_back(row);
 		}
 	}
+
 	file.close();
+
 	return true;
 }
 
@@ -102,6 +104,7 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 					currentTile.m_position.x - playerOffset + static_cast<float>(constants::k_screenWidth) / 2.f,
 					currentTile.m_position.y
 				};
+
 				if (tilePos.x > -constants::k_spriteSheetCellSize && tilePos.x <= constants::k_screenWidth)
 				{
 					std::string spriteIdentifier = "EmptyString";
@@ -206,171 +209,25 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 void TileManager::CheckPlayerLevelCollisions(Player& player)
 {
 	const CollisionBoxes playerCollisionBoxes = player.GetCurrentCollisionBoxes();
-	/* TOP COLLISIONS */
-	if (player.GetPosition().y > static_cast<float>(constants::k_spriteSheetCellSize) / 2.f)
+
+	CheckPlayerHeadCollisions(player, playerCollisionBoxes);
+
+	// Don't limit direction to start, as Left and Right collisions will
+	// limit the player's move direction
+	player.SetMoveDirectionLimit(eDirection::e_None);
+
+	CheckPlayerLeftCollisions(player, playerCollisionBoxes);
+
+	CheckPlayerRightCollisions(player, playerCollisionBoxes);
+
+	CheckPlayerBottomCollisions(player, playerCollisionBoxes);
+
+	for(auto& fireball : player.GetFireBallPool())
 	{
-		const int playerPosX = ((static_cast<int>(player.GetPosition().x)) /
-			constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
-
-		const int playerPosY = static_cast<int>(player.GetPosition().y) / constants::k_spriteSheetCellSize;
-
-		Tile& currentTile = m_levelData[playerPosY][playerPosX];
-
-		const auto currentTileCollisionBox = CollisionBox(
-			{ currentTile.m_position },
-			{ currentTile.m_position.x + constants::k_spriteSheetCellSize, currentTile.m_position.y + constants::k_spriteSheetCellSize }
-		);
-
-		if (currentTile.m_canCollide &&
-			player.GetCurrentCollisionBoxes().m_topCollisionBox.Overlapping(currentTileCollisionBox))
-		{
-			player.SetVelocity({ player.GetVelocity().x });
-
-			switch (currentTile.m_type)
-			{
-			case eTileType::e_CrateBlock:
-				if (currentTile.m_canBeDestroyed)
-				{
-					currentTile.m_type = eTileType::e_Air;
-					currentTile.m_canCollide = false;
-					SoundManager::GetInstance().PlaySoundEffect("Block_Break");
-				}
-				break;
-			case eTileType::e_CoinBlock:
-				currentTile.m_type = eTileType::e_CrateBlock;
-				currentTile.m_canBeDestroyed = false;
-				SoundManager::GetInstance().PlaySoundEffect("Coin");
-				break;
-			case eTileType::e_BoxedCoinBlock:
-				currentTile.m_type = eTileType::e_CoinBlock;
-				SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
-				break;
-			case eTileType::e_ItemBlock:
-				if (constants::rand_range(0, 100) <= 50)
-				{
-					m_entityLocations.push(
-						{
-							eEntityType::e_FireGem,
-							{
-								currentTile.m_position.x,
-								currentTile.m_position.y - constants::k_spriteSheetCellSize
-							}
-						}
-					);
-					std::cout << "Fire Gem Spawned" << std::endl;
-				} else
-				{
-					m_entityLocations.push(
-						{
-							eEntityType::e_GrowGem,
-							{
-								currentTile.m_position.x,
-								currentTile.m_position.y - constants::k_spriteSheetCellSize
-							}
-						}
-					);
-					std::cout << "Fire Grow Gem Spawned" << std::endl;
-				}
-
-				currentTile.m_type = eTileType::e_BrickBlock;
-				SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
-				break;
-			default:;
-			}
-		}
-	}
-
-	/* LEFT AND RIGHT COLLISIONS */
-
-	bool hasCollided = false;
-
-	// LEFT
-	int playerXTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x)) / constants::k_spriteSheetCellSize) +
-		constants::k_maxTilesHorizontal / 2;
-	int playerYTile = ((static_cast<int>(playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellSize);
-
-	if (m_levelData[playerYTile][playerXTile].m_canCollide)
-	{
-		// Work out the amount of overlap in the X direction
-		const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_leftCollisionBox.TOP_LEFT.x -
-			static_cast<float>(constants::k_screenWidth / 2.f);
-
-		if (abs(xOverlap) > 32.f)
-		{
-			player.SetMoveDirectionLimit(eDirection::e_Left);
-			hasCollided = true;
-		}
-	}
-
-	// RIGHT
-	playerXTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x)) / constants::k_spriteSheetCellSize) +
-		constants::k_maxTilesHorizontal / 2;
-	playerYTile = ((static_cast<int>(playerCollisionBoxes.m_rightCollisionBox.TOP_LEFT.y)) / constants::k_spriteSheetCellSize);
-
-	if (m_levelData[playerYTile][playerXTile].m_canCollide)
-	{
-		if (m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorMid
-			|| m_levelData[playerYTile][playerXTile].m_type == eTileType::e_OpenDoorTop)
-		{
-			m_shouldLoadNextLevel = true;
-		} else
-		{
-			// Work out the amount of overlap in the X direction
-			const float xOverlap = static_cast<float>(playerXTile * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_rightCollisionBox.BOTTOM_RIGHT.x -
-				static_cast<float>(constants::k_screenWidth / 2.f);
-
-			if (abs(xOverlap) > 8.f)
-			{
-				player.SetMoveDirectionLimit(eDirection::e_Right);
-				hasCollided = true;
-			}
-		}
-	}
-
-	if (!hasCollided)
-	{
-		player.SetMoveDirectionLimit(eDirection::e_None);
-	}
-
-
-	/* BOTTOM COLLISIONS */
-	const int feetX = ((static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.x)) /
-		constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
-	const int feetY = static_cast<int>(playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
-
-	if (feetY < 15)
-	{
-		if (m_levelData[feetY][feetX].m_canCollide)
-		{
-			if (m_levelData[feetY][feetX].m_type == eTileType::e_Spikes)
-			{
-				player.Kill();
-				return;
-			}
-			// Work out the amount of overlap in the Y direction
-			const float yOverlap = static_cast<float>(feetY * constants::k_spriteSheetCellSize) - playerCollisionBoxes.m_bottomCollisionBox.TOP_LEFT.y;
-			if (abs(yOverlap) > 16.f)
-			{
-				player.SetPosition({ player.GetPosition().x, static_cast<float>(feetY - 1) * constants::k_spriteSheetCellSize });
-			}
-			player.SetPlayerState(ePlayerState::e_Walking);
-		} else
-		{
-			player.SetPlayerState(ePlayerState::e_Jumping);
-		}
-	} else
-	{
-		player.Kill();
-	}
-
-	for (auto& fireball : player.GetFireBallPool())
-	{
-		if (fireball.GetActiveState())
-		{
-			CheckFireballLevelCollisions(fireball);
-		}
+		CheckFireballLevelCollisions(fireball);
 	}
 }
+
 
 bool TileManager::ShouldLoadNextLevel() const
 {
@@ -447,9 +304,8 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	{
 		auto& groundTile = m_levelData[fireballY][fireballX];
 
-		const auto groundTileBoxes = CollisionBox({ groundTile.m_position },
-			{ groundTile.m_position.x + constants::k_spriteSheetCellSize, groundTile.m_position.y + constants::k_spriteSheetCellSize });
-
+		const auto groundTileBoxes = groundTile.m_tileCollisionBox;
+		
 		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes)
 			&& groundTile.m_canCollide)
 		{
@@ -483,4 +339,131 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 std::queue<std::pair<eEntityType, Vector2>>& TileManager::GetEntityLocations()
 {
 	return m_entityLocations;
+}
+
+void TileManager::CheckPlayerHeadCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+{
+	const CollisionBox& playerGlobalBox = playerCollisionBoxes.m_globalBounds;
+	
+	if (player.GetPosition().y > 0)
+	{
+		// Find the grid position of the global bounds...
+		const int globalBoundsX = (static_cast<int>(playerGlobalBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+		const int globalBoundsY = (static_cast<int>(playerGlobalBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize);
+
+		auto& currentTile = m_levelData[globalBoundsY][globalBoundsX];
+		if (currentTile.m_canCollide && playerGlobalBox.Overlapping(currentTile.m_tileCollisionBox))
+		{
+			const CollisionBox& playerTopCollisionBox = playerCollisionBoxes.m_topCollisionBox;
+			if (playerTopCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
+			{
+				// Stop the jump
+				player.SetVelocity({ player.GetVelocity().x });
+
+				// Work out which tile it was and deal accordingly
+				switch (currentTile.m_type)
+				{
+				case eTileType::e_CrateBlock:
+					if (currentTile.m_canBeDestroyed)
+					{
+						currentTile.m_type = eTileType::e_Air;
+						currentTile.m_canCollide = false;
+						SoundManager::GetInstance().PlaySoundEffect("Block_Break");
+					}
+					break;
+				case eTileType::e_CoinBlock:
+					currentTile.m_type = eTileType::e_CrateBlock;
+					currentTile.m_canBeDestroyed = false;
+					SoundManager::GetInstance().PlaySoundEffect("Coin");
+					break;
+				case eTileType::e_BoxedCoinBlock:
+					currentTile.m_type = eTileType::e_CoinBlock;
+					SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
+					break;
+				case eTileType::e_ItemBlock:
+					const eEntityType type = constants::rand_range(0, 100) <= 50 ? eEntityType::e_FireGem : eEntityType::e_GrowGem;
+					m_entityLocations.push({ type, {currentTile.m_position.x,currentTile.m_position.y - constants::k_spriteSheetCellSize} });
+					currentTile.m_type = eTileType::e_BrickBlock;
+					SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
+					break;
+				}
+			}
+		}
+	}
+}
+
+void TileManager::CheckPlayerLeftCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+{
+	// Find the block to the left of the player
+	if (player.GetPosition().x > 0 && player.GetPosition().x <= static_cast<float>(m_levelData[0].size() * constants::k_spriteSheetCellSize))
+	{
+		const CollisionBox& playerLeftCollisionBox = playerCollisionBoxes.m_leftCollisionBox;
+
+		const int playerX = (static_cast<int>(playerLeftCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+		const int playerY = static_cast<int>(playerLeftCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
+
+		const auto& currentTile = m_levelData[playerY][playerX];
+
+		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		{
+			if (playerLeftCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
+			{
+				player.SetMoveDirectionLimit(eDirection::e_Left);
+			}
+		}
+	}
+}
+
+void TileManager::CheckPlayerRightCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+{
+	// Find the block to the right of the player
+	if (player.GetPosition().x > 0 && player.GetPosition().x <= static_cast<float>(m_levelData[0].size() * constants::k_spriteSheetCellSize))
+	{
+		const CollisionBox& playerRightCollisionBox = playerCollisionBoxes.m_rightCollisionBox;
+
+		const int playerX = (static_cast<int>(playerRightCollisionBox.BOTTOM_RIGHT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+		const int playerY = static_cast<int>(playerRightCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
+
+		const auto& currentTile = m_levelData[playerY][playerX];
+
+		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		{
+			if (playerRightCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
+			{
+				player.SetMoveDirectionLimit(eDirection::e_Right);
+			}
+		}
+	}
+}
+
+void TileManager::CheckPlayerBottomCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+{
+	// Check the player is on-screen
+	if(player.GetPosition().y < constants::k_maxTilesVertical * constants::k_spriteSheetCellSize && player.GetPosition().y > 0)
+	{
+		const CollisionBox& playerBottomCollisionBox = playerCollisionBoxes.m_bottomCollisionBox;
+		
+		// Find the block below the player
+		const int playerFeetX = (static_cast<int>(playerBottomCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+
+		const int playerFeetY = static_cast<int>(playerBottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
+
+		const auto& currentTile = m_levelData[playerFeetY][playerFeetX];
+
+		if(currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		{
+			if(playerBottomCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
+			{
+				if(currentTile.m_type == eTileType::e_Spikes)
+				{
+					player.Kill();
+				}
+
+				player.SetPlayerState(ePlayerState::e_Walking);
+			}
+		}else
+		{
+			player.SetPlayerState(ePlayerState::e_Jumping);
+		}
+	}
 }
