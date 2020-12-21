@@ -343,10 +343,10 @@ void Player::Move(const float deltaTime)
 {
 	if (m_currentDirection == eDirection::e_Right && m_moveDirectionLimit != eDirection::e_Right)
 	{
-		m_position = m_position + Vector2(m_movementSpeed * 100, m_velocity.y) * deltaTime;
+		m_position = m_position + Vector2((m_currentPlayerState == ePlayerState::e_Jumping ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) * m_movementSpeed : m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
 	} else if (m_currentDirection == eDirection::e_Left && m_moveDirectionLimit != eDirection::e_Left)
 	{
-		m_position = m_position + Vector2(-m_movementSpeed * 100, m_velocity.y) * deltaTime;
+		m_position = m_position + Vector2((m_currentPlayerState == ePlayerState::e_Jumping ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) * -m_movementSpeed : -m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
 	}
 }
 
