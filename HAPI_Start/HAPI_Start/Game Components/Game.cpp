@@ -8,7 +8,6 @@ Game::Game() :
 	PLAYER_LOST(false),
 	m_keyboardData(HAPI.GetKeyboardData()),
 	m_controllerData(HAPI.GetControllerData(0)),
-	m_tileManager(),
 	m_player({ Vector2::CENTRE }),
 	m_gameClock(),
 	m_levelTimer(200.f),
@@ -31,12 +30,6 @@ Game::Game() :
 
 void Game::Update()
 {
-	// See if the player has triggered the next level
-	if (m_tileManager.ShouldLoadNextLevel())
-	{
-		LoadNextLevel();
-	}
-
 	const float deltaTime = DeltaTime();
 
 	if (m_levelStarted)
@@ -44,48 +37,6 @@ void Game::Update()
 		HandleKeyBoardInput();
 		HandleControllerInput();
 	}
-
-	// Reset player position if they died
-	if (m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
-	{
-		m_player.Reset();
-	}
-
-	// SEE IF THERE ARE ANY COINS OR GEMS TO SET VISIBLE
-	auto& newEntityLocations = m_tileManager.GetEntityLocations();
-	while (!newEntityLocations.empty())
-	{
-		const auto& front = newEntityLocations.front();
-		switch (front.first)
-		{
-		case eEntityType::e_FireGem:
-		case eEntityType::e_GrowGem:
-
-			for (auto& gem : m_pickUpPool)
-			{
-				if (gem.GetActiveState() == false)
-				{
-					if (front.first == eEntityType::e_FireGem)
-					{
-						gem.SetPowerUpType(ePowerUpType::e_FireThrower);
-						std::cout << "Gem set to fire" << std::endl;
-					} else
-					{
-						gem.SetPowerUpType(ePowerUpType::e_Grower);
-						std::cout << "Gem set to grow" << std::endl;
-					}
-					gem.Initialise(front.second);
-					break;
-				}
-			}
-			break;
-
-		default: break;
-		}
-		// dequeue the element
-		newEntityLocations.pop();
-	}
-
 
 	// UPDATE ENTITIES
 	m_player.Update(deltaTime);
@@ -96,13 +47,25 @@ void Game::Update()
 		m_levelStarted = true;
 	}
 
+	// Kill the player if they are off screen
+	if(m_player.GetPosition().y > constants::k_maxTilesVertical * constants::k_spriteSheetCellSize)
+	{
+		m_player.Kill();
+	}
+	
+	// Reset player position if they died
+	if (m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
+	{
+		m_player.Reset();
+	}
+
 
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
 	UpdateEnemies(m_coins, deltaTime);
 
 	// UPDATE ANY ACTIVE PICKUPS
-	for (auto& pickup : m_pickUpPool)
+	for (auto& pickup : m_gems)
 	{
 		if (pickup.GetActiveState())
 		{
@@ -110,36 +73,7 @@ void Game::Update()
 		}
 	}
 
-
-	// CHECK ENTITY-LEVEL COLLISIONS 
-	m_tileManager.CheckPlayerLevelCollisions(m_player);
-	for (auto& slime : m_slimes)
-	{
-		m_tileManager.CheckEnemyLevelCollisions(slime);
-	}
-
-	for (auto& snail : m_snails)
-	{
-		m_tileManager.CheckEnemyLevelCollisions(snail);
-	}
-
-	// CHECK ENTITY-ENTITY COLLISIONS
-	CheckEnemyCollisions(m_slimes);
-	CheckEnemyCollisions(m_snails);
-
-	for (auto& c : m_coins)
-	{
-		c.CheckEntityCollisions(m_player);
-	}
-
-	for (auto& pickup : m_pickUpPool)
-	{
-		if (pickup.GetActiveState())
-		{
-			pickup.CheckEntityCollisions(m_player);
-			m_player.CheckEntityCollisions(pickup);
-		}
-	}
+	CheckCollisions();
 
 	ScrollBackground();
 
@@ -205,7 +139,7 @@ void Game::Render()
 		}
 	}
 
-	for (auto& pickup : m_pickUpPool)
+	for (auto& pickup : m_gems)
 	{
 		if (pickup.GetActiveState())
 		{
@@ -366,17 +300,17 @@ bool Game::Initialise()
 	{
 		return false;
 	}
-	
+
 	HAPI.SetShowFPS(true);
 
 	m_textureManager.Initialise(HAPI.GetScreenPointer());
-	
+
 	SoundManager::GetInstance().Initialise();
 
 	// Create items for the object poolers
 	for (int i = 0; i < 10; ++i)
 	{
-		m_pickUpPool.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, ePowerUpType::e_Grower, false);
+		m_gems.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, ePowerUpType::e_Grower, false);
 	}
 
 	return LoadLevel(eLevel::e_LevelOne);
@@ -437,26 +371,25 @@ bool Game::LoadLevel(const eLevel level)
 	auto& entityLocations = m_tileManager.GetEntityLocations();
 
 	// Dequeue every entity location
-	while (!entityLocations.empty())
-	{
-		const auto location = entityLocations.front();
-		entityLocations.pop();
+	for(auto& entity : entityLocations){
 
-		switch (location.first)
+		switch (entity.first)
 		{
 		case eEntityType::e_Coin:
-			m_coins.emplace_back(GenerateNextEntityID(), location.second, true);
+			m_coins.emplace_back(GenerateNextEntityID(), entity.second, true);
 			break;
 		case eEntityType::e_Slime:
-			m_slimes.emplace_back(GenerateNextEntityID(), location.second, location.second.y == 768.f ? true : false);
+			m_slimes.emplace_back(GenerateNextEntityID(), entity.second, entity.second.y == 768.f ? true : false);
 			break;
 		case eEntityType::e_Snail:
-			m_snails.emplace_back(GenerateNextEntityID(), location.second);
+			m_snails.emplace_back(GenerateNextEntityID(), entity.second);
 			break;
 		default: break;
 		}
 	}
 
+	entityLocations.clear();
+	
 	// Reset Player
 	m_player.Reset();
 
@@ -465,4 +398,132 @@ bool Game::LoadLevel(const eLevel level)
 	m_levelTimer = 200.f;
 
 	return true;
+}
+
+void Game::CheckCollisions()
+{
+	// CHECK ENTITY-LEVEL COLLISIONS 
+	HandlePlayerCollisions();
+
+	for (auto& slime : m_slimes)
+	{
+		m_tileManager.CheckEnemyLevelCollisions(slime);
+	}
+
+	for (auto& snail : m_snails)
+	{
+		m_tileManager.CheckEnemyLevelCollisions(snail);
+	}
+
+	// CHECK ENTITY-ENTITY COLLISIONS
+	CheckEnemyCollisions(m_slimes);
+	CheckEnemyCollisions(m_snails);
+
+	for (auto& c : m_coins)
+	{
+		c.CheckEntityCollisions(m_player);
+	}
+
+	for (auto& pickup : m_gems)
+	{
+		if (pickup.GetActiveState())
+		{
+			pickup.CheckEntityCollisions(m_player);
+			m_player.CheckEntityCollisions(pickup);
+		}
+	}
+}
+
+void Game::HandlePlayerCollisions()
+{
+	CollisionData& playerCollisionData = m_tileManager.CheckPlayerLevelCollisions(m_player);
+
+	// HEAD COLLISIONS
+	if (playerCollisionData.m_headCollision)
+	{
+		// Stop the jump
+		m_player.SetVelocity({ m_player.GetVelocity().x });
+
+		// Work out which tile it was
+		switch (playerCollisionData.m_headCollision->m_type)
+		{
+		case eTileType::e_CrateBlock:
+			if (playerCollisionData.m_headCollision->m_canBeDestroyed)
+			{
+				playerCollisionData.m_headCollision->m_type = eTileType::e_Air;
+				playerCollisionData.m_headCollision->m_canCollide = false;
+				SoundManager::GetInstance().PlaySoundEffect("Block_Break");
+			}
+			break;
+
+		case eTileType::e_CoinBlock:
+			playerCollisionData.m_headCollision->m_type = eTileType::e_CrateBlock;
+			playerCollisionData.m_headCollision->m_canBeDestroyed = false;
+
+			m_coins.emplace_back(
+				GenerateNextEntityID(),
+				Vector2(playerCollisionData.m_headCollision->m_position.x, playerCollisionData.m_headCollision->m_position.y - constants::k_spriteSheetCellSize),
+				true
+			);
+			
+			SoundManager::GetInstance().PlaySoundEffect("Coin");
+			break;
+
+		case eTileType::e_BoxedCoinBlock:
+			playerCollisionData.m_headCollision->m_type = eTileType::e_CoinBlock;
+			SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
+			break;
+
+		case eTileType::e_ItemBlock:
+		{
+			ePowerUpType type = constants::rand_range(0, 100) <= 50 ? ePowerUpType::e_FireThrower : ePowerUpType::e_Grower;
+
+			// Instantiate a new power up
+			m_gems.emplace_back(
+				GenerateNextEntityID(),
+				Vector2(playerCollisionData.m_headCollision->m_position.x, playerCollisionData.m_headCollision->m_position.y - constants::k_spriteSheetCellSize),
+				ePowerUpType::e_FireThrower,
+				true
+			);
+
+			playerCollisionData.m_headCollision->m_type = eTileType::e_BrickBlock;
+			SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
+		}
+		break;
+		default:
+			break;
+		}
+	}
+
+	if (playerCollisionData.m_leftCollision)
+	{
+		m_player.SetMoveDirectionLimit(eDirection::e_Left);
+	}
+
+	if (playerCollisionData.m_rightCollision)
+	{
+		switch (playerCollisionData.m_rightCollision->m_type)
+		{
+		case eTileType::e_OpenDoorMid:
+		case eTileType::e_OpenDoorTop:
+			LoadNextLevel();
+			break;		
+		}
+		m_player.SetMoveDirectionLimit(eDirection::e_Right);
+	}
+
+	if (playerCollisionData.m_bottomCollision)
+	{
+		if (playerCollisionData.m_bottomCollision->m_type == eTileType::e_Spikes)
+		{
+			m_player.Kill();
+		} else
+		{
+			m_player.SetPlayerState(ePlayerState::e_Walking);
+		}
+	} else
+	{
+		// If there is no bottom collision, make the player jump
+		m_player.SetPlayerState(ePlayerState::e_Jumping);
+	}
 }

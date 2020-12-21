@@ -49,7 +49,7 @@ private:
 	std::vector<Slime> m_slimes;
 	std::vector<Snail> m_snails;
 	std::vector<Coin> m_coins;
-	std::vector<PickUpGem> m_pickUpPool;
+	std::vector<PickUpGem> m_gems;
 
 	Text m_scoreText;
 	Text m_livesText;
@@ -64,6 +64,8 @@ private:
 	bool Initialise();
 	void LoadNextLevel();
 	bool LoadLevel(eLevel level);
+	void CheckCollisions();
+	void HandlePlayerCollisions();
 	void ScrollBackground();
 	void UpdateUI(float deltaTime);
 	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);

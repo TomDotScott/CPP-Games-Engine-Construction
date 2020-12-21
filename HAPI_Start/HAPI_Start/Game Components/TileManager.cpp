@@ -5,24 +5,22 @@
 #include "../Audio/SoundManager.h"
 #include "../Graphics/TextureManager.h"
 
+TileManager::TileManager() :
+	m_shouldLoadNextLevel(false),
+	m_playerCollisionData()
+{
+
+}
+
 bool TileManager::LoadLevel(const std::string& filename)
 {
 	m_shouldLoadNextLevel = false;
 
 	// Clear the level data if it exists
-	if (!m_levelData.empty())
-	{
-		m_levelData.clear();
-	}
+	m_levelData.clear();
 
-	// Clear the entity locations, if they exist
-	if (!m_entityLocations.empty())
-	{
-		while (!m_entityLocations.empty())
-		{
-			m_entityLocations.pop();
-		}
-	}
+	// Clear the entity locations
+	m_entityLocations.clear();
 
 	std::ifstream file(filename);
 	if (!file.is_open())
@@ -65,7 +63,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					tileType == eTileType::e_Coin ||
 					tileType == eTileType::e_Snail)
 				{
-					m_entityLocations.push({ static_cast<const eEntityType>(tileString), tilePosition });
+					m_entityLocations.push_back({ static_cast<const eEntityType>(tileString), tilePosition });
 					row.emplace_back(eTileType::e_Air, tilePosition, false);
 				} else
 				{
@@ -206,26 +204,28 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 	}
 }
 
-void TileManager::CheckPlayerLevelCollisions(Player& player)
+CollisionData& TileManager::CheckPlayerLevelCollisions(Player& player)
 {
 	const CollisionBoxes playerCollisionBoxes = player.GetCurrentCollisionBoxes();
 
-	CheckPlayerHeadCollisions(player, playerCollisionBoxes);
+	m_playerCollisionData.m_headCollision = CheckPlayerHeadCollisions(player, playerCollisionBoxes);
 
 	// Don't limit direction to start, as Left and Right collisions will
 	// limit the player's move direction
 	player.SetMoveDirectionLimit(eDirection::e_None);
 
-	CheckPlayerLeftCollisions(player, playerCollisionBoxes);
+	m_playerCollisionData.m_leftCollision = CheckPlayerLeftCollisions(player, playerCollisionBoxes);
 
-	CheckPlayerRightCollisions(player, playerCollisionBoxes);
+	m_playerCollisionData.m_rightCollision = CheckPlayerRightCollisions(player, playerCollisionBoxes);
 
-	CheckPlayerBottomCollisions(player, playerCollisionBoxes);
+	m_playerCollisionData.m_bottomCollision = CheckPlayerBottomCollisions(player, playerCollisionBoxes);
 
-	for(auto& fireball : player.GetFireBallPool())
+	for (auto& fireball : player.GetFireBallPool())
 	{
 		CheckFireballLevelCollisions(fireball);
 	}
+
+	return m_playerCollisionData;
 }
 
 
@@ -305,7 +305,7 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 		auto& groundTile = m_levelData[fireballY][fireballX];
 
 		const auto groundTileBoxes = groundTile.m_tileCollisionBox;
-		
+
 		if (fireballBottom.Translate({ static_cast<float>(constants::k_maxTilesHorizontal) / 2.f, 0 }).Overlapping(groundTileBoxes)
 			&& groundTile.m_canCollide)
 		{
@@ -336,134 +336,103 @@ void TileManager::CheckFireballLevelCollisions(Fireball& fireball)
 	}
 }
 
-std::queue<std::pair<eEntityType, Vector2>>& TileManager::GetEntityLocations()
+std::vector<std::pair<eEntityType, Vector2>>& TileManager::GetEntityLocations()
 {
 	return m_entityLocations;
 }
 
-void TileManager::CheckPlayerHeadCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckPlayerHeadCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
 {
 	const CollisionBox& playerGlobalBox = playerCollisionBoxes.m_globalBounds;
-	
-	if (player.GetPosition().y > 0)
-	{
-		// Find the grid position of the global bounds...
-		const int globalBoundsX = (static_cast<int>(playerGlobalBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
-		const int globalBoundsY = (static_cast<int>(playerGlobalBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize);
 
+	// Find the grid position of the global bounds...
+	const int globalBoundsX = (static_cast<int>(playerGlobalBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+	const int globalBoundsY = (static_cast<int>(playerGlobalBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize);
+
+	// check the player is on screen
+	if (globalBoundsX > 0 && globalBoundsX < m_levelData[0].size() && globalBoundsY > 0 && globalBoundsY < constants::k_maxTilesVertical)
+	{
 		auto& currentTile = m_levelData[globalBoundsY][globalBoundsX];
 		if (currentTile.m_canCollide && playerGlobalBox.Overlapping(currentTile.m_tileCollisionBox))
 		{
 			const CollisionBox& playerTopCollisionBox = playerCollisionBoxes.m_topCollisionBox;
 			if (playerTopCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
-				// Stop the jump
-				player.SetVelocity({ player.GetVelocity().x });
-
-				// Work out which tile it was and deal accordingly
-				switch (currentTile.m_type)
-				{
-				case eTileType::e_CrateBlock:
-					if (currentTile.m_canBeDestroyed)
-					{
-						currentTile.m_type = eTileType::e_Air;
-						currentTile.m_canCollide = false;
-						SoundManager::GetInstance().PlaySoundEffect("Block_Break");
-					}
-					break;
-				case eTileType::e_CoinBlock:
-					currentTile.m_type = eTileType::e_CrateBlock;
-					currentTile.m_canBeDestroyed = false;
-					SoundManager::GetInstance().PlaySoundEffect("Coin");
-					break;
-				case eTileType::e_BoxedCoinBlock:
-					currentTile.m_type = eTileType::e_CoinBlock;
-					SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
-					break;
-				case eTileType::e_ItemBlock:
-					const eEntityType type = constants::rand_range(0, 100) <= 50 ? eEntityType::e_FireGem : eEntityType::e_GrowGem;
-					m_entityLocations.push({ type, {currentTile.m_position.x,currentTile.m_position.y - constants::k_spriteSheetCellSize} });
-					currentTile.m_type = eTileType::e_BrickBlock;
-					SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
-					break;
-				}
+				return &currentTile;
 			}
 		}
 	}
+	return nullptr;
 }
 
-void TileManager::CheckPlayerLeftCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckPlayerLeftCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
 {
-	// Find the block to the left of the player
-	if (player.GetPosition().x > 0 && player.GetPosition().x <= static_cast<float>(m_levelData[0].size() * constants::k_spriteSheetCellSize))
+	const CollisionBox& playerLeftCollisionBox = playerCollisionBoxes.m_leftCollisionBox;
+
+	const int playerX = (static_cast<int>(playerLeftCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+	const int playerY = static_cast<int>(playerLeftCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
+
+	if (playerX > 0 && playerX < m_levelData[0].size() && playerY > 0 && playerY < constants::k_maxTilesVertical)
 	{
-		const CollisionBox& playerLeftCollisionBox = playerCollisionBoxes.m_leftCollisionBox;
-
-		const int playerX = (static_cast<int>(playerLeftCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
-		const int playerY = static_cast<int>(playerLeftCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
-
-		const auto& currentTile = m_levelData[playerY][playerX];
+		auto& currentTile = m_levelData[playerY][playerX];
 
 		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
 		{
 			if (playerLeftCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
-				player.SetMoveDirectionLimit(eDirection::e_Left);
+				return &currentTile;
 			}
 		}
 	}
+
+	return nullptr;
 }
 
-void TileManager::CheckPlayerRightCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckPlayerRightCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
 {
-	// Find the block to the right of the player
-	if (player.GetPosition().x > 0 && player.GetPosition().x <= static_cast<float>(m_levelData[0].size() * constants::k_spriteSheetCellSize))
+	const CollisionBox& playerRightCollisionBox = playerCollisionBoxes.m_rightCollisionBox;
+
+	const int playerX = (static_cast<int>(playerRightCollisionBox.BOTTOM_RIGHT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+	const int playerY = static_cast<int>(playerRightCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
+
+	if (playerX > 0 && playerX < m_levelData[0].size() && playerY > 0 && playerY < constants::k_maxTilesVertical)
 	{
-		const CollisionBox& playerRightCollisionBox = playerCollisionBoxes.m_rightCollisionBox;
-
-		const int playerX = (static_cast<int>(playerRightCollisionBox.BOTTOM_RIGHT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
-		const int playerY = static_cast<int>(playerRightCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
-
-		const auto& currentTile = m_levelData[playerY][playerX];
+		auto& currentTile = m_levelData[playerY][playerX];
 
 		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
 		{
 			if (playerRightCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
-				player.SetMoveDirectionLimit(eDirection::e_Right);
+				return &currentTile;
 			}
 		}
 	}
+
+	return nullptr;
 }
 
-void TileManager::CheckPlayerBottomCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckPlayerBottomCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
 {
+	const CollisionBox& playerBottomCollisionBox = playerCollisionBoxes.m_bottomCollisionBox;
+
+	// Find the block below the player
+	const int playerFeetX = (static_cast<int>(playerBottomCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+
+	const int playerFeetY = static_cast<int>(playerBottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
+
 	// Check the player is on-screen
-	if(player.GetPosition().y < constants::k_maxTilesVertical * constants::k_spriteSheetCellSize && player.GetPosition().y > 0)
+	if (playerFeetX > 0 && playerFeetX < m_levelData[0].size() && playerFeetY > 0 && playerFeetY < constants::k_maxTilesVertical)
 	{
-		const CollisionBox& playerBottomCollisionBox = playerCollisionBoxes.m_bottomCollisionBox;
-		
-		// Find the block below the player
-		const int playerFeetX = (static_cast<int>(playerBottomCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
+		auto& currentTile = m_levelData[playerFeetY][playerFeetX];
 
-		const int playerFeetY = static_cast<int>(playerBottomCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
-
-		const auto& currentTile = m_levelData[playerFeetY][playerFeetX];
-
-		if(currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
 		{
-			if(playerBottomCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
+			if (playerBottomCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
-				if(currentTile.m_type == eTileType::e_Spikes)
-				{
-					player.Kill();
-				}
-
-				player.SetPlayerState(ePlayerState::e_Walking);
+				return &currentTile;
 			}
-		}else
-		{
-			player.SetPlayerState(ePlayerState::e_Jumping);
 		}
 	}
+
+	return nullptr;
 }
