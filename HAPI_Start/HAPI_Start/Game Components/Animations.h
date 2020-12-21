@@ -47,4 +47,7 @@ namespace animations
 	extern const std::vector<std::string> SLIME_WALK;
 	extern const std::vector<std::string> SLIME_SQUASHED;
 	extern const std::vector<std::string> SLIME_SHELL_HIT;
+
+	// THE FLAG
+	extern const std::vector<std::string> FLAG_WAVE;
 }

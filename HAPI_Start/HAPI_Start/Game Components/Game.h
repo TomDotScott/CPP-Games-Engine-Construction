@@ -7,12 +7,14 @@
 #include "Entities/Coin.h"
 #include "Entities/Enemies/Slime.h"
 #include "Entities/Enemies/Snail.h"
+#include "Entities/Flag.h"
 #include "Entities/PickUpGem.h"
 #include "Entities/Player.h"
 #include "Text.h"
 #include "TileManager.h"
 
 enum class eKeyCode;
+
 class Game
 {
 public:
@@ -41,7 +43,9 @@ private:
 	clock_t m_gameClock;
 	float m_levelTimer;
 	eLevel m_currentLevel;
+
 	bool m_levelStarted;
+	bool m_levelFinished;
 	
 	Vector2 m_backgroundPosition;
 	eDirection m_backgroundMoveDir;
@@ -50,6 +54,7 @@ private:
 	std::vector<Snail> m_snails;
 	std::vector<Coin> m_coins;
 	std::vector<PickUpGem> m_gems;
+	Flag m_flag;
 
 	Text m_scoreText;
 	Text m_livesText;

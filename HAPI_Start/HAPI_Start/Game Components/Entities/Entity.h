@@ -25,6 +25,7 @@ enum class eEntityType
 	e_Fireball,
 	e_FireGem,
 	e_GrowGem,
+	e_Flag = 38,
 	e_Slime = 65,
 	e_Coin = 66,
 	e_Snail = 68,
@@ -96,7 +97,7 @@ protected:
 	virtual void Move(float deltaTime) = 0;
 	
 	void AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
-	void PlayAnimation(float deltaTime);
+	virtual void PlayAnimation(float deltaTime);
 	void PlaySFX(const std::string& sfxName);
 	void SetAnimationIndex(int animationIndex);
 	std::string GetCurrentAnimationFrameIdentifier();

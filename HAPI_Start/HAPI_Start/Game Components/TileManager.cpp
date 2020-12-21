@@ -50,41 +50,64 @@ bool TileManager::LoadLevel(const std::string& filename)
 					break;
 				}
 
-				const auto tileString = atoi(val.c_str());
+				const auto tileIntFromCSV = atoi(val.c_str());
 
 				const Vector2 tilePosition{
 					static_cast<float>(c * constants::k_spriteSheetCellSize - 10 * constants::k_spriteSheetCellSize),
 					static_cast<float>(r * constants::k_spriteSheetCellSize)
 				};
 
-				const auto tileType = static_cast<eTileType>(tileString);
+				const auto tileType = static_cast<eTileType>(tileIntFromCSV);
 
-				if (tileType == eTileType::e_Slime ||
-					tileType == eTileType::e_Coin ||
-					tileType == eTileType::e_Snail)
+				switch (tileType)
 				{
-					m_entityLocations.push_back({ static_cast<const eEntityType>(tileString), tilePosition });
+				case eTileType::e_Dirt:
+				case eTileType::e_GrassLeft:
+				case eTileType::e_GrassCentre:
+				case eTileType::e_GrassRight:
+				case eTileType::e_GrassCliffLeft:
+				case eTileType::e_GrassCliffRight:
+				case eTileType::e_StoneTop:
+				case eTileType::e_StoneCentre:
+				case eTileType::e_StoneLeft:
+				case eTileType::e_StoneRight:
+				case eTileType::e_FlagPole:
+				case eTileType::e_CoinBlock:
+				case eTileType::e_BoxedCoinBlock:
+				case eTileType::e_CrateBlock:
+				case eTileType::e_ItemBlock:
+				case eTileType::e_BrickBlock:
+				case eTileType::e_ClosedDoorMid:
+				case eTileType::e_ClosedDoorTop:
+				case eTileType::e_OpenDoorMid:
+				case eTileType::e_OpenDoorTop:
+					row.emplace_back(tileType, tilePosition, true);
+					break;
+
+				case eTileType::e_Air:
+				case eTileType::e_Bush:
+				case eTileType::e_RightArrow:
+				case eTileType::e_Plant:
+				case eTileType::e_Mushroom1:
+				case eTileType::e_Mushroom2:
+				case eTileType::e_Rock:
+				case eTileType::e_Spikes:
+					row.emplace_back(tileType, tilePosition, false);
+					break;
+
+				case eTileType::e_Flag:
+				case eTileType::e_Slime:
+				case eTileType::e_Coin:
+				case eTileType::e_Snail:
+					m_entityLocations.push_back({ static_cast<const eEntityType>(tileIntFromCSV), tilePosition });
 					row.emplace_back(eTileType::e_Air, tilePosition, false);
-				} else
-				{
-					bool canCollide = true;
-
-					if (tileType == eTileType::e_Air || tileType == eTileType::e_Plant ||
-						tileType == eTileType::e_Rock || tileType == eTileType::e_Bush ||
-						tileType == eTileType::e_Mushroom1 || tileType == eTileType::e_Mushroom2 ||
-						tileType == eTileType::e_RightArrow || tileType == eTileType::e_FlagPole)
-					{
-						canCollide = false;
-					}
-
-					row.emplace_back(tileType, tilePosition, canCollide);
+					break;
+				default:;
 				}
 			}
-
 			m_levelData.emplace_back(row);
 		}
 	}
-
 	file.close();
 
 	return true;

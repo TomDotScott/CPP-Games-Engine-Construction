@@ -117,6 +117,12 @@ void Player::Update(const float deltaTime)
 	PlayAnimation(deltaTime);
 }
 
+void Player::PlayAnimation(const float deltaTime)
+{
+	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
+	Entity::PlayAnimation(deltaTime);
+}
+
 void Player::Render(TextureManager& textureManager)
 {
 	// Glitches if direction is none so default to facing forward

@@ -34,7 +34,6 @@ void SoundSource::Play(const ALuint buffer)
 	{
 		m_buffer = buffer;
 		alSourcei(m_source, AL_BUFFER, static_cast<ALuint>(m_buffer));
-		std::cout << "Playing sound from buffer: " << m_buffer << std::endl;
 	}
 
 	alSourcePlay(m_source);

@@ -42,7 +42,6 @@ private:
 
 enum class eTileType
 {
-	e_None = -100,
 	e_Air = -1,
 	e_Dirt = 0,
 	e_GrassLeft = 1,
@@ -81,7 +80,6 @@ inline const char* to_string(const eTileType e)
 {
 	switch (e)
 	{
-	case eTileType::e_None: return "e_None";
 	case eTileType::e_Air: return "e_Air";
 	case eTileType::e_Dirt: return "e_Dirt";
 	case eTileType::e_GrassLeft: return "e_GrassLeft";

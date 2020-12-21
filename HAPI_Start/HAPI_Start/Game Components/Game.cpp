@@ -13,8 +13,10 @@ Game::Game() :
 	m_levelTimer(200.f),
 	m_currentLevel(eLevel::e_LevelOne),
 	m_levelStarted(false),
+	m_levelFinished(false),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None),
+	m_flag(GenerateNextEntityID(), Vector2::ZERO),
 	m_scoreText("Score 000000", HAPISPACE::HAPI_TColour::WHITE, { 0, 10 }),
 	m_livesText(std::to_string(m_player.GetLivesRemaining()), HAPISPACE::HAPI_TColour::WHITE, { 467, 10 }),
 	m_coinsText("0", HAPISPACE::HAPI_TColour::WHITE, { 680, 10 }),
@@ -32,33 +34,58 @@ void Game::Update()
 {
 	const float deltaTime = DeltaTime();
 
-	if (m_levelStarted)
+	if (m_levelStarted && !m_levelFinished)
 	{
 		HandleKeyBoardInput();
 		HandleControllerInput();
 	}
 
-	// UPDATE ENTITIES
-	m_player.Update(deltaTime);
-
-	// If the player has touched the ground, start the level
-	if (m_player.GetCurrentPlayerState() == ePlayerState::e_Idle && !m_levelStarted)
+	if (!m_levelFinished)
 	{
-		m_levelStarted = true;
+		m_player.Update(deltaTime);
+
+		// If the player has touched the ground, start the level
+		if (m_player.GetCurrentPlayerState() == ePlayerState::e_Idle && !m_levelStarted)
+		{
+			m_levelStarted = true;
+		}
+
+		// Kill the player if they are off screen
+		if (m_player.GetPosition().y > constants::k_maxTilesVertical * constants::k_spriteSheetCellSize)
+		{
+			m_player.Kill();
+		}
+
+		// Reset player position if they died
+		if (m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
+		{
+			m_player.Reset();
+		}
+	} else
+	{
+		if (m_player.GetCurrentPlayerState() == ePlayerState::e_Jumping)
+		{
+			// Slowly slide down
+			m_player.SetPosition({ m_player.GetPosition().x, m_player.GetPosition().y + (200 * deltaTime) });
+
+			// Calculate the new flag position based on the player position
+			const auto playerPos = m_player.GetPosition();
+
+			const Vector2 newFlagPos{
+				static_cast<float>(((static_cast<int>(m_player.GetPosition().x) / constants::k_spriteSheetCellSize) + 1) * constants::k_spriteSheetCellSize),
+				playerPos.y
+			};
+
+			m_flag.SetPosition(newFlagPos);
+		} else
+		{
+			m_player.SetPosition({ m_player.GetPosition().x + (500 * deltaTime), m_player.GetPosition().y });
+		}
+
+			m_player.PlayAnimation(deltaTime);
 	}
 
-	// Kill the player if they are off screen
-	if(m_player.GetPosition().y > constants::k_maxTilesVertical * constants::k_spriteSheetCellSize)
-	{
-		m_player.Kill();
-	}
-	
-	// Reset player position if they died
-	if (m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
-	{
-		m_player.Reset();
-	}
-
+	m_flag.Update(deltaTime);
 
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
@@ -110,6 +137,8 @@ void Game::Render()
 	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
 
 	const auto playerXOffset = m_player.GetPosition().x;
+
+	m_flag.Render(m_textureManager, playerXOffset);
 
 	m_tileManager.RenderTiles(m_textureManager, playerXOffset);
 
@@ -306,13 +335,7 @@ bool Game::Initialise()
 	m_textureManager.Initialise(HAPI.GetScreenPointer());
 
 	SoundManager::GetInstance().Initialise();
-
-	// Create items for the object poolers
-	for (int i = 0; i < 10; ++i)
-	{
-		m_gems.emplace_back(GenerateNextEntityID(), Vector2::CENTRE, ePowerUpType::e_Grower, false);
-	}
-
+	
 	return LoadLevel(eLevel::e_LevelOne);
 }
 
@@ -371,7 +394,8 @@ bool Game::LoadLevel(const eLevel level)
 	auto& entityLocations = m_tileManager.GetEntityLocations();
 
 	// Dequeue every entity location
-	for(auto& entity : entityLocations){
+	for (auto& entity : entityLocations)
+	{
 
 		switch (entity.first)
 		{
@@ -384,16 +408,20 @@ bool Game::LoadLevel(const eLevel level)
 		case eEntityType::e_Snail:
 			m_snails.emplace_back(GenerateNextEntityID(), entity.second);
 			break;
+		case eEntityType::e_Flag:
+			m_flag.SetPosition(entity.second);
+			break;
 		default: break;
 		}
 	}
 
 	entityLocations.clear();
-	
+
 	// Reset Player
 	m_player.Reset();
 
 	m_levelStarted = false;
+	m_levelFinished = false;
 
 	m_levelTimer = 200.f;
 
@@ -465,7 +493,7 @@ void Game::HandlePlayerCollisions()
 				Vector2(playerCollisionData.m_headCollision->m_position.x, playerCollisionData.m_headCollision->m_position.y - constants::k_spriteSheetCellSize),
 				true
 			);
-			
+
 			SoundManager::GetInstance().PlaySoundEffect("Coin");
 			break;
 
@@ -475,21 +503,15 @@ void Game::HandlePlayerCollisions()
 			break;
 
 		case eTileType::e_ItemBlock:
-		{
-			ePowerUpType type = constants::rand_range(0, 100) <= 50 ? ePowerUpType::e_FireThrower : ePowerUpType::e_Grower;
-
-			// Instantiate a new power up
+			playerCollisionData.m_headCollision->m_type = eTileType::e_BrickBlock;
+			SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
 			m_gems.emplace_back(
 				GenerateNextEntityID(),
 				Vector2(playerCollisionData.m_headCollision->m_position.x, playerCollisionData.m_headCollision->m_position.y - constants::k_spriteSheetCellSize),
-				ePowerUpType::e_FireThrower,
+				constants::rand_range(0, 100) <= 50 ? ePowerUpType::e_FireThrower : ePowerUpType::e_Grower,
 				true
 			);
-
-			playerCollisionData.m_headCollision->m_type = eTileType::e_BrickBlock;
-			SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
-		}
-		break;
+			break;
 		default:
 			break;
 		}
@@ -507,9 +529,24 @@ void Game::HandlePlayerCollisions()
 		case eTileType::e_OpenDoorMid:
 		case eTileType::e_OpenDoorTop:
 			LoadNextLevel();
-			break;		
+			break;
+		case eTileType::e_Flag:
+			if (!m_levelFinished)
+			{
+				m_player.AddToScore(500); // 500 point bonus for hitting the flag at the top
+			}
+		case eTileType::e_FlagPole:
+			if (!m_levelFinished)
+			{
+				m_player.AddToScore(500);
+			}
+			m_player.AddToScore(static_cast<int>(m_levelTimer));
+			m_levelTimer = 0.f;
+			m_levelFinished = true;
+			break;
+		default:
+			m_player.SetMoveDirectionLimit(eDirection::e_Right);
 		}
-		m_player.SetMoveDirectionLimit(eDirection::e_Right);
 	}
 
 	if (playerCollisionData.m_bottomCollision)

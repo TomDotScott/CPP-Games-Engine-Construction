@@ -137,3 +137,8 @@ const std::vector<std::string> animations::SLIME_SHELL_HIT
 {
 	"Slime_Snail_Shell_Hit"
 };
+
+/* FLAG BEGIN */
+const std::vector<std::string> animations::FLAG_WAVE{
+	"Flag_Up_1", "Flag_Up_2"
+};
