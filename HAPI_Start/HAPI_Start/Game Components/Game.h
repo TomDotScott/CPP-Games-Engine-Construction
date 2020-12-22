@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "../Graphics/TextureManager.h"
+#include "../State System/State.h"
 #include "Entities/Coin.h"
 #include "Entities/Enemies/Slime.h"
 #include "Entities/Enemies/Snail.h"
@@ -15,12 +16,12 @@
 
 enum class eKeyCode;
 
-class Game
+class Game final : public State
 {
 public:
 	Game();
-	void Update();
-	void Render();
+	void Update() override;
+	void Render(TextureManager& textureManager) override;
 	static int GenerateNextEntityID();
 
 	bool PLAYER_WON;
@@ -31,8 +32,6 @@ private:
 	{
 		e_LevelOne, e_LevelTwo
 	};
-
-	TextureManager m_textureManager;
 	
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
@@ -40,10 +39,10 @@ private:
 	TileManager m_tileManager;
 	
 	Player m_player;
-	clock_t m_gameClock;
 	float m_levelTimer;
 	eLevel m_currentLevel;
-
+	clock_t m_gameClock;
+	
 	bool m_levelStarted;
 	bool m_levelFinished;
 	
@@ -61,12 +60,11 @@ private:
 	Text m_coinsText;
 	Text m_worldText;
 	Text m_timerText;
-
-	float DeltaTime() const;
+	
 	bool GetKey(eKeyCode keyCode) const;
-	void HandleKeyBoardInput();
+	void Input() override;
 	void HandleControllerInput();
-	bool Initialise();
+	bool Initialise() override;
 	void LoadNextLevel();
 	bool LoadLevel(eLevel level);
 	void CheckCollisions();

@@ -46,6 +46,8 @@
     <ClCompile Include="Audio\Music.cpp" />
     <ClCompile Include="Game Components\Text.cpp" />
     <ClCompile Include="Graphics\Renderer.cpp" />
+    <ClCompile Include="State System\StateManager.cpp" />
+    <ClCompile Include="State System\State.cpp" />
     <ClCompile Include="Utilities\CollisionBox.cpp" />
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
@@ -69,6 +71,8 @@
     <ClInclude Include="Game Components\Text.h" />
     <ClInclude Include="Graphics\Renderer.h" />
     <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="State System\StateManager.h" />
+    <ClInclude Include="State System\State.h" />
     <ClInclude Include="Utilities\CollisionBox.h" />
     <ClInclude Include="Utilities\Constants.h" />
     <ClInclude Include="Game Components\Entities\Entity.h" />

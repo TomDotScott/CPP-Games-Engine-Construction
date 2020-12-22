@@ -9,9 +9,9 @@ Game::Game() :
 	m_keyboardData(HAPI.GetKeyboardData()),
 	m_controllerData(HAPI.GetControllerData(0)),
 	m_player({ Vector2::CENTRE }),
-	m_gameClock(),
 	m_levelTimer(200.f),
 	m_currentLevel(eLevel::e_LevelOne),
+	m_gameClock(),
 	m_levelStarted(false),
 	m_levelFinished(false),
 	m_backgroundPosition(Vector2::ZERO),
@@ -23,20 +23,15 @@ Game::Game() :
 	m_worldText("Level-1", HAPISPACE::HAPI_TColour::WHITE, { 856, 10 }),
 	m_timerText("100", HAPISPACE::HAPI_TColour::WHITE, { 1150, 10 })
 {
-	if (!Initialise())
-	{
-		HAPI.UserMessage("An error occured during initialisation", "AN ERROR OCCURED");
-		HAPI.Close();
-	}
 }
 
 void Game::Update()
 {
-	const float deltaTime = DeltaTime();
+	const float deltaTime = DeltaTime(m_gameClock);
 
 	if (m_levelStarted && !m_levelFinished)
 	{
-		HandleKeyBoardInput();
+		Input();
 		HandleControllerInput();
 	}
 
@@ -82,7 +77,7 @@ void Game::Update()
 			m_player.SetPosition({ m_player.GetPosition().x + (500 * deltaTime), m_player.GetPosition().y });
 		}
 
-			m_player.PlayAnimation(deltaTime);
+		m_player.PlayAnimation(deltaTime);
 	}
 
 	m_flag.Update(deltaTime);
@@ -106,16 +101,15 @@ void Game::Update()
 
 	UpdateUI(deltaTime);
 
-	// Reset the clock
 	m_gameClock = clock();
 
 	// Update the music buffer so that music plays
 	SoundManager::GetInstance().UpdateMusicBufferStream();
 }
 
-void Game::Render()
+void Game::Render(TextureManager& textureManager)
 {
-	m_textureManager.ClearScreen();
+	textureManager.ClearScreen();
 
 	std::string backgroundName;
 	switch (m_currentLevel)
@@ -130,41 +124,41 @@ void Game::Render()
 		break;
 	}
 
-	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
-	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
-	m_textureManager.DrawTexture(backgroundName, m_backgroundPosition);
-	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
-	m_textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
+	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
+	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
+	textureManager.DrawTexture(backgroundName, m_backgroundPosition);
+	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + constants::k_backgroundTileWidth, 0 });
+	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x + 2 * constants::k_backgroundTileWidth, 0 });
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
-	m_flag.Render(m_textureManager, playerXOffset);
+	m_flag.Render(textureManager, playerXOffset);
 
-	m_tileManager.RenderTiles(m_textureManager, playerXOffset);
+	m_tileManager.RenderTiles(textureManager, playerXOffset);
 
 	for (auto& coin : m_coins)
 	{
 		if (coin.GetIsVisible())
 		{
-			coin.Render(m_textureManager, playerXOffset);
+			coin.Render(textureManager, playerXOffset);
 		}
 	}
 
 	for (auto& slime : m_slimes)
 	{
-		slime.Render(m_textureManager, playerXOffset);
+		slime.Render(textureManager, playerXOffset);
 	}
 
 	for (auto& snail : m_snails)
 	{
-		snail.Render(m_textureManager, playerXOffset);
+		snail.Render(textureManager, playerXOffset);
 	}
 
 	for (auto& ball : m_player.GetFireBallPool())
 	{
 		if (ball.GetActiveState())
 		{
-			ball.Render(m_textureManager, playerXOffset);
+			ball.Render(textureManager, playerXOffset);
 		}
 	}
 
@@ -172,25 +166,25 @@ void Game::Render()
 	{
 		if (pickup.GetActiveState())
 		{
-			pickup.Render(m_textureManager, playerXOffset);
+			pickup.Render(textureManager, playerXOffset);
 		}
 	}
 
-	m_player.Render(m_textureManager);
+	m_player.Render(textureManager);
 
 	// Render UI on top of everything else
-	m_scoreText.Render(m_textureManager);
+	m_scoreText.Render(textureManager);
 
-	m_textureManager.DrawSprite("UI_Lives", { 394, 10 });
-	m_textureManager.DrawSprite("UI_X", { 435, 10 });
-	m_livesText.Render(m_textureManager);
+	textureManager.DrawSprite("UI_Lives", { 394, 10 });
+	textureManager.DrawSprite("UI_X", { 435, 10 });
+	m_livesText.Render(textureManager);
 
-	m_textureManager.DrawSprite("UI_Coins", { 605, 10 });
-	m_textureManager.DrawSprite("UI_X", { 647, 10 });
-	m_coinsText.Render(m_textureManager);
+	textureManager.DrawSprite("UI_Coins", { 605, 10 });
+	textureManager.DrawSprite("UI_X", { 647, 10 });
+	m_coinsText.Render(textureManager);
 
-	m_worldText.Render(m_textureManager);
-	m_timerText.Render(m_textureManager);
+	m_worldText.Render(textureManager);
+	m_timerText.Render(textureManager);
 }
 
 void Game::ScrollBackground()
@@ -246,20 +240,10 @@ std::string Game::AddLeadingZeroes(const std::string& string, const int amountOf
 	}
 }
 
-
 int Game::GenerateNextEntityID()
 {
 	static int currentEntityID = 0;
 	return ++currentEntityID;
-}
-
-float Game::DeltaTime() const
-{
-	const clock_t programTickCount = clock() - m_gameClock;
-
-	const float ticksToMilliseconds = 1000.f / CLOCKS_PER_SEC;
-
-	return (programTickCount * ticksToMilliseconds) / 1000.f;
 }
 
 bool Game::GetKey(const eKeyCode keyCode) const
@@ -267,7 +251,7 @@ bool Game::GetKey(const eKeyCode keyCode) const
 	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
 }
 
-void Game::HandleKeyBoardInput()
+void Game::Input()
 {
 	if (GetKey(eKeyCode::SPACE))
 	{
@@ -322,20 +306,8 @@ void Game::HandleControllerInput()
 
 bool Game::Initialise()
 {
-	int width = constants::k_screenWidth;
-	int height = constants::k_screenHeight;
-
-	if (!HAPI.Initialise(width, height, "Nano's Adventure"))
-	{
-		return false;
-	}
-
-	HAPI.SetShowFPS(true);
-
-	m_textureManager.Initialise(HAPI.GetScreenPointer());
-
 	SoundManager::GetInstance().Initialise();
-	
+
 	return LoadLevel(eLevel::e_LevelOne);
 }
 

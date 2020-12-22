@@ -8,6 +8,7 @@ public:
 	void Update(float deltaTime) override;
 	CollisionBoxes GenerateCollisionBoxes() override;
 	void CheckEntityCollisions(Entity& other) override;
+	
 private:
 	void Move(float deltaTime) override;
 };

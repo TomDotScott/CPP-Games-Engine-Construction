@@ -310,7 +310,8 @@ void Player::Reset()
 	m_position = Vector2::CENTRE;
 	m_velocity = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
-	m_currentPowerUpState = ePowerUpState::e_Normal;
+	m_currentPowerUpState = ePowerUpState::e_Small;
+	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 	m_isDead = false;
 }
 
