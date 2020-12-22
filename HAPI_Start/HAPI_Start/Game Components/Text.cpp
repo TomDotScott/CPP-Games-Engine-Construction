@@ -3,12 +3,9 @@
 
 #include "../Graphics/TextureManager.h"
 
-Text::Text(std::string text, const HAPISPACE::HAPI_TColour colour, const Vector2 position, const int size, const HAPISPACE::HAPI_TextStyle style) :
+Text::Text(std::string text, const Vector2 position) :
 	m_text(std::move(text)),
-	m_colour(colour),
-	m_position(position),
-	m_characterSize(size),
-	m_style(style)
+	m_position(position)
 {
 }
 
@@ -52,6 +49,10 @@ void Text::Render(TextureManager& textureManager) const
 		case '9':
 			spriteName = "UI_9";
 			break;
+		case 'A':
+		case 'a':
+			spriteName = "UI_A";
+			break;
 		case 'C':
 		case 'c':
 			spriteName = "UI_C";
@@ -64,6 +65,10 @@ void Text::Render(TextureManager& textureManager) const
 		case 'e':
 			spriteName = "UI_E";
 			break;
+		case 'H':
+		case 'h':
+			spriteName = "UI_H";
+			break;
 		case 'I':
 		case 'i':
 			spriteName = "UI_I";
@@ -71,7 +76,15 @@ void Text::Render(TextureManager& textureManager) const
 		case 'L':
 		case 'l':
 			spriteName = "UI_L";
-			break;		
+			break;
+		case 'N':
+		case 'n':
+			spriteName = "UI_N";
+			break;
+		case 'P':
+		case 'p':
+			spriteName = "UI_P";
+			break;
 		case 'R':
 		case 'r':
 			spriteName = "UI_R";
@@ -91,6 +104,10 @@ void Text::Render(TextureManager& textureManager) const
 		case 'W':
 		case 'w':
 			spriteName = "UI_W";
+			break;
+		case 'Y':
+		case 'y':
+			spriteName = "UI_Y";
 			break;
 		default:
 			xOffset += 28.f;
@@ -118,12 +135,7 @@ void Text::SetPosition(const Vector2 position)
 	m_position = position;
 }
 
-void Text::SetColour(const HAPISPACE::HAPI_TColour colour)
+Vector2 Text::GetPosition() const
 {
-	m_colour = colour;
-}
-
-void Text::SetStyle(const HAPISPACE::HAPI_TextStyle style)
-{
-	m_style = style;
+	return m_position;
 }

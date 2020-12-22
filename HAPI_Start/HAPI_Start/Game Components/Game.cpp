@@ -3,11 +3,8 @@
 #include "../Audio/Music.h"
 #include "../Audio/SoundManager.h"
 
-Game::Game() :
-	PLAYER_WON(false),
-	PLAYER_LOST(false),
-	m_keyboardData(HAPI.GetKeyboardData()),
-	m_controllerData(HAPI.GetControllerData(0)),
+Game::Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
+	State(keyboardData, controllerData),
 	m_player({ Vector2::CENTRE }),
 	m_levelTimer(200.f),
 	m_currentLevel(eLevel::e_LevelOne),
@@ -17,11 +14,11 @@ Game::Game() :
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None),
 	m_flag(GenerateNextEntityID(), Vector2::ZERO),
-	m_scoreText("Score 000000", HAPISPACE::HAPI_TColour::WHITE, { 0, 10 }),
-	m_livesText(std::to_string(m_player.GetLivesRemaining()), HAPISPACE::HAPI_TColour::WHITE, { 467, 10 }),
-	m_coinsText("0", HAPISPACE::HAPI_TColour::WHITE, { 680, 10 }),
-	m_worldText("Level-1", HAPISPACE::HAPI_TColour::WHITE, { 856, 10 }),
-	m_timerText("100", HAPISPACE::HAPI_TColour::WHITE, { 1150, 10 })
+	m_scoreText("Score 000000", { 0, 10 }),
+	m_livesText(std::to_string(m_player.GetLivesRemaining()), { 467, 10 }),
+	m_coinsText("0", { 680, 10 }),
+	m_worldText("Level-1", { 856, 10 }),
+	m_timerText("100", { 1150, 10 })
 {
 }
 
@@ -29,11 +26,12 @@ void Game::Update()
 {
 	const float deltaTime = DeltaTime(m_gameClock);
 
-	if (m_levelStarted && !m_levelFinished)
+	// TODO: MOVE THIS LOGIC TO THE STATE MANAGER
+	/*if (m_levelStarted && !m_levelFinished)
 	{
 		Input();
 		HandleControllerInput();
-	}
+	}*/
 
 	if (!m_levelFinished)
 	{
@@ -246,11 +244,6 @@ int Game::GenerateNextEntityID()
 	return ++currentEntityID;
 }
 
-bool Game::GetKey(const eKeyCode keyCode) const
-{
-	return m_keyboardData.scanCode[static_cast<int>(keyCode)] ? true : false;
-}
-
 void Game::Input()
 {
 	if (GetKey(eKeyCode::SPACE))
@@ -284,29 +277,13 @@ void Game::Input()
 	m_player.SetDirection(playerMoveDir);
 }
 
-void Game::HandleControllerInput()
-{
-	//Player One Controls 
-	Vector2 leftStickVector{ static_cast<float>(m_controllerData.analogueButtons[2]), static_cast<float>(m_controllerData.analogueButtons[3]) };
-	if (leftStickVector.Magnitude() > constants::k_leftThumbDeadzone)
-	{
-		leftStickVector.Normalised();
-		if (leftStickVector.x > 0)
-		{
-			m_player.SetDirection(eDirection::e_Right);
-		} else if (leftStickVector.x < 0)
-		{
-			m_player.SetDirection(eDirection::e_Left);
-		} else
-		{
-			m_player.SetDirection(eDirection::e_None);
-		}
-	}
-}
-
-bool Game::Initialise()
+bool Game::Initialise(TextureManager& textureManager)
 {
 	SoundManager::GetInstance().Initialise();
+
+	//-----------------------TEXTURES-------------------------
+	textureManager.CreateTexture("Res/Graphics/Level1_Background.tga", "Level1_Background");
+	textureManager.CreateTexture("Res/Graphics/Level2_Background.tga", "Level2_Background");
 
 	return LoadLevel(eLevel::e_LevelOne);
 }
@@ -528,7 +505,10 @@ void Game::HandlePlayerCollisions()
 			m_player.Kill();
 		} else
 		{
-			m_player.SetPlayerState(ePlayerState::e_Walking);
+			if (playerCollisionData.m_bottomCollision->m_position.y > m_player.GetPosition().y)
+			{
+				m_player.SetPlayerState(ePlayerState::e_Walking);
+			}
 		}
 	} else
 	{

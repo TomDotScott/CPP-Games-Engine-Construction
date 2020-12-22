@@ -1,7 +1,8 @@
 #pragma once
+#include "../Graphics/TextureManager.h"
+#include "HAPI_Types.h"
 #include "State.h"
 
-class TextureManager;
 
 enum class eState
 {
@@ -11,7 +12,7 @@ enum class eState
 class StateManager
 {
 public:
-	StateManager() = default;
+	explicit StateManager();
 
 	~StateManager();
 
@@ -19,11 +20,9 @@ public:
 
 	void OnCreate(const eState state);
 
-	void Input() const;
-
 	void Update() const;
 
-	void Render(TextureManager& textureManager) const;
+	void Render();
 
 	eState GetCurrentState() const { return m_currentState; }
 private:
@@ -31,4 +30,8 @@ private:
 
 	eState m_currentState;
 	State* m_state;
+
+	TextureManager m_textureManager;
 };
+
+extern StateManager STATE_MANAGER;

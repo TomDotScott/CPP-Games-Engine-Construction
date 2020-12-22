@@ -21,12 +21,8 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 {
 	m_screen = screenPtr;
 	
-	//-----------------------TEXTURES-------------------------
-	CreateTexture("Res/Graphics/Level1_Background.tga", "Level1_Background");
-	CreateTexture("Res/Graphics/Level2_Background.tga", "Level2_Background");
-	CreateSpriteSheet("Res/Graphics/GameSpriteSheet.tga");
-
 	// ----------------------SPRITESHEET-----------------------
+	CreateSpriteSheet("Res/Graphics/GameSpriteSheet.tga");
 	CreateSprite("Player_Small_Dead_Body");
 	CreateSprite("Player_Small_Walk_Body_1");
 	CreateSprite("Player_Small_Walk_Body_2");
@@ -121,22 +117,28 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("UI_7");
 	CreateSprite("UI_8");
 	CreateSprite("UI_9");
+	CreateSprite("UI_A");
 	CreateSprite("UI_C");
 	CreateSprite("UI_D");
 	CreateSprite("UI_E");
+	CreateSprite("UI_H");
 	CreateSprite("UI_I");
 	CreateSprite("UI_L");
+	CreateSprite("UI_N");
+	CreateSprite("UI_P");
 	CreateSprite("UI_R");
 	CreateSprite("UI_S");
 	CreateSprite("UI_T");
 	CreateSprite("UI_V");
 	CreateSprite("UI_W");
+	CreateSprite("UI_Y");
 	CreateSprite("UI_Heart_Full");
 	CreateSprite("UI_Heart_Half");
 	CreateSprite("UI_Heart_Empty");
 	CreateSprite("UI_Lives");
 	CreateSprite("UI_Coins");
 	CreateSprite("UI_X");
+	CreateSprite("UI_Pointer");
 	CreateSprite("Slime_1");
 	CreateSprite("Slime_2");
 	CreateSprite("Slime_Squashed");
@@ -203,6 +205,24 @@ bool TextureManager::CreateTexture(const std::string& filename, const std::strin
 	}
 	m_textureBuffer[name] = newTexture;
 	return true;
+}
+
+bool TextureManager::RemoveTexture(const std::string& name)
+{
+	if (m_textureBuffer.find(name) == m_textureBuffer.end())
+	{
+		HAPI.UserMessage("The texture: " + name + " doesn't exist. It may have already been removed.", "Error Occured");
+		return false;
+	}else
+	{
+		// Clear the data stored
+		delete m_textureBuffer[name];
+
+		// Remove the entry in the map
+		m_textureBuffer.erase(name);
+
+		return true;
+	}
 }
 
 bool TextureManager::CreateSpriteSheet(const std::string& filename)

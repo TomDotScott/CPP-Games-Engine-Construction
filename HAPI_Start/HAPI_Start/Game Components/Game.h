@@ -14,27 +14,19 @@
 #include "Text.h"
 #include "TileManager.h"
 
-enum class eKeyCode;
-
 class Game final : public State
 {
 public:
-	Game();
+	Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
 	void Update() override;
 	void Render(TextureManager& textureManager) override;
 	static int GenerateNextEntityID();
-
-	bool PLAYER_WON;
-	bool PLAYER_LOST;
 
 private:
 	enum class eLevel
 	{
 		e_LevelOne, e_LevelTwo
 	};
-	
-	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
-	const HAPISPACE::HAPI_TControllerData& m_controllerData;
 
 	TileManager m_tileManager;
 	
@@ -61,10 +53,8 @@ private:
 	Text m_worldText;
 	Text m_timerText;
 	
-	bool GetKey(eKeyCode keyCode) const;
 	void Input() override;
-	void HandleControllerInput();
-	bool Initialise() override;
+	bool Initialise(TextureManager& textureManager) override;
 	void LoadNextLevel();
 	bool LoadLevel(eLevel level);
 	void CheckCollisions();
@@ -128,8 +118,3 @@ void Game::CheckEnemyCollisions(std::vector<T>& enemies)
 		}
 	}
 }
-
-enum class eKeyCode
-{
-	NONE = -1, SHIFT = 16, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
-};

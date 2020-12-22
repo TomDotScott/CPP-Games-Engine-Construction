@@ -28,6 +28,7 @@ public:
 	void SetPixel(int x, int y, int value) const;
 
 	bool CreateTexture(const std::string& filename, const std::string& name);
+	bool RemoveTexture(const std::string& name);
 	void DrawTexture(const std::string& name, Vector2 position, const bool flipped = false);
 
 	bool CreateSpriteSheet(const std::string& filename);

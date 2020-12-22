@@ -4,6 +4,9 @@
 #include "Game Components/Game.h"
 #include "State System/StateManager.h"
 
+
+StateManager STATE_MANAGER{};
+
 void HAPI_Main() {
 	srand(static_cast<unsigned>(time(nullptr)));
 
@@ -17,20 +20,14 @@ void HAPI_Main() {
 
 	HAPI.SetShowFPS(true);
 
-	StateManager stateManager{};
-
-	stateManager.OnCreate(eState::e_Game);
-	
-	TextureManager textureManager;
-
-	textureManager.Initialise(HAPI.GetScreenPointer());
+	STATE_MANAGER.OnCreate(eState::e_MainMenu);
 	
 	while (HAPI.Update()) {
 		//const float dt = delta_time(gameClock);
 
-		stateManager.Update();
+		STATE_MANAGER.Update();
 		
-		stateManager.Render(textureManager);
+		STATE_MANAGER.Render();
 		
 		// Reset the clock
 		//gameClock = clock();
