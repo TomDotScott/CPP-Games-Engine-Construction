@@ -51,6 +51,12 @@ void Fireball::Update(const float deltaTime)
 	if (m_fireBallState == eFireBallState::e_Bouncing)
 	{
 		Move(deltaTime);
+
+		// Deactivate if fallen off the bottom of the screen
+		if(m_position.y >= constants::k_spriteSheetCellSize  * (constants::k_maxTilesVertical + 1))
+		{
+			m_activeState = false;
+		}
 	} else
 	{
 		if (GetCurrentAnimationState() == eAnimationState::e_Ended)
