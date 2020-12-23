@@ -7,26 +7,26 @@ const std::vector<std::string> animations::PLAYER_SMALL_DEAD{
 
 const std::vector<std::string> animations::PLAYER_SMALL_IDLE
 {
-	"Player_Small_Idle_Body_1", "Player_Small_Idle_Body_2"
+	"Player_Small_Idle_1", "Player_Small_Idle_2"
 };
 
 const std::vector<std::string> animations::PLAYER_SMALL_WALK
 {
-	"Player_Small_Walk_Body_1", "Player_Small_Walk_Body_2"
+	"Player_Small_Walk_1", "Player_Small_Walk_2"
 };
 
 const std::vector<std::string> animations::PLAYER_SMALL_JUMP{
-	"Player_Small_Jump_Body_1"
+	"Player_Small_Jump"
 };
 
 const std::vector<std::string> animations::PLAYER_SMALL_CLIMB
 {
-	"Player_Small_Climb_Body_1", "Player_Climb_Body_2"
+	"Player_Small_Climb_1", "Player_Climb_2"
 };
 
 // NORMAL SIZED PLAYER
 const std::vector<std::string> animations::PLAYER_DEAD{
-	"Player_Dead"
+	"Player_Dead_Body_1" 
 };
 
 const std::vector<std::string> animations::PLAYER_IDLE
@@ -51,7 +51,7 @@ const std::vector<std::string> animations::PLAYER_CLIMB
 // POWERED UP PLAYER
 const std::vector<std::string> animations::PLAYER_POWER_UP_DEAD
 {
-	"Player_Power_Up_Dead_Body"
+	"Player_Power_Up_Dead_Body_1"
 };
 
 const std::vector<std::string> animations::PLAYER_POWER_UP_IDLE

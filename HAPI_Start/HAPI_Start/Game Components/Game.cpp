@@ -507,12 +507,18 @@ void Game::HandlePlayerCollisions()
 		{
 			if (playerCollisionData.m_bottomCollision->m_position.y > m_player.GetPosition().y)
 			{
-				m_player.SetPlayerState(ePlayerState::e_Walking);
+				if (m_player.GetCurrentPlayerState() != ePlayerState::e_Dead)
+				{
+					m_player.SetPlayerState(ePlayerState::e_Walking);
+				}
 			}
 		}
 	} else
 	{
-		// If there is no bottom collision, make the player jump
-		m_player.SetPlayerState(ePlayerState::e_Jumping);
+		if (m_player.GetCurrentPlayerState() != ePlayerState::e_Dead)
+		{
+			// If there is no bottom collision, make the player jump
+			m_player.SetPlayerState(ePlayerState::e_Jumping);
+		}
 	}
 }

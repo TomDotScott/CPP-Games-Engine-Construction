@@ -58,63 +58,71 @@ Player::Player(const Vector2 startingPosition) :
 
 void Player::Update(const float deltaTime)
 {
-	Move(deltaTime);
-
-	m_shotCoolDown += deltaTime;
-
-	if (m_canShoot)
+	if (m_currentPlayerState != ePlayerState::e_Dead)
 	{
-		Shoot();
-	}
+		Move(deltaTime);
 
-	if (m_immune)
-	{
-		m_immuneTime += deltaTime;
-		if (m_immuneTime >= 2.f)
+		m_shotCoolDown += deltaTime;
+
+		if (m_canShoot)
 		{
-			m_immune = false;
-			m_immuneTime = 0.f;
+			Shoot();
 		}
-	}
 
-	if (m_currentPlayerState == ePlayerState::e_Walking)
-	{
-		m_velocity.y = 0;
-		if (m_shouldJumpNextFrame)
+		if (m_immune)
 		{
-			Jump(m_jumpForce);
-			PlaySFX("Player_Jump");
-			m_shouldJumpNextFrame = false;
+			m_immuneTime += deltaTime;
+			if (m_immuneTime >= 2.f)
+			{
+				m_immune = false;
+				m_immuneTime = 0.f;
+			}
 		}
-	} else if (m_currentPlayerState == ePlayerState::e_Jumping)
-	{
-		m_velocity.y += constants::k_gravity * deltaTime;
-	}
 
-	m_position = m_position + m_velocity;
-
-	// Can't go off the top of the screen
-	if (m_position.y < constants::k_spriteSheetCellSize)
-	{
-		m_position.y = constants::k_spriteSheetCellSize;
-	}
-
-	if (m_currentDirection == eDirection::e_None && m_currentPlayerState != ePlayerState::e_Jumping && !m_shouldJumpNextFrame)
-	{
-		m_currentPlayerState = ePlayerState::e_Idle;
-	}
-
-	// Update the fireballs
-	for (auto& ball : m_fireballPool)
-	{
-		if (ball.GetActiveState())
+		if (m_currentPlayerState == ePlayerState::e_Walking)
 		{
-			ball.Update(deltaTime);
+			m_velocity.y = 0;
+			if (m_shouldJumpNextFrame)
+			{
+				Jump(m_jumpForce);
+				PlaySFX("Player_Jump");
+				m_shouldJumpNextFrame = false;
+			}
+		} else if (m_currentPlayerState == ePlayerState::e_Jumping)
+		{
+			m_velocity.y += constants::k_gravity * deltaTime;
+		}
+
+		m_position = m_position + m_velocity;
+
+		// Can't go off the top of the screen
+		if (m_position.y < constants::k_spriteSheetCellSize)
+		{
+			m_position.y = constants::k_spriteSheetCellSize;
+		}
+
+		if (m_currentDirection == eDirection::e_None && m_currentPlayerState != ePlayerState::e_Jumping && !m_shouldJumpNextFrame)
+		{
+			m_currentPlayerState = ePlayerState::e_Idle;
+		}
+
+		// Update the fireballs
+		for (auto& ball : m_fireballPool)
+		{
+			if (ball.GetActiveState())
+			{
+				ball.Update(deltaTime);
+			}
 		}
 	}
 
 	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 	PlayAnimation(deltaTime);
+
+	if(m_currentPlayerState == ePlayerState::e_Dead && m_animations[m_animationIndex].GetCurrentAnimationState() == eAnimationState::e_Ended)
+	{
+		m_isDead = true;
+	}
 }
 
 void Player::PlayAnimation(const float deltaTime)
@@ -133,14 +141,14 @@ void Player::Render(TextureManager& textureManager)
 		textureManager.DrawSprite(
 			GetTopIdentifier(),
 			{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left,
-			m_immune ? 100 : 255
+			m_immune && m_currentPlayerState != ePlayerState::e_Dead ? 100 : 255
 		);
 	}
 
 	textureManager.DrawSprite(
 		GetCurrentAnimationFrameIdentifier(),
 		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, dir == eDirection::e_Left,
-		m_immune ? 100 : 255
+		m_immune && m_currentPlayerState != ePlayerState::e_Dead ? 100 : 255
 	);
 }
 
@@ -185,7 +193,7 @@ void Player::CheckEntityCollisions(Entity& other)
 				{
 					if (!m_immune && !m_isDead)
 					{
-						if (m_currentPowerUpState == ePowerUpState::e_Normal)
+						if (m_currentPowerUpState == ePowerUpState::e_Small)
 						{
 							PlaySFX("Player_Dead");
 						} else
@@ -252,20 +260,19 @@ void Player::PowerDown()
 	switch (m_currentPowerUpState)
 	{
 	case ePowerUpState::e_Small:
-		m_isDead = true;
 		m_livesRemaining -= 1;
+		m_currentPlayerState = ePlayerState::e_Dead;
 		break;
 	case ePowerUpState::e_Normal:
 		m_currentPowerUpState = ePowerUpState::e_Small;
-		m_immune = true;
 		break;
 	case ePowerUpState::e_FireThrower:
 		m_currentPowerUpState = ePowerUpState::e_Normal;
-		m_immune = true;
 		break;
 	default:;
 	}
 
+	m_immune = true;
 	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 }
 
@@ -301,8 +308,12 @@ bool Player::GetIsDead() const
 
 void Player::Kill()
 {
-	m_isDead = true;
-	m_livesRemaining--;
+	if (m_currentPlayerState != ePlayerState::e_Dead)
+	{
+		m_currentPlayerState = ePlayerState::e_Dead;
+		m_livesRemaining--;
+		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
+	}
 }
 
 void Player::Reset()
@@ -311,8 +322,10 @@ void Player::Reset()
 	m_velocity = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
 	m_currentPowerUpState = ePowerUpState::e_Small;
-	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
+	m_currentPlayerState = ePlayerState::e_Jumping;
+	m_immune = false;
 	m_isDead = false;
+	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentPlayerState));
 }
 
 std::vector<Fireball>& Player::GetFireBallPool()

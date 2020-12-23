@@ -23,14 +23,14 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	
 	// ----------------------SPRITESHEET-----------------------
 	CreateSpriteSheet("Res/Graphics/GameSpriteSheet.tga");
-	CreateSprite("Player_Small_Dead_Body");
-	CreateSprite("Player_Small_Walk_Body_1");
-	CreateSprite("Player_Small_Walk_Body_2");
-	CreateSprite("Player_Small_Jump_Body_1");
-	CreateSprite("Player_Small_Idle_Body_1");
-	CreateSprite("Player_Small_Idle_Body_2");
-	CreateSprite("Player_Dead_Top");
-	CreateSprite("Player_Dead_Body");
+	CreateSprite("Player_Small_Dead");
+	CreateSprite("Player_Small_Walk_1");
+	CreateSprite("Player_Small_Walk_2");
+	CreateSprite("Player_Small_Jump");
+	CreateSprite("Player_Small_Idle_1");
+	CreateSprite("Player_Small_Idle_2");
+	CreateSprite("Player_Dead_Top_1");
+	CreateSprite("Player_Dead_Body_1");
 	CreateSprite("Player_Walk_Top_1");
 	CreateSprite("Player_Walk_Body_1");
 	CreateSprite("Player_Walk_Top_2");
@@ -45,8 +45,8 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("Player_Climb_Body_1");
 	CreateSprite("Player_Climb_Top_2");
 	CreateSprite("Player_Climb_Body_2");
-	CreateSprite("Player_Power_Up_Dead_Top");
-	CreateSprite("Player_Power_Up_Dead_Body");
+	CreateSprite("Player_Power_Up_Dead_Top_1");
+	CreateSprite("Player_Power_Up_Dead_Body_1");
 	CreateSprite("Player_Power_Up_Walk_Top_1");
 	CreateSprite("Player_Power_Up_Walk_Body_1");
 	CreateSprite("Player_Power_Up_Walk_Top_2");
