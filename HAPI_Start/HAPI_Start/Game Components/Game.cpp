@@ -26,13 +26,6 @@ void Game::Update()
 {
 	const float deltaTime = DeltaTime(m_gameClock);
 
-	// TODO: MOVE THIS LOGIC TO THE STATE MANAGER
-	/*if (m_levelStarted && !m_levelFinished)
-	{
-		Input();
-		HandleControllerInput();
-	}*/
-
 	if (!m_levelFinished)
 	{
 		m_player.Update(deltaTime);

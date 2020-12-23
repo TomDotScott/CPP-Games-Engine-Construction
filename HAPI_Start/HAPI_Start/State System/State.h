@@ -14,12 +14,12 @@ public:
 	virtual void Input() = 0;
 	virtual void Update() = 0;
 	virtual void Render(TextureManager& textureManager) = 0;
-
+	static float DeltaTime(clock_t& gameClock);
+	
 protected:
 	const HAPISPACE::HAPI_TKeyboardData& m_keyboardData;
 	const HAPISPACE::HAPI_TControllerData& m_controllerData;
-	
-	float DeltaTime(clock_t& gameClock);
+
 	bool GetKey(eKeyCode keyCode) const;
 };
 

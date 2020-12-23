@@ -13,25 +13,28 @@ class StateManager
 {
 public:
 	explicit StateManager();
-
 	~StateManager();
-
-	void ChangeState(const eState state);
-
-	void OnCreate(const eState state);
-
-	void Update() const;
-
+	
+	void ChangeState(eState state);
+	void OnCreate(eState state);
+	void Update();
 	void Render();
-
-	eState GetCurrentState() const { return m_currentState; }
+	
+	eState GetCurrentState() const;
+	
 private:
 	void SetState(State* state);
-
+	
 	eState m_currentState;
 	State* m_state;
-
+	
 	TextureManager m_textureManager;
+
+/*On the main menu and controls menu, HAPI still registers the
+space button being pressed a cooldown of half a second is used
+to smooth things out*/
+	float m_inputCoolDown;
+	clock_t m_clock;
 };
 
 extern StateManager STATE_MANAGER;

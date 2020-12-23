@@ -35,7 +35,15 @@ void MainMenu::Input()
 
 	if (GetKey(eKeyCode::SPACE))
 	{
-		STATE_MANAGER.ChangeState(eState::e_Game);
+		switch (m_selected)
+		{
+		case eSelected::e_Play:
+			STATE_MANAGER.ChangeState(eState::e_Game);
+			break;
+		case eSelected::e_Controls:
+			STATE_MANAGER.ChangeState(eState::e_ControlsMenu);
+			break;
+		}
 	}
 }
 

@@ -124,11 +124,13 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("UI_H");
 	CreateSprite("UI_I");
 	CreateSprite("UI_L");
+	CreateSprite("UI_M");
 	CreateSprite("UI_N");
 	CreateSprite("UI_P");
 	CreateSprite("UI_R");
 	CreateSprite("UI_S");
 	CreateSprite("UI_T");
+	CreateSprite("UI_U");
 	CreateSprite("UI_V");
 	CreateSprite("UI_W");
 	CreateSprite("UI_Y");

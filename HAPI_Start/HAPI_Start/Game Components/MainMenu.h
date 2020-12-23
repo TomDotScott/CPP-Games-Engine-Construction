@@ -20,9 +20,7 @@ private:
 	Text m_highScoreText;
 	Text m_playText;
 	Text m_controlsText;
-	
 	eSelected m_selected;
-	
 	Vector2 m_selectorPosition;
 };
 

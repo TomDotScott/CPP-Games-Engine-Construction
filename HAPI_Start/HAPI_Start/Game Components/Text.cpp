@@ -77,6 +77,10 @@ void Text::Render(TextureManager& textureManager) const
 		case 'l':
 			spriteName = "UI_L";
 			break;
+		case 'M':
+		case 'm':
+			spriteName = "UI_M";
+			break;
 		case 'N':
 		case 'n':
 			spriteName = "UI_N";
@@ -96,6 +100,10 @@ void Text::Render(TextureManager& textureManager) const
 		case 'T':
 		case 't':
 			spriteName = "UI_T";
+			break;
+		case 'U':
+		case 'u':
+			spriteName = "UI_U";
 			break;
 		case 'V':
 		case 'v':
