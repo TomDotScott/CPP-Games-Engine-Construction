@@ -48,7 +48,7 @@ enum class eTileType
 	e_GrassCentre = 2,
 	e_GrassRight = 3,
 	e_StoneTop = 4,
-	e_StoneCentre = 5,
+	e_Stone = 5,
 	e_StoneLeft = 6,
 	e_StoneRight = 7,
 	e_Flag = 38,
@@ -73,46 +73,54 @@ enum class eTileType
 	e_Snail = 68,
 	e_RightArrow = 69,
 	e_GrassCliffLeft = 70,
-	e_GrassCliffRight = 71
+	e_GrassCliffRight = 71,
+	e_Boss = 73,
+	e_Bridge = 74,
+	e_Lever = 75,
+	e_StoneCentre = 76
 };
 
 inline const char* to_string(const eTileType e)
 {
 	switch (e)
 	{
-	case eTileType::e_Air: return "e_Air";
-	case eTileType::e_Dirt: return "e_Dirt";
-	case eTileType::e_GrassLeft: return "e_GrassLeft";
-	case eTileType::e_GrassCentre: return "e_GrassCentre";
-	case eTileType::e_GrassRight: return "e_GrassRight";
-	case eTileType::e_StoneTop: return "e_StoneTop";
-	case eTileType::e_StoneCentre: return "e_StoneCentre";
-	case eTileType::e_StoneLeft: return "e_StoneLeft";
-	case eTileType::e_StoneRight: return "e_StoneRight";
-	case eTileType::e_Flag: return "e_Flag";
-	case eTileType::e_CoinBlock: return "e_CoinBlock";
-	case eTileType::e_BoxedCoinBlock: return "e_BoxedCoinBlock";
-	case eTileType::e_CrateBlock: return "e_CrateBlock";
-	case eTileType::e_ItemBlock: return "e_ItemBlock";
-	case eTileType::e_BrickBlock: return "e_BrickBlock";
-	case eTileType::e_Bush: return "e_Bush";
-	case eTileType::e_ClosedDoorMid: return "e_ClosedDoorMid";
-	case eTileType::e_ClosedDoorTop: return "e_ClosedDoorTop";
-	case eTileType::e_OpenDoorMid: return "e_OpenDoorMid";
-	case eTileType::e_OpenDoorTop: return "e_OpenDoorTop";
-	case eTileType::e_Plant: return "e_Plant";
-	case eTileType::e_Mushroom1: return "e_Mushroom1";
-	case eTileType::e_Mushroom2: return "e_Mushroom2";
-	case eTileType::e_Rock: return "e_Rock";
-	case eTileType::e_Spikes: return "e_Spikes";
-	case eTileType::e_FlagPole: return "e_FlagPole";
-	case eTileType::e_Slime: return "e_Slime";
-	case eTileType::e_Coin: return "e_Coin";
-	case eTileType::e_Snail: return "e_Snail";
-	case eTileType::e_RightArrow: return "e_RightArrow";
-	case eTileType::e_GrassCliffLeft: return "e_GrassCliffLeft";
-	case eTileType::e_GrassCliffRight: return "e_GrassCliffRight";
-	default: return "unknown";
+		case eTileType::e_Air: return "e_Air";
+		case eTileType::e_Dirt: return "e_Dirt";
+		case eTileType::e_GrassLeft: return "e_GrassLeft";
+		case eTileType::e_GrassCentre: return "e_GrassCentre";
+		case eTileType::e_GrassRight: return "e_GrassRight";
+		case eTileType::e_StoneTop: return "e_StoneTop";
+		case eTileType::e_Stone: return "e_Stone";
+		case eTileType::e_StoneLeft: return "e_StoneLeft";
+		case eTileType::e_StoneRight: return "e_StoneRight";
+		case eTileType::e_Flag: return "e_Flag";
+		case eTileType::e_CoinBlock: return "e_CoinBlock";
+		case eTileType::e_BoxedCoinBlock: return "e_BoxedCoinBlock";
+		case eTileType::e_CrateBlock: return "e_CrateBlock";
+		case eTileType::e_ItemBlock: return "e_ItemBlock";
+		case eTileType::e_BrickBlock: return "e_BrickBlock";
+		case eTileType::e_Bush: return "e_Bush";
+		case eTileType::e_ClosedDoorMid: return "e_ClosedDoorMid";
+		case eTileType::e_ClosedDoorTop: return "e_ClosedDoorTop";
+		case eTileType::e_OpenDoorMid: return "e_OpenDoorMid";
+		case eTileType::e_OpenDoorTop: return "e_OpenDoorTop";
+		case eTileType::e_Plant: return "e_Plant";
+		case eTileType::e_Mushroom1: return "e_Mushroom1";
+		case eTileType::e_Mushroom2: return "e_Mushroom2";
+		case eTileType::e_Rock: return "e_Rock";
+		case eTileType::e_Spikes: return "e_Spikes";
+		case eTileType::e_FlagPole: return "e_FlagPole";
+		case eTileType::e_Slime: return "e_Slime";
+		case eTileType::e_Coin: return "e_Coin";
+		case eTileType::e_Snail: return "e_Snail";
+		case eTileType::e_RightArrow: return "e_RightArrow";
+		case eTileType::e_GrassCliffLeft: return "e_GrassCliffLeft";
+		case eTileType::e_GrassCliffRight: return "e_GrassCliffRight";
+		case eTileType::e_Boss: return "e_Boss";
+		case eTileType::e_Bridge: return "e_Bridge";
+		case eTileType::e_Lever: return "e_Lever";
+		case eTileType::e_StoneCentre: return "e_StoneCentre";
+		default: return "unknown";
 	}
 }
 

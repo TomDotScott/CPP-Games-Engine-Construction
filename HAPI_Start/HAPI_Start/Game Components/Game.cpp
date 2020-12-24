@@ -111,10 +111,13 @@ void Game::Render(TextureManager& textureManager)
 	case eLevel::e_LevelTwo:
 		backgroundName = "Level2_Background";
 		break;
+	case eLevel::e_LevelThree:
+		backgroundName = "Level3_Background";
+		break;
 	default:
 		break;
 	}
-
+	
 	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
 	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
 	textureManager.DrawTexture(backgroundName, m_backgroundPosition);
@@ -123,7 +126,10 @@ void Game::Render(TextureManager& textureManager)
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
-	m_flag.Render(textureManager, playerXOffset);
+	if (m_currentLevel != eLevel::e_LevelThree)
+	{
+		m_flag.Render(textureManager, playerXOffset);
+	}
 
 	m_tileManager.RenderTiles(textureManager, playerXOffset);
 
@@ -272,13 +278,35 @@ void Game::Input()
 
 bool Game::Initialise(TextureManager& textureManager)
 {
-	SoundManager::GetInstance().Initialise();
+	// Load SFX
+	SoundManager::GetInstance().AddSoundEffect("Block_Break", "Res/SFX/Block_Break.wav");
+	SoundManager::GetInstance().AddSoundEffect("Block_Bump", "Res/SFX/Block_Bump.wav");
+	SoundManager::GetInstance().AddSoundEffect("Brick_Break", "Res/SFX/Brick_Break.wav");
+	SoundManager::GetInstance().AddSoundEffect("Coin", "Res/SFX/Coin.wav");
+	SoundManager::GetInstance().AddSoundEffect("Entity_Shell_Hit", "Res/SFX/Entity_Shell_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Entity_Squash", "Res/SFX/Entity_Squash.wav");
+	SoundManager::GetInstance().AddSoundEffect("Entity_Fireball_Hit", "Res/SFX/Entity_Fireball_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Explosion", "Res/SFX/Fireball_Explosion.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Shoot", "Res/SFX/Fireball_Shoot.wav");
+	SoundManager::GetInstance().AddSoundEffect("Fireball_Wall_Hit", "Res/SFX/Fireball_Wall_Hit.wav");
+	SoundManager::GetInstance().AddSoundEffect("Flag", "Res/SFX/Flag.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Dead", "Res/SFX/Player_Dead.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Jump", "Res/SFX/Player_Jump.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Power_Down", "Res/SFX/Player_Power_Down.wav");
+	SoundManager::GetInstance().AddSoundEffect("Player_Power_Up", "Res/SFX/Player_Power_Up.wav");
+	SoundManager::GetInstance().AddSoundEffect("Power_Up_Reveal", "Res/SFX/Power_Up_Reveal.wav");
+	SoundManager::GetInstance().AddSoundEffect("Shell_Hit_Wall", "Res/SFX/Shell_Hit_Wall.wav");
 
+	SoundManager::GetInstance().AddMusic("Level1", "Res/Music/Level1.wav");
+	SoundManager::GetInstance().AddMusic("Level2", "Res/Music/Level2.wav");
+	SoundManager::GetInstance().AddMusic("Level3", "Res/Music/Level3.wav");
+	
 	//-----------------------TEXTURES-------------------------
 	textureManager.CreateTexture("Res/Graphics/Level1_Background.tga", "Level1_Background");
 	textureManager.CreateTexture("Res/Graphics/Level2_Background.tga", "Level2_Background");
+	textureManager.CreateTexture("Res/Graphics/Level3_Background.tga", "Level3_Background");
 
-	return LoadLevel(eLevel::e_LevelOne);
+	return LoadLevel(m_currentLevel);
 }
 
 void Game::LoadNextLevel()
@@ -293,6 +321,11 @@ void Game::LoadNextLevel()
 		}
 		break;
 	case eLevel::e_LevelTwo:
+		if (!LoadLevel(eLevel::e_LevelThree))
+		{
+			HAPI.UserMessage(("Level Three could not be loaded"), "An Error Occured");
+			HAPI.Close();
+		}
 		break;
 	default:
 		break;
@@ -318,6 +351,10 @@ bool Game::LoadLevel(const eLevel level)
 		name = "Level2";
 		m_worldText.SetString("Level 2");
 		break;
+	case eLevel::e_LevelThree:
+		name = "Level3";
+		m_worldText.SetString("Level 3");
+		break;
 	default:
 		HAPI.UserMessage(("Level not yet created"), "An Error Occured");
 		return false;
@@ -338,7 +375,6 @@ bool Game::LoadLevel(const eLevel level)
 	// Dequeue every entity location
 	for (auto& entity : entityLocations)
 	{
-
 		switch (entity.first)
 		{
 		case eEntityType::e_Coin:
@@ -360,13 +396,15 @@ bool Game::LoadLevel(const eLevel level)
 	entityLocations.clear();
 
 	// Reset Player
-	m_player.Reset();
+	m_player.Reset(true);
 
 	m_levelStarted = false;
 	m_levelFinished = false;
 
 	m_levelTimer = 200.f;
 
+	m_currentLevel = level;
+	
 	return true;
 }
 

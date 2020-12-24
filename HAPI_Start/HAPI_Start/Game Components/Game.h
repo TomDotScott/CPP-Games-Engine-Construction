@@ -25,7 +25,7 @@ public:
 private:
 	enum class eLevel
 	{
-		e_LevelOne, e_LevelTwo
+		e_LevelOne, e_LevelTwo, e_LevelThree
 	};
 
 	TileManager m_tileManager;

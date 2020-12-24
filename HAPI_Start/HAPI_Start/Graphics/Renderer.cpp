@@ -11,7 +11,7 @@ namespace renderer
 		{
 			const int width = static_cast<int>(textureSize.x);
 			const int height = static_cast<int>(textureSize.y);
-			
+
 			const int imgWidthHalf = width / 2;
 			for (int y = 0; y < height; y++)
 			{
@@ -34,13 +34,13 @@ namespace renderer
 				}
 			}
 		}
-		
+
 		void alpha_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, Vector2 textureSize, Vector2 texturePosition)
 		{
 			HAPISPACE::BYTE* screenStart{
 				screen + (static_cast<int>(texturePosition.y) * constants::k_screenWidth + static_cast<int>(texturePosition.x)) * 4
 			};
-			
+
 			HAPISPACE::BYTE* textureStart{ textureData };
 
 			const int increment{ constants::k_screenWidth * 4 - static_cast<int>(textureSize.x) * 4 };
@@ -195,7 +195,7 @@ namespace renderer
 				}
 			}
 		}
-		
+
 		void sprite_alpha_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, short alpha = 255)
 		{
 			const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellSize * 4 };
@@ -271,11 +271,13 @@ namespace renderer
 					position.y = std::max(0.f, temp.y);
 
 					// Calculate the increment up here rather than in the loop since it doesn't change...
-					const int screenInc{ static_cast<int>(screenBounds.GetSize().x) * 4 - static_cast<int>(clippedRect.GetSize().x) * 4 };
+					//const int screenInc{ static_cast<int>(screenBounds.GetSize().x) * 4 - static_cast<int>(clippedRect.GetSize().x) * 4 };
+					const int screenInc{ (static_cast<int>(screenBounds.GetSize().x) - static_cast<int>(clippedRect.GetSize().x)) * 4 };
 
 
 					const int spriteOffset{
-						(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellSize) * 4
+						/*(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellSize) * 4*/
+						(static_cast<int>(clippedRect.TOP_LEFT.y) * constants::k_spriteSheetCellSize + static_cast<int>(clippedRect.TOP_LEFT.x)) * 4
 					};
 
 					HAPISPACE::BYTE* spritePtr = spriteData + spriteOffset;
@@ -320,14 +322,14 @@ namespace renderer
 			}
 		}
 	}
-	
+
 	void render_texture(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, const Vector2 textureSize, const Vector2 texturePosition, const bool flipped)
 	{
-		if(flipped)
+		if (flipped)
 		{
 			texture::flip_texture(screen, textureData, textureSize);
 		}
-		
+
 		texture::clip_blit(screen, textureData, textureSize, texturePosition);
 
 		if (flipped)

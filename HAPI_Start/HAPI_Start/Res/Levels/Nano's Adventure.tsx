@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="Nano's Adventure" tilewidth="128" tileheight="128" tilecount="33" columns="0">
+<tileset version="1.4" tiledversion="1.4.2" name="Nano's Adventure" tilewidth="128" tileheight="256" tilecount="37" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Ground/Grass/grassCenter.png"/>
@@ -99,5 +99,17 @@
  </tile>
  <tile id="71">
   <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Ground/Grass/grassCliff_right.png"/>
+ </tile>
+ <tile id="73">
+  <image width="128" height="256" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Players/128x256/Yellow/alienYellow_front.png"/>
+ </tile>
+ <tile id="74">
+  <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Tiles/bridgeB.png"/>
+ </tile>
+ <tile id="75">
+  <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Tiles/leverRight.png"/>
+ </tile>
+ <tile id="76">
+  <image width="128" height="128" source="../../../../../../../Dropbox/Dropbox (Aaron Wallis)/C DRIVE/Desktop/PNG/Ground/Stone/stoneMid.png"/>
  </tile>
 </tileset>

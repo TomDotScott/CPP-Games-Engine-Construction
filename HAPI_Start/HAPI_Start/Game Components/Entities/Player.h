@@ -49,7 +49,7 @@ public:
 	bool GetIsDead() const;
 	void Kill();
 
-	void Reset();
+	void Reset(bool passLevel = false);
 
 	std::vector<Fireball>& GetFireBallPool();
 

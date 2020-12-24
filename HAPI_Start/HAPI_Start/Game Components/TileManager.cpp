@@ -41,7 +41,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 				break;
 			}
 			std::stringstream iss(line);
-			for (int c = 0; c < constants::k_maxTilesHorizontal * 11; ++c)
+			for (int c = 0; c < constants::k_maxTilesHorizontal * 20; ++c)
 			{
 				std::string val;
 				std::getline(iss, val, ',');
@@ -68,8 +68,10 @@ bool TileManager::LoadLevel(const std::string& filename)
 				case eTileType::e_GrassCliffLeft:
 				case eTileType::e_GrassCliffRight:
 				case eTileType::e_StoneTop:
-				case eTileType::e_StoneCentre:
+				case eTileType::e_Stone:
 				case eTileType::e_StoneLeft:
+				case eTileType::e_StoneCentre:
+				case eTileType::e_Bridge:
 				case eTileType::e_StoneRight:
 				case eTileType::e_FlagPole:
 				case eTileType::e_CoinBlock:
@@ -149,8 +151,8 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 					case eTileType::e_StoneTop:
 						spriteIdentifier = "Stone_Top";
 						break;
-					case eTileType::e_StoneCentre:
-						spriteIdentifier = "Stone_Centre";
+					case eTileType::e_Stone:
+						spriteIdentifier = "Stone";
 						break;
 					case eTileType::e_StoneLeft:
 						spriteIdentifier = "Stone_Left";
@@ -217,6 +219,12 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 						break;
 					case eTileType::e_GrassCliffRight:
 						spriteIdentifier = "Grass_Cliff_Right";
+						break;
+					case eTileType::e_Bridge:
+						spriteIdentifier = "Bridge";
+						break;
+					case eTileType::e_StoneCentre:
+						spriteIdentifier = "Stone_Centre";
 						break;
 					default:;
 					}

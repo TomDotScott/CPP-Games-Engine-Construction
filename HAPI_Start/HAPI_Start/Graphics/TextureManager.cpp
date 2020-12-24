@@ -80,7 +80,7 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("Grass_Cliff_Left");
 	CreateSprite("Grass_Cliff_Right");
 	CreateSprite("Stone_Left");
-	CreateSprite("Stone_Centre");
+	CreateSprite("Stone");
 	CreateSprite("Stone_Right");
 	CreateSprite("Stone_Top");
 	CreateSprite("Coin_1");
@@ -170,6 +170,8 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("Door_Closed_Mid");
 	CreateSprite("Door_Open_Top");
 	CreateSprite("Door_Open_Mid");
+	CreateSprite("Stone_Centre");
+	CreateSprite("Bridge");
 }
 
 void TextureManager::ClearScreen(HAPISPACE::HAPI_TColour col) const

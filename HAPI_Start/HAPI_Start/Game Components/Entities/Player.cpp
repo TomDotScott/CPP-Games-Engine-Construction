@@ -316,12 +316,17 @@ void Player::Kill()
 	}
 }
 
-void Player::Reset()
+void Player::Reset(const bool passLevel)
 {
 	m_position = Vector2::CENTRE;
 	m_velocity = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
-	m_currentPowerUpState = ePowerUpState::e_Small;
+	
+	if (!passLevel)
+	{
+		m_currentPowerUpState = ePowerUpState::e_Normal;
+	}
+	
 	m_currentPlayerState = ePlayerState::e_Jumping;
 	m_immune = false;
 	m_isDead = false;
