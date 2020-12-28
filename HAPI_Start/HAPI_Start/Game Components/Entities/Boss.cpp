@@ -9,11 +9,11 @@ Boss::Boss(const int entityID, const Vector2 startingPosition, const Player& pla
 		eDirection::e_Left
 	),
 	m_player(player),
-	m_visible(false),
+	m_active(false),
 	m_battleStarted(false)
 {
 	AddAnimation(animations::BOSS_IDLE, true, 1000.f);
-	AddAnimation(animations::BOSS_WALK);
+	AddAnimation(animations::BOSS_WALK, true, 200.f);
 	AddAnimation(animations::BOSS_JUMP);
 	AddAnimation(animations::BOSS_DEAD, false, 1000.f);
 
@@ -90,7 +90,7 @@ void Boss::CheckEntityCollisions(Entity& other)
 void Boss::Render(TextureManager& textureManager, const float playerOffset)
 {
 	// To save code duplication, call the parent function
-	if (m_visible)
+	if (m_active)
 	{
 		Alien::Render(textureManager, playerOffset);
 
@@ -101,14 +101,14 @@ void Boss::Render(TextureManager& textureManager, const float playerOffset)
 	}
 }
 
-void Boss::SetVisible(const bool visible)
+void Boss::SetActive(const bool active)
 {
-	m_visible = visible;
+	m_active = active;
 }
 
-bool Boss::GetIsVisible() const
+bool Boss::GetIsActive() const
 {
-	return m_visible;
+	return m_active;
 }
 
 bool Boss::GetBattleStarted() const

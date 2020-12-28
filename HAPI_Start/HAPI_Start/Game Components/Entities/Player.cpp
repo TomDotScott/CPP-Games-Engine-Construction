@@ -11,7 +11,7 @@ Player::Player(const Vector2 startingPosition) :
 	),
 	m_numStates(5),
 	m_shouldJumpNextFrame(false),
-	m_currentPowerUpState(ePowerUpState::e_FireThrower),
+	m_currentPowerUpState(ePowerUpState::e_Normal),
 	m_moveDirectionLimit(eDirection::e_None),
 	m_score(0),
 	m_coinCount(0),
@@ -240,19 +240,24 @@ void Player::Kill()
 		m_currentAlienState = eAlienState::e_Dead;
 		m_livesRemaining--;
 		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState));
+
+		if(m_livesRemaining == 0)
+		{
+			// TODO: GAME OVER MENU
+			//STATE_MANAGER.ChangeState(eState::e_GameOver);
+		}
 	}
 }
 
 void Player::Reset(const bool passLevel)
 {
-	//m_position = Vector2::CENTRE;
-	m_position = { 23360, 832 };
+	m_position = Vector2::CENTRE;
 	m_velocity = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
 
 	if (!passLevel)
 	{
-		m_currentPowerUpState = ePowerUpState::e_FireThrower;
+		m_currentPowerUpState = ePowerUpState::e_Normal;
 	}
 
 	m_currentAlienState = eAlienState::e_Jumping;

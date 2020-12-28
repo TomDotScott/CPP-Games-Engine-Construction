@@ -12,14 +12,14 @@ public:
 	void CheckEntityCollisions(Entity& other) override;
 	void Render(TextureManager& textureManager, float playerOffset) override;
 
-	void SetVisible(bool visible);
-	bool GetIsVisible() const;
+	void SetActive(bool active);
+	bool GetIsActive() const;
 
 	bool GetBattleStarted() const;
 	
 private:
 	const Player& m_player;
-	bool m_visible;
+	bool m_active;
 	bool m_battleStarted;
 	
 	CollisionBoxes GenerateCollisionBoxes() override;

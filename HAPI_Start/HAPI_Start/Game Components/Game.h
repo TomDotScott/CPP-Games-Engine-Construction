@@ -10,6 +10,7 @@
 #include "Entities/Enemies/Slime.h"
 #include "Entities/Enemies/Snail.h"
 #include "Entities/Flag.h"
+#include "Entities/Lever.h"
 #include "Entities/PickUpGem.h"
 #include "Entities/Player.h"
 #include "Text.h"
@@ -38,6 +39,7 @@ private:
 	
 	bool m_levelStarted;
 	bool m_levelFinished;
+	bool m_leverPulled;
 	
 	Vector2 m_backgroundPosition;
 	eDirection m_backgroundMoveDir;
@@ -47,6 +49,7 @@ private:
 	std::vector<Coin> m_coins;
 	std::vector<PickUpGem> m_gems;
 	Flag m_flag;
+	Lever m_endLever;
 	Boss m_boss;
 
 	Text m_scoreText;
@@ -61,7 +64,6 @@ private:
 	bool LoadLevel(eLevel level);
 	void CheckCollisions();
 	void HandlePlayerCollisions();
-	void HandleBossCollisions();
 	void ScrollBackground();
 	void UpdateUI(float deltaTime);
 	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);

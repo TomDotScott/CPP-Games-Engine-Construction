@@ -29,7 +29,8 @@ enum class eEntityType
 	e_Slime = 65,
 	e_Coin = 66,
 	e_Snail = 68,
-	e_Boss = 73
+	e_Boss = 73,
+	e_Lever = 75
 };
 
 // Every entity will have 4 collision areas as well as
@@ -63,9 +64,6 @@ public:
 	virtual void Render(TextureManager& textureManager, float playerOffset);
 	virtual void CheckEntityCollisions(Entity& other) = 0;
 
-	// Different per entity and per animation frame...
-	virtual CollisionBoxes GenerateCollisionBoxes() = 0;
-
 	CollisionBoxes GetCurrentCollisionBoxes();
 
 	Vector2 GetPosition() const;
@@ -96,7 +94,8 @@ protected:
 	eEntityType m_entityType;
 
 	virtual void Move(float deltaTime) = 0;
-	
+	// Different per entity and per animation frame...
+	virtual CollisionBoxes GenerateCollisionBoxes() = 0;
 	void AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, bool looping = true, float frameLength = 100.f);
 	virtual void PlayAnimation(float deltaTime);
 	void PlaySFX(const std::string& sfxName);

@@ -145,6 +145,10 @@ const std::vector<std::string> animations::FLAG_WAVE{
 
 /* LEVER BEGIN */
 const std::vector<std::string> animations::LEVER{
+	"Lever_1"
+};
+
+const std::vector<std::string> animations::LEVER_SWING{
 	"Lever_1", "Lever_2", "Lever_3"
 };
 
@@ -166,4 +170,3 @@ const std::vector<std::string> animations::BOSS_WALK
 const std::vector<std::string> animations::BOSS_JUMP{
 	"Boss_Jump_Body_1"
 };
-

@@ -31,6 +31,7 @@ public:
 	void RenderTiles(TextureManager& textureManager, float playerOffset);
 	CollisionData& CheckAlienLevelCollisions(Alien& alien);
 	bool IsBossOnFloor(Alien& boss);
+	void OnLeverPulled();
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void CheckFireballLevelCollisions(Fireball& fireball);
 	std::vector<std::pair<eEntityType, Vector2>>& GetEntityLocations();
@@ -83,7 +84,8 @@ enum class eTileType
 	e_Boss = 73,
 	e_Bridge = 74,
 	e_Lever = 75,
-	e_StoneCentre = 76
+	e_StoneCentre = 76,
+	e_DestructibleStone
 };
 
 inline const char* to_string(const eTileType e)

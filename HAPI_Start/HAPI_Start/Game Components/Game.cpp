@@ -2,18 +2,21 @@
 #include <fstream>
 #include "../Audio/Music.h"
 #include "../Audio/SoundManager.h"
+#include "../State System/StateManager.h"
 
 Game::Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
 	State(keyboardData, controllerData),
 	m_player({ Vector2::CENTRE }),
 	m_levelTimer(200.f),
-	m_currentLevel(eLevel::e_LevelThree),
+	m_currentLevel(eLevel::e_LevelOne),
 	m_gameClock(),
 	m_levelStarted(false),
 	m_levelFinished(false),
+	m_leverPulled(false),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None),
 	m_flag(GenerateNextEntityID(), Vector2::ZERO),
+	m_endLever(GenerateNextEntityID(), Vector2::ZERO),
 	m_boss(GenerateNextEntityID(), {}, m_player),
 	m_scoreText("Score 000000", { 0, 10 }),
 	m_livesText(std::to_string(m_player.GetLivesRemaining()), { 467, 10 }),
@@ -53,7 +56,7 @@ void Game::Update()
 		if (m_player.GetCurrentAlienState() == eAlienState::e_Jumping)
 		{
 			// Slowly slide down
-			m_player.SetPosition({ m_player.GetPosition().x, m_player.GetPosition().y + (200 * deltaTime) });
+			m_player.SetPosition({ m_player.GetPosition().x, m_player.GetPosition().y + (200.f * deltaTime) });
 
 			// Calculate the new flag position based on the player position
 			const auto playerPos = m_player.GetPosition();
@@ -74,7 +77,21 @@ void Game::Update()
 
 	m_flag.Update(deltaTime);
 
-	if (m_boss.GetIsVisible())
+	if (m_endLever.GetIsActive())
+	{
+		m_endLever.Update(deltaTime);
+
+		if (!m_leverPulled)
+		{
+			if (m_endLever.GetLeverState() == eLeverState::e_Swinging)
+			{
+				m_leverPulled = true;
+				m_tileManager.OnLeverPulled();
+			}
+		}
+	}
+
+	if (m_boss.GetIsActive())
 	{
 		m_boss.Update(deltaTime);
 	}
@@ -132,10 +149,7 @@ void Game::Render(TextureManager& textureManager)
 
 	const auto playerXOffset = m_player.GetPosition().x;
 
-	if (m_currentLevel != eLevel::e_LevelThree)
-	{
-		m_flag.Render(textureManager, playerXOffset);
-	}
+	m_flag.Render(textureManager, playerXOffset);
 
 	m_tileManager.RenderTiles(textureManager, playerXOffset);
 
@@ -173,11 +187,17 @@ void Game::Render(TextureManager& textureManager)
 		}
 	}
 
-	m_boss.Render(textureManager, playerXOffset);
-	//textureManager.DrawSprite("Boss_Idle_Body_1", m_boss.GetPosition(), true);
-	//textureManager.DrawSprite("Boss_Idle_Body_1", {Vector2::CENTRE});
+	if (m_boss.GetIsActive())
+	{
+		m_boss.Render(textureManager, playerXOffset);
+	}
 
 	m_player.Render(textureManager);
+
+	if (m_endLever.GetIsActive())
+	{
+		m_endLever.Render(textureManager, playerXOffset);
+	}
 
 	// Render UI on top of everything else
 	m_scoreText.Render(textureManager);
@@ -337,6 +357,10 @@ void Game::LoadNextLevel()
 			HAPI.Close();
 		}
 		break;
+	case eLevel::e_LevelThree:
+		// TODO: SAVE SCORE AND WINNING THE GAME MENU
+		// STATE_MANAGER.ChangeState(eState::e_MainMenu);
+		break;
 	default:
 		break;
 	}
@@ -399,6 +423,9 @@ bool Game::LoadLevel(const eLevel level)
 		case eEntityType::e_Flag:
 			m_flag.SetPosition(entity.second);
 			break;
+		case eEntityType::e_Lever:
+			m_endLever.SetPosition(entity.second);
+			break;
 		case eEntityType::e_Boss:
 			m_boss.SetPosition(entity.second);
 			break;
@@ -420,10 +447,12 @@ bool Game::LoadLevel(const eLevel level)
 
 	if (m_currentLevel == eLevel::e_LevelThree)
 	{
-		m_boss.SetVisible(true);
+		m_boss.SetActive(true);
+		m_endLever.SetActive(true);
 	} else
 	{
-		m_boss.SetVisible(false);
+		m_boss.SetActive(false);
+		m_endLever.SetActive(false);
 	}
 
 	return true;
@@ -433,18 +462,11 @@ void Game::CheckCollisions()
 {
 	// CHECK ENTITY-LEVEL COLLISIONS 
 	HandlePlayerCollisions();
-	
-	if(m_tileManager.IsBossOnFloor(m_boss))
+
+	if (m_tileManager.IsBossOnFloor(m_boss))
 	{
-		if (m_boss.GetBattleStarted())
-		{
-			m_boss.SetAlienState(eAlienState::e_Walking);
-		}
-		else
-		{
-			m_boss.SetAlienState(eAlienState::e_Idle);
-		}
-	}else
+		m_boss.SetAlienState(m_boss.GetBattleStarted() ? eAlienState::e_Walking : eAlienState::e_Idle);
+	} else
 	{
 		m_boss.SetAlienState(eAlienState::e_Jumping);
 	}
@@ -484,6 +506,11 @@ void Game::CheckCollisions()
 			pickup.CheckEntityCollisions(m_player);
 			m_player.CheckEntityCollisions(pickup);
 		}
+	}
+
+	if (m_endLever.GetIsActive())
+	{
+		m_endLever.CheckEntityCollisions(m_player);
 	}
 }
 

@@ -37,7 +37,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 				break;
 			}
 			std::stringstream iss(line);
-			for (int c = 0; c < constants::k_maxTilesHorizontal * 20; ++c)
+			for (int c = 0; c < constants::k_maxTilesHorizontal * 30; ++c)
 			{
 				std::string val;
 				std::getline(iss, val, ',');
@@ -67,7 +67,6 @@ bool TileManager::LoadLevel(const std::string& filename)
 				case eTileType::e_Stone:
 				case eTileType::e_StoneLeft:
 				case eTileType::e_StoneCentre:
-				case eTileType::e_Bridge:
 				case eTileType::e_StoneRight:
 				case eTileType::e_FlagPole:
 				case eTileType::e_CoinBlock:
@@ -77,11 +76,13 @@ bool TileManager::LoadLevel(const std::string& filename)
 				case eTileType::e_BrickBlock:
 				case eTileType::e_ClosedDoorMid:
 				case eTileType::e_ClosedDoorTop:
+				case eTileType::e_DestructibleStone:
+				case eTileType::e_Bridge:
 				case eTileType::e_OpenDoorMid:
 				case eTileType::e_OpenDoorTop:
 					row.emplace_back(tileType, tilePosition, true);
 					break;
-
+					
 				case eTileType::e_Air:
 				case eTileType::e_Bush:
 				case eTileType::e_RightArrow:
@@ -94,6 +95,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					break;
 
 				case eTileType::e_Boss:
+				case eTileType::e_Lever:
 				case eTileType::e_Flag:
 				case eTileType::e_Slime:
 				case eTileType::e_Coin:
@@ -148,6 +150,7 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 					case eTileType::e_StoneTop:
 						spriteIdentifier = "Stone_Top";
 						break;
+					case eTileType::e_DestructibleStone:
 					case eTileType::e_Stone:
 						spriteIdentifier = "Stone";
 						break;
@@ -262,6 +265,21 @@ bool TileManager::IsBossOnFloor(Alien& boss)
 	}
 	
 	return false;
+}
+
+void TileManager::OnLeverPulled()
+{
+	for (auto& row : m_levelData)
+	{
+		for (auto& currentTile : row)
+		{
+			if(currentTile.m_type == eTileType::e_DestructibleStone || currentTile.m_type == eTileType::e_Bridge)
+			{
+				currentTile.m_type = eTileType::e_Air;
+				currentTile.m_canCollide = false;
+			}
+		}
+	}
 }
 
 void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
