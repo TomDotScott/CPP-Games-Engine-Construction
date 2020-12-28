@@ -11,7 +11,7 @@ Player::Player(const Vector2 startingPosition) :
 	),
 	m_numStates(5),
 	m_shouldJumpNextFrame(false),
-	m_currentPowerUpState(ePowerUpState::e_Normal),
+	m_currentPowerUpState(ePowerUpState::e_FireThrower),
 	m_moveDirectionLimit(eDirection::e_None),
 	m_score(0),
 	m_coinCount(0),
@@ -245,13 +245,14 @@ void Player::Kill()
 
 void Player::Reset(const bool passLevel)
 {
-	m_position = Vector2::CENTRE;
+	//m_position = Vector2::CENTRE;
+	m_position = { 23360, 832 };
 	m_velocity = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
 
 	if (!passLevel)
 	{
-		m_currentPowerUpState = ePowerUpState::e_Normal;
+		m_currentPowerUpState = ePowerUpState::e_FireThrower;
 	}
 
 	m_currentAlienState = eAlienState::e_Jumping;

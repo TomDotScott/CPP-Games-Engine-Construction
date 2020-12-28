@@ -50,4 +50,11 @@ namespace animations
 
 	// THE FLAG
 	extern const std::vector<std::string> FLAG_WAVE;
+	extern const std::vector<std::string> LEVER;
+
+	// BOSS
+	extern const std::vector<std::string> BOSS_DEAD;
+	extern const std::vector<std::string> BOSS_IDLE;
+	extern const std::vector<std::string> BOSS_WALK;
+	extern const std::vector<std::string> BOSS_JUMP;
 }

@@ -21,7 +21,7 @@ void HAPI_Main() {
 	HAPI.LimitFrameRate(144);
 	HAPI.SetShowFPS(true);
 
-	STATE_MANAGER.OnCreate(eState::e_MainMenu);
+	STATE_MANAGER.OnCreate(eState::e_Game);
 	
 	while (HAPI.Update()) {
 		STATE_MANAGER.Update();

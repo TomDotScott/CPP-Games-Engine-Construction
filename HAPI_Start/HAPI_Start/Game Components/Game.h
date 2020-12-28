@@ -5,6 +5,7 @@
 
 #include "../Graphics/TextureManager.h"
 #include "../State System/State.h"
+#include "Entities/Boss.h"
 #include "Entities/Coin.h"
 #include "Entities/Enemies/Slime.h"
 #include "Entities/Enemies/Snail.h"
@@ -46,6 +47,7 @@ private:
 	std::vector<Coin> m_coins;
 	std::vector<PickUpGem> m_gems;
 	Flag m_flag;
+	Boss m_boss;
 
 	Text m_scoreText;
 	Text m_livesText;
@@ -59,6 +61,7 @@ private:
 	bool LoadLevel(eLevel level);
 	void CheckCollisions();
 	void HandlePlayerCollisions();
+	void HandleBossCollisions();
 	void ScrollBackground();
 	void UpdateUI(float deltaTime);
 	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);

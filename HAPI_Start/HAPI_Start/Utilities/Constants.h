@@ -24,6 +24,10 @@ namespace constants
 	// Music Info
 	constexpr int k_bufferSamples = 8192;
 	constexpr int k_numBuffers = 4;
+
+	// Boss movement
+	constexpr float k_bossMinX = 23552.f;
+	constexpr float k_bossMaxX = 24128.f;
 	
 	inline int rand_range(const int min, const int max)
 	{

@@ -13,7 +13,8 @@ public:
 	void Update(float deltaTime) override;
 	void CheckEntityCollisions(Entity& other) override;
 	CollisionBoxes GenerateCollisionBoxes() override;
-
+	void Render(TextureManager& textureManager, float playerOffset) override;
+	
 	void Initialise(Vector2 startPosition, eDirection startingDirection);
 	void Bounce();
 	void Explode();

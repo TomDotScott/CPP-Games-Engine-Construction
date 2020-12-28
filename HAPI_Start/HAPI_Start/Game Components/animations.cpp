@@ -142,3 +142,28 @@ const std::vector<std::string> animations::SLIME_SHELL_HIT
 const std::vector<std::string> animations::FLAG_WAVE{
 	"Flag_Up_1", "Flag_Up_2"
 };
+
+/* LEVER BEGIN */
+const std::vector<std::string> animations::LEVER{
+	"Lever_1", "Lever_2", "Lever_3"
+};
+
+/* BOSS BEGIN */
+const std::vector<std::string> animations::BOSS_DEAD{
+	"Boss_Dead_Body_1"
+};
+
+const std::vector<std::string> animations::BOSS_IDLE
+{
+	"Boss_Idle_Body_1", "Boss_Idle_Body_2"
+};
+
+const std::vector<std::string> animations::BOSS_WALK
+{
+	"Boss_Walk_Body_1", "Boss_Walk_Body_2"
+};
+
+const std::vector<std::string> animations::BOSS_JUMP{
+	"Boss_Jump_Body_1"
+};
+

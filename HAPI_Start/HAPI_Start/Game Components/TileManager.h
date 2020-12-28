@@ -10,6 +10,13 @@ struct Tile;
 
 struct CollisionData
 {
+	void Reset()
+	{
+		m_headCollision = nullptr;
+		m_leftCollision = nullptr;
+		m_rightCollision = nullptr;
+		m_bottomCollision = nullptr;
+	}
 	Tile* m_headCollision;
 	Tile* m_leftCollision;
 	Tile* m_rightCollision;
@@ -22,8 +29,8 @@ public:
 	TileManager();
 	bool LoadLevel(const std::string& filename);
 	void RenderTiles(TextureManager& textureManager, float playerOffset);
-	CollisionData& CheckPlayerLevelCollisions(Player& player);
-	bool ShouldLoadNextLevel() const;
+	CollisionData& CheckAlienLevelCollisions(Alien& alien);
+	bool IsBossOnFloor(Alien& boss);
 	void CheckEnemyLevelCollisions(Enemy& enemy);
 	void CheckFireballLevelCollisions(Fireball& fireball);
 	std::vector<std::pair<eEntityType, Vector2>>& GetEntityLocations();
@@ -31,13 +38,12 @@ public:
 private:
 	std::vector<std::vector<Tile>> m_levelData;
 	std::vector<std::pair<eEntityType, Vector2>> m_entityLocations;
-	bool m_shouldLoadNextLevel;
-	CollisionData m_playerCollisionData;
+	CollisionData m_alienCollisionData;
 
-	Tile* CheckPlayerHeadCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
-	Tile* CheckPlayerLeftCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
-	Tile* CheckPlayerRightCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
-	Tile* CheckPlayerBottomCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes);
+	Tile* CheckAlienHeadCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
+	Tile* CheckAlienLeftCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
+	Tile* CheckAlienRightCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
+	Tile* CheckAlienBottomCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
 };
 
 enum class eTileType

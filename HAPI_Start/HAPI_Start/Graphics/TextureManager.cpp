@@ -172,6 +172,19 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("Door_Open_Mid");
 	CreateSprite("Stone_Centre");
 	CreateSprite("Bridge");
+	CreateSprite("Boss_Walk_Top_1");
+	CreateSprite("Boss_Walk_Body_1");
+	CreateSprite("Boss_Walk_Top_2");
+	CreateSprite("Boss_Walk_Body_2");
+	CreateSprite("Boss_Idle_Top_1");
+	CreateSprite("Boss_Idle_Body_1");
+	CreateSprite("Boss_Idle_Top_2");
+	CreateSprite("Boss_Idle_Body_2");
+	CreateSprite("Boss_Jump_Top_1");
+	CreateSprite("Boss_Jump_Body_1");
+	CreateSprite("Lever_1");
+	CreateSprite("Lever_2");
+	CreateSprite("Lever_3");
 }
 
 void TextureManager::ClearScreen(HAPISPACE::HAPI_TColour col) const

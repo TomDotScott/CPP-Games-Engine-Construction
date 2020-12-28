@@ -7,13 +7,14 @@ Game::Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::H
 	State(keyboardData, controllerData),
 	m_player({ Vector2::CENTRE }),
 	m_levelTimer(200.f),
-	m_currentLevel(eLevel::e_LevelOne),
+	m_currentLevel(eLevel::e_LevelThree),
 	m_gameClock(),
 	m_levelStarted(false),
 	m_levelFinished(false),
 	m_backgroundPosition(Vector2::ZERO),
 	m_backgroundMoveDir(eDirection::e_None),
 	m_flag(GenerateNextEntityID(), Vector2::ZERO),
+	m_boss(GenerateNextEntityID(), {}, m_player),
 	m_scoreText("Score 000000", { 0, 10 }),
 	m_livesText(std::to_string(m_player.GetLivesRemaining()), { 467, 10 }),
 	m_coinsText("0", { 680, 10 }),
@@ -73,6 +74,11 @@ void Game::Update()
 
 	m_flag.Update(deltaTime);
 
+	if (m_boss.GetIsVisible())
+	{
+		m_boss.Update(deltaTime);
+	}
+
 	UpdateEnemies(m_slimes, deltaTime);
 	UpdateEnemies(m_snails, deltaTime);
 	UpdateEnemies(m_coins, deltaTime);
@@ -117,7 +123,7 @@ void Game::Render(TextureManager& textureManager)
 	default:
 		break;
 	}
-	
+
 	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - constants::k_backgroundTileWidth, 0 });
 	textureManager.DrawTexture(backgroundName, { m_backgroundPosition.x - 2 * constants::k_backgroundTileWidth, 0 });
 	textureManager.DrawTexture(backgroundName, m_backgroundPosition);
@@ -166,6 +172,10 @@ void Game::Render(TextureManager& textureManager)
 			pickup.Render(textureManager, playerXOffset);
 		}
 	}
+
+	m_boss.Render(textureManager, playerXOffset);
+	//textureManager.DrawSprite("Boss_Idle_Body_1", m_boss.GetPosition(), true);
+	//textureManager.DrawSprite("Boss_Idle_Body_1", {Vector2::CENTRE});
 
 	m_player.Render(textureManager);
 
@@ -300,7 +310,7 @@ bool Game::Initialise(TextureManager& textureManager)
 	SoundManager::GetInstance().AddMusic("Level1", "Res/Music/Level1.wav");
 	SoundManager::GetInstance().AddMusic("Level2", "Res/Music/Level2.wav");
 	SoundManager::GetInstance().AddMusic("Level3", "Res/Music/Level3.wav");
-	
+
 	//-----------------------TEXTURES-------------------------
 	textureManager.CreateTexture("Res/Graphics/Level1_Background.tga", "Level1_Background");
 	textureManager.CreateTexture("Res/Graphics/Level2_Background.tga", "Level2_Background");
@@ -389,6 +399,9 @@ bool Game::LoadLevel(const eLevel level)
 		case eEntityType::e_Flag:
 			m_flag.SetPosition(entity.second);
 			break;
+		case eEntityType::e_Boss:
+			m_boss.SetPosition(entity.second);
+			break;
 		default: break;
 		}
 	}
@@ -404,7 +417,15 @@ bool Game::LoadLevel(const eLevel level)
 	m_levelTimer = 200.f;
 
 	m_currentLevel = level;
-	
+
+	if (m_currentLevel == eLevel::e_LevelThree)
+	{
+		m_boss.SetVisible(true);
+	} else
+	{
+		m_boss.SetVisible(false);
+	}
+
 	return true;
 }
 
@@ -412,6 +433,30 @@ void Game::CheckCollisions()
 {
 	// CHECK ENTITY-LEVEL COLLISIONS 
 	HandlePlayerCollisions();
+	
+	if(m_tileManager.IsBossOnFloor(m_boss))
+	{
+		if (m_boss.GetBattleStarted())
+		{
+			m_boss.SetAlienState(eAlienState::e_Walking);
+		}
+		else
+		{
+			m_boss.SetAlienState(eAlienState::e_Idle);
+		}
+	}else
+	{
+		m_boss.SetAlienState(eAlienState::e_Jumping);
+	}
+
+	// Check the collisions of the boss' active fireballs
+	for (auto& fireball : m_boss.GetFireBallPool())
+	{
+		if (fireball.GetActiveState())
+		{
+			m_tileManager.CheckFireballLevelCollisions(fireball);
+		}
+	}
 
 	for (auto& slime : m_slimes)
 	{
@@ -444,7 +489,7 @@ void Game::CheckCollisions()
 
 void Game::HandlePlayerCollisions()
 {
-	CollisionData& playerCollisionData = m_tileManager.CheckPlayerLevelCollisions(m_player);
+	CollisionData& playerCollisionData = m_tileManager.CheckAlienLevelCollisions(m_player);
 
 	// HEAD COLLISIONS
 	if (playerCollisionData.m_headCollision)
@@ -496,6 +541,10 @@ void Game::HandlePlayerCollisions()
 			break;
 		}
 	}
+
+	// Don't limit direction to start, as Left and Right collisions will
+	// limit the player's move direction
+	m_player.SetMoveDirectionLimit(eDirection::e_None);
 
 	if (playerCollisionData.m_leftCollision)
 	{

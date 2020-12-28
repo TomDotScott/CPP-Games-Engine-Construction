@@ -40,23 +40,9 @@ SoundDevice::SoundDevice()
 
 SoundDevice::~SoundDevice()
 {
-	if(!alcMakeContextCurrent(NULL))
-	{
-		HAPI.UserMessage("Failed to set context to nullptr", "An error occured");
-		throw("Failed to set context to nullptr");
-	}
+	alcMakeContextCurrent(nullptr);
 
 	alcDestroyContext(p_ALCContext);
 
-	if(p_ALCContext)
-	{
-		HAPI.UserMessage("Failed to unset during close", "An error occured");
-		throw("Failed to unset during close");
-	}
-
-	if(!alcCloseDevice(p_ALCDevice))
-	{
-		HAPI.UserMessage("Failed to close sound device", "An error occured");
-		throw("Failed to close sound device");
-	}
+	alcCloseDevice(p_ALCDevice);
 }

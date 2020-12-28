@@ -91,6 +91,14 @@ CollisionBoxes Fireball::GenerateCollisionBoxes()
 	};
 }
 
+void Fireball::Render(TextureManager& textureManager, const float playerOffset)
+{
+	if(m_activeState)
+	{
+		Entity::Render(textureManager, playerOffset);
+	}
+}
+
 void Fireball::Move(const float deltaTime)
 {
 	m_velocity.y += constants::k_gravity * deltaTime;

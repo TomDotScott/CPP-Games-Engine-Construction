@@ -6,16 +6,12 @@
 #include "../Graphics/TextureManager.h"
 
 TileManager::TileManager() :
-	m_shouldLoadNextLevel(false),
-	m_playerCollisionData()
+	m_alienCollisionData()
 {
-
 }
 
 bool TileManager::LoadLevel(const std::string& filename)
 {
-	m_shouldLoadNextLevel = false;
-
 	// Clear the level data if it exists
 	m_levelData.clear();
 
@@ -97,6 +93,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					row.emplace_back(tileType, tilePosition, false);
 					break;
 
+				case eTileType::e_Boss:
 				case eTileType::e_Flag:
 				case eTileType::e_Slime:
 				case eTileType::e_Coin:
@@ -235,34 +232,36 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 	}
 }
 
-CollisionData& TileManager::CheckPlayerLevelCollisions(Player& player)
+CollisionData& TileManager::CheckAlienLevelCollisions(Alien& alien)
 {
-	const CollisionBoxes playerCollisionBoxes = player.GetCurrentCollisionBoxes();
+	m_alienCollisionData.Reset();
+	
+	const CollisionBoxes playerCollisionBoxes = alien.GetCurrentCollisionBoxes();
 
-	m_playerCollisionData.m_headCollision = CheckPlayerHeadCollisions(player, playerCollisionBoxes);
+	m_alienCollisionData.m_headCollision = CheckAlienHeadCollisions(alien, playerCollisionBoxes);
 
-	// Don't limit direction to start, as Left and Right collisions will
-	// limit the player's move direction
-	player.SetMoveDirectionLimit(eDirection::e_None);
+	m_alienCollisionData.m_leftCollision = CheckAlienLeftCollisions(alien, playerCollisionBoxes);
 
-	m_playerCollisionData.m_leftCollision = CheckPlayerLeftCollisions(player, playerCollisionBoxes);
+	m_alienCollisionData.m_rightCollision = CheckAlienRightCollisions(alien, playerCollisionBoxes);
 
-	m_playerCollisionData.m_rightCollision = CheckPlayerRightCollisions(player, playerCollisionBoxes);
+	m_alienCollisionData.m_bottomCollision = CheckAlienBottomCollisions(alien, playerCollisionBoxes);
 
-	m_playerCollisionData.m_bottomCollision = CheckPlayerBottomCollisions(player, playerCollisionBoxes);
-
-	for (auto& fireball : player.GetFireBallPool())
+	for (auto& fireball : alien.GetFireBallPool())
 	{
 		CheckFireballLevelCollisions(fireball);
 	}
 
-	return m_playerCollisionData;
+	return m_alienCollisionData;
 }
 
-
-bool TileManager::ShouldLoadNextLevel() const
+bool TileManager::IsBossOnFloor(Alien& boss)
 {
-	return m_shouldLoadNextLevel;
+	if(CheckAlienBottomCollisions(boss, boss.GetCurrentCollisionBoxes()))
+	{
+		return true;
+	}
+	
+	return false;
 }
 
 void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
@@ -372,9 +371,9 @@ std::vector<std::pair<eEntityType, Vector2>>& TileManager::GetEntityLocations()
 	return m_entityLocations;
 }
 
-Tile* TileManager::CheckPlayerHeadCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckAlienHeadCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes)
 {
-	const CollisionBox& playerGlobalBox = playerCollisionBoxes.m_globalBounds;
+	const CollisionBox& playerGlobalBox = alienCollisionBoxes.m_globalBounds;
 
 	// Find the grid position of the global bounds...
 	const int globalBoundsX = (static_cast<int>(playerGlobalBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
@@ -386,7 +385,7 @@ Tile* TileManager::CheckPlayerHeadCollisions(Player& player, const CollisionBoxe
 		auto& currentTile = m_levelData[globalBoundsY][globalBoundsX];
 		if (currentTile.m_canCollide && playerGlobalBox.Overlapping(currentTile.m_tileCollisionBox))
 		{
-			const CollisionBox& playerTopCollisionBox = playerCollisionBoxes.m_topCollisionBox;
+			const CollisionBox& playerTopCollisionBox = alienCollisionBoxes.m_topCollisionBox;
 			if (playerTopCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
 				return &currentTile;
@@ -396,9 +395,9 @@ Tile* TileManager::CheckPlayerHeadCollisions(Player& player, const CollisionBoxe
 	return nullptr;
 }
 
-Tile* TileManager::CheckPlayerLeftCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckAlienLeftCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes)
 {
-	const CollisionBox& playerLeftCollisionBox = playerCollisionBoxes.m_leftCollisionBox;
+	const CollisionBox& playerLeftCollisionBox = alienCollisionBoxes.m_leftCollisionBox;
 
 	const int playerX = (static_cast<int>(playerLeftCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 	const int playerY = static_cast<int>(playerLeftCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
@@ -407,7 +406,7 @@ Tile* TileManager::CheckPlayerLeftCollisions(Player& player, const CollisionBoxe
 	{
 		auto& currentTile = m_levelData[playerY][playerX];
 
-		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		if (currentTile.m_canCollide && alienCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
 		{
 			if (playerLeftCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
@@ -419,9 +418,9 @@ Tile* TileManager::CheckPlayerLeftCollisions(Player& player, const CollisionBoxe
 	return nullptr;
 }
 
-Tile* TileManager::CheckPlayerRightCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckAlienRightCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes)
 {
-	const CollisionBox& playerRightCollisionBox = playerCollisionBoxes.m_rightCollisionBox;
+	const CollisionBox& playerRightCollisionBox = alienCollisionBoxes.m_rightCollisionBox;
 
 	const int playerX = (static_cast<int>(playerRightCollisionBox.BOTTOM_RIGHT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
 	const int playerY = static_cast<int>(playerRightCollisionBox.TOP_LEFT.y) / constants::k_spriteSheetCellSize;
@@ -430,7 +429,7 @@ Tile* TileManager::CheckPlayerRightCollisions(Player& player, const CollisionBox
 	{
 		auto& currentTile = m_levelData[playerY][playerX];
 
-		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		if (currentTile.m_canCollide && alienCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
 		{
 			if (playerRightCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
@@ -442,9 +441,9 @@ Tile* TileManager::CheckPlayerRightCollisions(Player& player, const CollisionBox
 	return nullptr;
 }
 
-Tile* TileManager::CheckPlayerBottomCollisions(Player& player, const CollisionBoxes& playerCollisionBoxes)
+Tile* TileManager::CheckAlienBottomCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes)
 {
-	const CollisionBox& playerBottomCollisionBox = playerCollisionBoxes.m_bottomCollisionBox;
+	const CollisionBox& playerBottomCollisionBox = alienCollisionBoxes.m_bottomCollisionBox;
 
 	// Find the block below the player
 	const int playerFeetX = (static_cast<int>(playerBottomCollisionBox.TOP_LEFT.x) / constants::k_spriteSheetCellSize) + constants::k_maxTilesHorizontal / 2;
@@ -456,7 +455,7 @@ Tile* TileManager::CheckPlayerBottomCollisions(Player& player, const CollisionBo
 	{
 		auto& currentTile = m_levelData[playerFeetY][playerFeetX];
 
-		if (currentTile.m_canCollide && playerCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
+		if (currentTile.m_canCollide && alienCollisionBoxes.m_globalBounds.Overlapping(currentTile.m_tileCollisionBox))
 		{
 			if (playerBottomCollisionBox.Overlapping(currentTile.m_tileCollisionBox))
 			{
