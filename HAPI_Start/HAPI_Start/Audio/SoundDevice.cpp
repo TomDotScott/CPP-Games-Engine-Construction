@@ -36,8 +36,6 @@ SoundDevice::SoundDevice()
 	{
 		name = alcGetString(p_ALCDevice, ALC_DEVICE_SPECIFIER);
 	}
-
-	std::cout << "Sound Device opened: " << name << std::endl;
 }
 
 SoundDevice::~SoundDevice()

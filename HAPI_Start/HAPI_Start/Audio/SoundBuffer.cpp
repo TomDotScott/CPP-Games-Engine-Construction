@@ -92,8 +92,6 @@ ALuint SoundBuffer::AddSoundEffect(const char* filename)
 
 	// Finally, add to the list of known buffers
 	m_soundEffectBuffers.emplace_back(buffer);
-
-	std::cout << "Successfully loaded " << filename << " in buffer: " << buffer << std::endl;
 	
 	return buffer;	
 }
