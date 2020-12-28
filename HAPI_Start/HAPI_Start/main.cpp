@@ -18,18 +18,14 @@ void HAPI_Main() {
 		HAPI.Close();
 	}
 
+	HAPI.LimitFrameRate(144);
 	HAPI.SetShowFPS(true);
 
 	STATE_MANAGER.OnCreate(eState::e_MainMenu);
 	
 	while (HAPI.Update()) {
-		//const float dt = delta_time(gameClock);
-
 		STATE_MANAGER.Update();
 		
 		STATE_MANAGER.Render();
-		
-		// Reset the clock
-		//gameClock = clock();
 	}
 }

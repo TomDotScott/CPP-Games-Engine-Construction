@@ -31,7 +31,7 @@ void Game::Update()
 		m_player.Update(deltaTime);
 
 		// If the player has touched the ground, start the level
-		if (m_player.GetCurrentPlayerState() == ePlayerState::e_Idle && !m_levelStarted)
+		if (m_player.GetCurrentAlienState() == eAlienState::e_Idle && !m_levelStarted)
 		{
 			m_levelStarted = true;
 		}
@@ -49,7 +49,7 @@ void Game::Update()
 		}
 	} else
 	{
-		if (m_player.GetCurrentPlayerState() == ePlayerState::e_Jumping)
+		if (m_player.GetCurrentAlienState() == eAlienState::e_Jumping)
 		{
 			// Slowly slide down
 			m_player.SetPosition({ m_player.GetPosition().x, m_player.GetPosition().y + (200 * deltaTime) });
@@ -247,7 +247,7 @@ void Game::Input()
 {
 	if (GetKey(eKeyCode::SPACE))
 	{
-		if (m_player.GetCurrentPlayerState() != ePlayerState::e_Jumping)
+		if (m_player.GetCurrentAlienState() != eAlienState::e_Jumping)
 		{
 			m_player.SetShouldJump(true);
 		}
@@ -538,18 +538,18 @@ void Game::HandlePlayerCollisions()
 		{
 			if (playerCollisionData.m_bottomCollision->m_position.y > m_player.GetPosition().y)
 			{
-				if (m_player.GetCurrentPlayerState() != ePlayerState::e_Dead)
+				if (m_player.GetCurrentAlienState() != eAlienState::e_Dead)
 				{
-					m_player.SetPlayerState(ePlayerState::e_Walking);
+					m_player.SetAlienState(eAlienState::e_Walking);
 				}
 			}
 		}
 	} else
 	{
-		if (m_player.GetCurrentPlayerState() != ePlayerState::e_Dead)
+		if (m_player.GetCurrentAlienState() != eAlienState::e_Dead)
 		{
 			// If there is no bottom collision, make the player jump
-			m_player.SetPlayerState(ePlayerState::e_Jumping);
+			m_player.SetAlienState(eAlienState::e_Jumping);
 		}
 	}
 }

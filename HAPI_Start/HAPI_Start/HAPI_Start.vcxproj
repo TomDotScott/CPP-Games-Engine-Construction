@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game Components\Entities\Alien.cpp" />
+    <ClCompile Include="Game Components\Entities\Boss.cpp" />
     <ClCompile Include="Game Components\ControlsMenu.cpp" />
     <ClCompile Include="Game Components\Entities\Flag.cpp" />
     <ClCompile Include="Game Components\Entities\PickUpGem.cpp" />
@@ -54,6 +56,8 @@
     <ClCompile Include="Utilities\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game Components\Entities\Alien.h" />
+    <ClInclude Include="Game Components\Entities\Boss.h" />
     <ClInclude Include="Game Components\ControlsMenu.h" />
     <ClInclude Include="Game Components\Entities\Flag.h" />
     <ClInclude Include="Game Components\Entities\PickUpGem.h" />

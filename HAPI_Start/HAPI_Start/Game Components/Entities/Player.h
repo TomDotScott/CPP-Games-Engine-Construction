@@ -1,39 +1,23 @@
 ﻿#pragma once
 #pragma once
-#include "Entity.h"
+#include "Alien.h"
 #include "Fireball.h"
 
 enum class ePowerUpType;
-
-enum class ePlayerState
-{
-	e_Idle, e_Walking, e_Jumping, e_Climbing, e_Dead
-};
 
 enum class ePowerUpState
 {
 	e_Small, e_Normal, e_FireThrower
 };
 
-class Player final : public Entity
+class Player final : public Alien
 {
 public:
 	explicit Player(Vector2 startingPosition);
 
 	void Update(float deltaTime) override;
-	void PlayAnimation(float deltaTime) override;
 	void Render(TextureManager& textureManager) override;
-	void CheckEntityCollisions(Entity& other) override;
-	void SetShouldJump(bool shouldJump);
-
-	void SetCanShoot(bool canShoot);
-
-	eDirection GetMoveDirectionLimit() const;
-	void SetMoveDirectionLimit(eDirection direction);
-
-	ePlayerState GetCurrentPlayerState() const;
-	void SetPlayerState(ePlayerState state);
-
+	
 	ePowerUpState GetPowerUpState() const;
 	void PowerUp(ePowerUpType pType);
 	void PowerDown();
@@ -46,23 +30,26 @@ public:
 
 	int GetLivesRemaining() const;
 
+	void SetCanShoot(bool canShoot);
+	
 	bool GetIsDead() const;
 	void Kill();
 
 	void Reset(bool passLevel = false);
 
-	std::vector<Fireball>& GetFireBallPool();
+	void PlayAnimation(float deltaTime) override;
+	void SetShouldJump(bool shouldJump);
 
+	eDirection GetMoveDirectionLimit() const;
+	void SetMoveDirectionLimit(eDirection direction);
+
+	CollisionBoxes GenerateCollisionBoxes() override;
+
+	void CheckEntityCollisions(Entity& other) override;
 private:
 	int m_numStates;
-	float m_movementSpeed;
-	float m_jumpForce;
 	bool m_shouldJumpNextFrame;
 
-	bool m_canShoot;
-	float m_shotCoolDown;
-
-	ePlayerState m_currentPlayerState;
 	ePowerUpState m_currentPowerUpState;
 
 	eDirection m_moveDirectionLimit;
@@ -75,11 +62,5 @@ private:
 	bool m_immune;
 	bool m_isDead;
 
-	std::vector<Fireball> m_fireballPool;
-
 	void Move(float deltaTime) override;
-	void Jump(float jumpForce);
-	void Shoot();
-	std::string GetTopIdentifier();
-	CollisionBoxes GenerateCollisionBoxes() override;
 };

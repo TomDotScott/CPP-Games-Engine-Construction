@@ -60,7 +60,6 @@ void StateManager::Update()
 			}else
 			{
 				m_inputCoolDown += State::DeltaTime(m_clock);
-				std::cout << m_inputCoolDown << std::endl;
 			}
 		}
 	}
