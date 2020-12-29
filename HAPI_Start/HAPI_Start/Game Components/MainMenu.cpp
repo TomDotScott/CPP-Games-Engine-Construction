@@ -3,6 +3,7 @@
 #include "../Audio/SoundManager.h"
 #include "../Graphics/TextureManager.h"
 #include "../State System/StateManager.h"
+#include <fstream>
 
 MainMenu::MainMenu(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
 	State(keyboardData, controllerData),
@@ -15,10 +16,30 @@ MainMenu::MainMenu(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPI
 
 bool MainMenu::Initialise(TextureManager& textureManager)
 {
-	SoundManager::GetInstance().AddMusic("MainMenu", "Res/Music/MainMenu.wav");
+	std::ifstream read("Res/score.txt");
+
+	std::string highscore;
+	// Highscore is on the second line, but we have to read both lines
+	std::getline(read, highscore);
+	std::getline(read, highscore);
+	
+	m_highScoreText.SetString("HISCORE " + highscore);
+
+	read.close();
+	
+	if(!SoundManager::GetInstance().AddMusic("MainMenu", "Res/Music/MainMenu.wav"))
+	{
+		return false;
+	}
+	
 	SoundManager::GetInstance().PlayMusic("MainMenu");
 
 	return textureManager.CreateTexture("Res/Graphics/MainMenu_Background.tga", "MainMenu_Background");
+}
+
+bool MainMenu::Unload(TextureManager& textureManager)
+{
+	return SoundManager::GetInstance().RemoveMusic("MainMenu") && textureManager.RemoveTexture("MainMenu_Background");
 }
 
 void MainMenu::Input()
@@ -44,6 +65,11 @@ void MainMenu::Input()
 			STATE_MANAGER.ChangeState(eState::e_ControlsMenu);
 			break;
 		}
+	}
+
+	if(GetKey(eKeyCode::ESCAPE))
+	{
+		HAPI.Close();
 	}
 }
 

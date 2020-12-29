@@ -8,7 +8,8 @@ Game::Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::H
 	State(keyboardData, controllerData),
 	m_player({ Vector2::CENTRE }),
 	m_levelTimer(200.f),
-	m_currentLevel(eLevel::e_LevelOne),
+	m_totalElapsedTime(0.f),
+	m_currentLevel(eLevel::e_LevelThree),
 	m_gameClock(),
 	m_levelStarted(false),
 	m_levelFinished(false),
@@ -119,6 +120,11 @@ void Game::Update()
 
 	// Update the music buffer so that music plays
 	SoundManager::GetInstance().UpdateMusicBufferStream();
+
+	if (m_player.GetLivesRemaining() == 0)
+	{
+		GameOver();
+	}
 }
 
 void Game::Render(TextureManager& textureManager)
@@ -250,6 +256,7 @@ void Game::UpdateUI(const float deltaTime)
 	if (m_levelStarted)
 	{
 		m_levelTimer -= deltaTime;
+		m_totalElapsedTime += deltaTime;
 		const std::string timeRemaining = std::to_string(static_cast<int>(m_levelTimer));
 		m_timerText.SetString(AddLeadingZeroes(timeRemaining, 3));
 	}
@@ -339,6 +346,39 @@ bool Game::Initialise(TextureManager& textureManager)
 	return LoadLevel(m_currentLevel);
 }
 
+bool Game::Unload(TextureManager& textureManager)
+{
+	// Remove all the assets
+	if (!SoundManager::GetInstance().RemoveSoundEffect("Block_Break") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Block_Bump") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Brick_Break") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Coin") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Entity_Shell_Hit") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Entity_Squash") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Entity_Fireball_Hit") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Fireball_Explosion") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Fireball_Shoot") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Fireball_Wall_Hit") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Flag") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Player_Dead") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Player_Jump") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Player_Power_Down") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Player_Power_Up") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Power_Up_Reveal") ||
+		!SoundManager::GetInstance().RemoveSoundEffect("Shell_Hit_Wall") ||
+		!SoundManager::GetInstance().RemoveMusic("Level1") ||
+		!SoundManager::GetInstance().RemoveMusic("Level2") ||
+		!SoundManager::GetInstance().RemoveMusic("Level3") ||
+		!textureManager.RemoveTexture("Level1_Background") ||
+		!textureManager.RemoveTexture("Level2_Background") ||
+		!textureManager.RemoveTexture("Level3_Background"))
+	{
+		HAPI.UserMessage("Failed to unload the game assets", "An error occured");
+		return false;
+	}
+	return true;
+}
+
 void Game::LoadNextLevel()
 {
 	switch (m_currentLevel)
@@ -358,8 +398,7 @@ void Game::LoadNextLevel()
 		}
 		break;
 	case eLevel::e_LevelThree:
-		// TODO: SAVE SCORE AND WINNING THE GAME MENU
-		// STATE_MANAGER.ChangeState(eState::e_MainMenu);
+		GameOver();
 		break;
 	default:
 		break;
@@ -456,6 +495,58 @@ bool Game::LoadLevel(const eLevel level)
 	}
 
 	return true;
+}
+
+void Game::GameOver() const
+{
+	std::ifstream read("Res/score.txt");
+	if (!read.is_open())
+	{
+		HAPI.UserMessage("Cannot open score text file", "An error occured");
+	}
+
+	std::string score;
+	std::string highScore;
+	std::string elapsedTime;
+
+	std::getline(read, score);
+	std::cout << score << std::endl;
+
+	std::getline(read, highScore);
+	std::cout << highScore << std::endl;
+
+	std::getline(read, elapsedTime);
+	std::cout << elapsedTime << std::endl;
+
+	score = std::to_string(m_player.GetScore());
+
+	// if there is no highscore, the score IS the highscore
+	if (highScore.empty())
+	{
+		highScore = score;
+	} else
+	{
+		if (std::stoi(highScore) < m_player.GetScore())
+		{
+			highScore = score;
+		}
+	}
+
+	elapsedTime = std::to_string(static_cast<int>(m_totalElapsedTime));
+
+	read.close();
+
+	std::ofstream write("Res/score.txt");
+
+	write << AddLeadingZeroes(score, 6) << "\n" << AddLeadingZeroes(highScore, 6) << "\n" << AddLeadingZeroes(elapsedTime, 3) << "\n";
+
+	write.close();
+
+	std::cout << score << std::endl;
+	std::cout << highScore << std::endl;
+	std::cout << elapsedTime << std::endl;
+
+	STATE_MANAGER.ChangeState(eState::e_GameOver);
 }
 
 void Game::CheckCollisions()

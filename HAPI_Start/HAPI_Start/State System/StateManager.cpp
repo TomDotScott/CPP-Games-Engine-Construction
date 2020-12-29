@@ -1,8 +1,7 @@
 #include "StateManager.h"
-
-
 #include "../Game Components/ControlsMenu.h"
 #include "../Game Components/Game.h"
+#include "../Game Components/GameOver.h"
 #include "../Game Components/MainMenu.h"
 
 void StateManager::OnCreate(const eState state)
@@ -15,6 +14,7 @@ void StateManager::OnCreate(const eState state)
 void StateManager::ChangeState(const eState state)
 {
 	m_currentState = state;
+
 	switch (state)
 	{
 	case eState::e_MainMenu:
@@ -26,6 +26,9 @@ void StateManager::ChangeState(const eState state)
 	case eState::e_Game:
 		SetState(new Game(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
 		break;
+	case eState::e_GameOver:
+		SetState(new GameOver(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+		break;
 	default:
 		break;
 	}
@@ -34,6 +37,11 @@ void StateManager::ChangeState(const eState state)
 
 void StateManager::SetState(State* state)
 {
+	if (m_state)
+	{
+		m_state->Unload(m_textureManager);
+	}
+	
 	delete m_state;
 	m_state = state;
 	if (m_state)

@@ -12,12 +12,17 @@ ControlsMenu::ControlsMenu(const HAPISPACE::HAPI_TKeyboardData& keyboardData, co
 
 bool ControlsMenu::Initialise(TextureManager& textureManager)
 {
-	return textureManager.CreateTexture("Res/Graphics/Controls_Background.tga", "Controls_Background");
+	return textureManager.CreateTexture("Res/Graphics/Controls_Background.tga", "Background");
+}
+
+bool ControlsMenu::Unload(TextureManager& textureManager)
+{
+	return textureManager.RemoveTexture("Background");
 }
 
 void ControlsMenu::Input()
 {
-	if(GetKey(eKeyCode::SPACE))
+	if (GetKey(eKeyCode::SPACE))
 	{
 		STATE_MANAGER.ChangeState(eState::e_MainMenu);
 	}
@@ -30,7 +35,7 @@ void ControlsMenu::Update()
 
 void ControlsMenu::Render(TextureManager& textureManager)
 {
-	textureManager.DrawTexture("Controls_Background", {});
+	textureManager.DrawTexture("Background", {});
 	m_backText.Render(textureManager);
 	textureManager.DrawSprite("UI_Pointer", { m_backText.GetPosition().x + 5 * constants::k_spriteSheetCellSize, m_backText.GetPosition().y });
 }

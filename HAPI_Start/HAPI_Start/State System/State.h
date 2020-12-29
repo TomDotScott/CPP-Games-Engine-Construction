@@ -11,6 +11,7 @@ public:
 	explicit State(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
 	virtual ~State() = default;
 	virtual bool Initialise(TextureManager& textureManager) = 0;
+	virtual bool Unload(TextureManager& textureManager) = 0;
 	virtual void Input() = 0;
 	virtual void Update() = 0;
 	virtual void Render(TextureManager& textureManager) = 0;
@@ -25,5 +26,5 @@ protected:
 
 enum class eKeyCode
 {
-	NONE = -1, SHIFT = 16, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
+	NONE = -1, SHIFT = 16, ESCAPE = 27, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
 };

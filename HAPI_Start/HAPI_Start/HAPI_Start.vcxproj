@@ -33,6 +33,7 @@
     <ClCompile Include="Game Components\Entities\Entity.cpp" />
     <ClCompile Include="Game Components\Game.cpp" />
     <ClCompile Include="Game Components\Entities\Enemies\Slime.cpp" />
+    <ClCompile Include="Game Components\GameOver.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="Game Components\Entities\Lever.cpp" />
     <ClCompile Include="main.cpp">
@@ -77,6 +78,7 @@
     <ClInclude Include="Audio\SoundManager.h" />
     <ClInclude Include="Audio\Music.h" />
     <ClInclude Include="Game Components\Text.h" />
+    <ClInclude Include="Game Components\GameOver.h" />
     <ClInclude Include="Graphics\Renderer.h" />
     <ClInclude Include="Graphics\Texture.h" />
     <ClInclude Include="Game Components\MainMenu.h" />

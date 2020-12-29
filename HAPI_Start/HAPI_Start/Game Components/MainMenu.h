@@ -12,6 +12,7 @@ class MainMenu final : public State
 public:
 	MainMenu(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
 	bool Initialise(TextureManager& textureManager) override;
+	bool Unload(TextureManager& textureManager) override;
 	void Input() override;
 	void Update() override;
 	void Render(TextureManager& textureManager) override;

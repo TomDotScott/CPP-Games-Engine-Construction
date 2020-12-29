@@ -20,6 +20,8 @@ class Game final : public State
 {
 public:
 	Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
+	bool Initialise(TextureManager& textureManager) override;
+	bool Unload(TextureManager& textureManager) override;
 	void Update() override;
 	void Render(TextureManager& textureManager) override;
 	static int GenerateNextEntityID();
@@ -34,6 +36,7 @@ private:
 	
 	Player m_player;
 	float m_levelTimer;
+	float m_totalElapsedTime;
 	eLevel m_currentLevel;
 	clock_t m_gameClock;
 	
@@ -59,9 +62,9 @@ private:
 	Text m_timerText;
 	
 	void Input() override;
-	bool Initialise(TextureManager& textureManager) override;
 	void LoadNextLevel();
 	bool LoadLevel(eLevel level);
+	void GameOver() const;
 	void CheckCollisions();
 	void HandlePlayerCollisions();
 	void ScrollBackground();
