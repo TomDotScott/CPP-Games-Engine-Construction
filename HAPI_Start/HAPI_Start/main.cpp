@@ -20,6 +20,10 @@ void HAPI_Main() {
 
 	HAPI.LimitFrameRate(144);
 	HAPI.SetShowFPS(true);
+	
+	const Texture appIcon("Res/AppIcon.png");
+	
+	HAPI.SetIcon(appIcon.textureData, 128, 128);
 
 	STATE_MANAGER.OnCreate(eState::e_MainMenu);
 	
