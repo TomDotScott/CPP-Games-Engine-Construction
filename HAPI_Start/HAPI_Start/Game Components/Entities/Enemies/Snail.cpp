@@ -34,7 +34,7 @@ void Snail::Update(const float deltaTime)
 		Move(deltaTime);
 		break;
 	case eSnailState::e_Squashed:
-		if (m_inShellDuration < 5000.f)
+		if (m_inShellDuration < 5.f)
 		{
 			m_inShellDuration += deltaTime;
 		} else
@@ -97,7 +97,7 @@ void Snail::CheckEntityCollisions(Entity& other)
 				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 			{
-				if (m_snailState != eSnailState::e_ProjectileHit)
+				if (m_snailState == eSnailState::e_Walking)
 				{
 					dynamic_cast<Fireball*>(&other)->Explode();
 					m_snailState = eSnailState::e_ProjectileHit;

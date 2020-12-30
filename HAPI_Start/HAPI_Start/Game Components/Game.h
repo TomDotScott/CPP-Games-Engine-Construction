@@ -62,9 +62,9 @@ private:
 	Text m_timerText;
 	
 	void Input() override;
+	bool LoadLevel(eLevel level, bool playerWon = true);
 	void LoadNextLevel();
-	bool LoadLevel(eLevel level);
-	void GameOver() const;
+	void GameOver(bool playerWon) const;
 	void CheckCollisions();
 	void HandlePlayerCollisions();
 	void ScrollBackground();
@@ -79,13 +79,12 @@ private:
 template <typename T>
 void Game::UpdateEnemies(std::vector<T>& enemies, const float deltaTime)
 {
-	// Only work on snails and slimes...
 	const float playerOffset = m_player.GetPosition().x;
 	for (auto& enemy : enemies)
 	{
 		// Only update enemies if they're onscreen and alive
-		if (enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset < constants::k_screenWidth &&
-			enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset > 0)
+		if (enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset < constants::k_screenWidth * 1.5f &&
+			enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset > -constants::k_screenWidth * 1.5f)
 		{
 			enemy.Update(deltaTime);
 		}

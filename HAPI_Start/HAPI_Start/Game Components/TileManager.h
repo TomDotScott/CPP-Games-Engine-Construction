@@ -140,10 +140,20 @@ struct Tile
 		m_canCollide(canCollide),
 		m_canBeDestroyed(true)
 	{
-		m_tileCollisionBox = {
-			m_position,
-			{m_position.x + constants::k_spriteSheetCellSize, m_position.y + constants::k_spriteSheetCellSize}
-		};
+		if (m_type != eTileType::e_Spikes)
+		{
+			m_tileCollisionBox = {
+				m_position,
+				{m_position.x + constants::k_spriteSheetCellSize, m_position.y + constants::k_spriteSheetCellSize}
+			};
+		}else
+		{
+			// Make spikes half sized
+			m_tileCollisionBox = {
+				{m_position.x, m_position.y + static_cast<float>(constants::k_spriteSheetCellSize) / 2.f},
+				{m_position.x + constants::k_spriteSheetCellSize, m_position.y + constants::k_spriteSheetCellSize}
+			};
+		}
 	}
 
 	friend bool operator==(Tile& lhs, Tile& rhs)

@@ -67,10 +67,10 @@ void MainMenu::Input()
 		}
 	}
 
-	if(GetKey(eKeyCode::ESCAPE))
+	/*if(GetKey(eKeyCode::ESCAPE))
 	{
 		HAPI.Close();
-	}
+	}*/
 }
 
 void MainMenu::Update()

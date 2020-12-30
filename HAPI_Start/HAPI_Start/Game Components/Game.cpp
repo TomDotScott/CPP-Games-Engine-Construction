@@ -9,7 +9,7 @@ Game::Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::H
 	m_player({ Vector2::CENTRE }),
 	m_levelTimer(200.f),
 	m_totalElapsedTime(0.f),
-	m_currentLevel(eLevel::e_LevelThree),
+	m_currentLevel(eLevel::e_LevelOne),
 	m_gameClock(),
 	m_levelStarted(false),
 	m_levelFinished(false),
@@ -35,6 +35,30 @@ void Game::Update()
 	{
 		m_player.Update(deltaTime);
 
+		switch (m_currentLevel)
+		{
+		case eLevel::e_LevelOne:
+			if (m_player.GetPosition().x > constants::k_levelOneMaxX)
+			{
+				m_player.SetPosition({ constants::k_levelOneMaxX, m_player.GetPosition().y });
+			}
+			break;
+		case eLevel::e_LevelTwo:
+			if (m_player.GetPosition().x > constants::k_levelTwoMaxX)
+			{
+				m_player.SetPosition({ constants::k_levelTwoMaxX, m_player.GetPosition().y });
+			}
+			break;
+		case eLevel::e_LevelThree:
+			if (m_player.GetPosition().x > constants::k_levelThreeMaxX)
+			{
+				m_player.SetPosition({ constants::k_levelThreeMaxX, m_player.GetPosition().y });
+			}
+			break;
+		default:
+			break;
+		}
+
 		// If the player has touched the ground, start the level
 		if (m_player.GetCurrentAlienState() == eAlienState::e_Idle && !m_levelStarted)
 		{
@@ -42,16 +66,37 @@ void Game::Update()
 		}
 
 		// Kill the player if they are off screen
-		if (m_player.GetPosition().y > constants::k_maxTilesVertical * constants::k_spriteSheetCellSize)
+		if (m_player.GetPosition().y > constants::k_screenHeight)
 		{
 			m_player.Kill();
 		}
 
-		// Reset player position if they died
+		// Reset player if they died
 		if (m_player.GetIsDead() && m_player.GetLivesRemaining() > 0)
 		{
-			m_player.Reset();
+			LoadLevel(m_currentLevel, false);
 		}
+
+		if (m_boss.GetIsActive())
+		{
+			m_boss.Update(deltaTime);
+		}
+
+		UpdateEnemies(m_slimes, deltaTime);
+		UpdateEnemies(m_snails, deltaTime);
+		UpdateEnemies(m_coins, deltaTime);
+
+		// UPDATE ANY ACTIVE PICKUPS
+		for (auto& pickup : m_gems)
+		{
+			if (pickup.GetActiveState())
+			{
+				pickup.Update(deltaTime);
+			}
+		}
+
+		ScrollBackground();
+
 	} else
 	{
 		if (m_player.GetCurrentAlienState() == eAlienState::e_Jumping)
@@ -70,7 +115,8 @@ void Game::Update()
 			m_flag.SetPosition(newFlagPos);
 		} else
 		{
-			m_player.SetPosition({ m_player.GetPosition().x + (500 * deltaTime), m_player.GetPosition().y });
+			const float newX = m_player.GetPosition().x + (500 * deltaTime);
+			m_player.SetPosition({ newX, m_player.GetPosition().y });
 		}
 
 		m_player.PlayAnimation(deltaTime);
@@ -92,27 +138,7 @@ void Game::Update()
 		}
 	}
 
-	if (m_boss.GetIsActive())
-	{
-		m_boss.Update(deltaTime);
-	}
-
-	UpdateEnemies(m_slimes, deltaTime);
-	UpdateEnemies(m_snails, deltaTime);
-	UpdateEnemies(m_coins, deltaTime);
-
-	// UPDATE ANY ACTIVE PICKUPS
-	for (auto& pickup : m_gems)
-	{
-		if (pickup.GetActiveState())
-		{
-			pickup.Update(deltaTime);
-		}
-	}
-
 	CheckCollisions();
-
-	ScrollBackground();
 
 	UpdateUI(deltaTime);
 
@@ -121,9 +147,9 @@ void Game::Update()
 	// Update the music buffer so that music plays
 	SoundManager::GetInstance().UpdateMusicBufferStream();
 
-	if (m_player.GetLivesRemaining() == 0)
+	if (m_player.GetLivesRemaining() == 0 || (m_levelTimer <= 0 && !m_levelFinished))
 	{
-		GameOver();
+		GameOver(false);
 	}
 }
 
@@ -282,6 +308,21 @@ int Game::GenerateNextEntityID()
 
 void Game::Input()
 {
+	if (GetKey(eKeyCode::F1))
+	{
+		LoadLevel(eLevel::e_LevelOne);
+	}
+
+	if (GetKey(eKeyCode::F2))
+	{
+		LoadLevel(eLevel::e_LevelTwo);
+	}
+
+	if (GetKey(eKeyCode::F3))
+	{
+		LoadLevel(eLevel::e_LevelThree);
+	}
+
 	if (GetKey(eKeyCode::SPACE))
 	{
 		if (m_player.GetCurrentAlienState() != eAlienState::e_Jumping)
@@ -398,14 +439,14 @@ void Game::LoadNextLevel()
 		}
 		break;
 	case eLevel::e_LevelThree:
-		GameOver();
+		GameOver(true);
 		break;
 	default:
 		break;
 	}
 }
 
-bool Game::LoadLevel(const eLevel level)
+bool Game::LoadLevel(const eLevel level, const bool playerWon)
 {
 	// Clear the entity containers
 	m_slimes.clear();
@@ -418,14 +459,17 @@ bool Game::LoadLevel(const eLevel level)
 	{
 	case eLevel::e_LevelOne:
 		name = "Level1";
+		m_levelTimer = 180.f;
 		m_worldText.SetString("Level 1");
 		break;
 	case eLevel::e_LevelTwo:
 		name = "Level2";
+		m_levelTimer = 240.f;
 		m_worldText.SetString("Level 2");
 		break;
 	case eLevel::e_LevelThree:
 		name = "Level3";
+		m_levelTimer = 300.f;
 		m_worldText.SetString("Level 3");
 		break;
 	default:
@@ -475,12 +519,10 @@ bool Game::LoadLevel(const eLevel level)
 	entityLocations.clear();
 
 	// Reset Player
-	m_player.Reset(true);
+	m_player.Reset(playerWon);
 
 	m_levelStarted = false;
 	m_levelFinished = false;
-
-	m_levelTimer = 200.f;
 
 	m_currentLevel = level;
 
@@ -497,7 +539,7 @@ bool Game::LoadLevel(const eLevel level)
 	return true;
 }
 
-void Game::GameOver() const
+void Game::GameOver(const bool playerWon) const
 {
 	std::ifstream read("Res/score.txt");
 	if (!read.is_open())
@@ -540,6 +582,8 @@ void Game::GameOver() const
 
 	write << AddLeadingZeroes(score, 6) << "\n" << AddLeadingZeroes(highScore, 6) << "\n" << AddLeadingZeroes(elapsedTime, 3) << "\n";
 
+	write << (playerWon ? "WIN" : "LOSE") << std::endl;
+
 	write.close();
 
 	std::cout << score << std::endl;
@@ -551,57 +595,63 @@ void Game::GameOver() const
 
 void Game::CheckCollisions()
 {
-	// CHECK ENTITY-LEVEL COLLISIONS 
-	HandlePlayerCollisions();
+	// CHECK ENTITY-LEVEL COLLISIONS
+	if (m_player.GetCurrentAlienState() != eAlienState::e_Dead)
+	{
+		HandlePlayerCollisions();
 
-	if (m_tileManager.IsBossOnFloor(m_boss))
-	{
-		m_boss.SetAlienState(m_boss.GetBattleStarted() ? eAlienState::e_Walking : eAlienState::e_Idle);
-	} else
-	{
-		m_boss.SetAlienState(eAlienState::e_Jumping);
-	}
-
-	// Check the collisions of the boss' active fireballs
-	for (auto& fireball : m_boss.GetFireBallPool())
-	{
-		if (fireball.GetActiveState())
+		if (!m_levelFinished)
 		{
-			m_tileManager.CheckFireballLevelCollisions(fireball);
+			if (m_tileManager.IsBossOnFloor(m_boss))
+			{
+				m_boss.SetAlienState(m_boss.GetBattleStarted() ? eAlienState::e_Walking : eAlienState::e_Idle);
+			} else
+			{
+				m_boss.SetAlienState(eAlienState::e_Jumping);
+			}
+
+			// Check the collisions of the boss' active fireballs
+			for (auto& fireball : m_boss.GetFireBallPool())
+			{
+				if (fireball.GetActiveState())
+				{
+					m_tileManager.CheckFireballLevelCollisions(fireball);
+				}
+			}
+
+			for (auto& slime : m_slimes)
+			{
+				m_tileManager.CheckEnemyLevelCollisions(slime);
+			}
+
+			for (auto& snail : m_snails)
+			{
+				m_tileManager.CheckEnemyLevelCollisions(snail);
+			}
+
+			// CHECK ENTITY-ENTITY COLLISIONS
+			CheckEnemyCollisions(m_slimes);
+			CheckEnemyCollisions(m_snails);
+
+			for (auto& c : m_coins)
+			{
+				c.CheckEntityCollisions(m_player);
+			}
+
+			for (auto& pickup : m_gems)
+			{
+				if (pickup.GetActiveState())
+				{
+					pickup.CheckEntityCollisions(m_player);
+					m_player.CheckEntityCollisions(pickup);
+				}
+			}
+
+			if (m_endLever.GetIsActive())
+			{
+				m_endLever.CheckEntityCollisions(m_player);
+			}
 		}
-	}
-
-	for (auto& slime : m_slimes)
-	{
-		m_tileManager.CheckEnemyLevelCollisions(slime);
-	}
-
-	for (auto& snail : m_snails)
-	{
-		m_tileManager.CheckEnemyLevelCollisions(snail);
-	}
-
-	// CHECK ENTITY-ENTITY COLLISIONS
-	CheckEnemyCollisions(m_slimes);
-	CheckEnemyCollisions(m_snails);
-
-	for (auto& c : m_coins)
-	{
-		c.CheckEntityCollisions(m_player);
-	}
-
-	for (auto& pickup : m_gems)
-	{
-		if (pickup.GetActiveState())
-		{
-			pickup.CheckEntityCollisions(m_player);
-			m_player.CheckEntityCollisions(pickup);
-		}
-	}
-
-	if (m_endLever.GetIsActive())
-	{
-		m_endLever.CheckEntityCollisions(m_player);
 	}
 }
 
@@ -658,6 +708,20 @@ void Game::HandlePlayerCollisions()
 		default:
 			break;
 		}
+
+		// Resolve the overlap
+		// Work out the overlap
+		Tile* tile = playerCollisionData.m_headCollision;
+		const Vector2 bottomOfTile = tile->m_tileCollisionBox.BOTTOM_RIGHT;
+
+		const float distanceFromBottomOfTileToPlayerHead = bottomOfTile.y - m_player.GetCurrentCollisionBoxes().m_topCollisionBox.TOP_LEFT.y;
+
+		// If the overlap is greater than 0 then we need to resolve the collision
+		if (distanceFromBottomOfTileToPlayerHead > 0)
+		{
+			// Adding to move down the screen
+			m_player.SetPosition({ m_player.GetPosition().x, m_player.GetPosition().y + distanceFromBottomOfTileToPlayerHead });
+		}
 	}
 
 	// Don't limit direction to start, as Left and Right collisions will
@@ -667,6 +731,19 @@ void Game::HandlePlayerCollisions()
 	if (playerCollisionData.m_leftCollision)
 	{
 		m_player.SetMoveDirectionLimit(eDirection::e_Left);
+
+		// Resolve the overlap to the left
+		// Work out the overlap
+		Tile* tile = playerCollisionData.m_leftCollision;
+		const Vector2 topRightOfTile = { tile->m_tileCollisionBox.BOTTOM_RIGHT.x, tile->m_tileCollisionBox.TOP_LEFT.y };
+
+		const float distanceFromTopRightOfTileToPlayerLeft = topRightOfTile.x - m_player.GetCurrentCollisionBoxes().m_leftCollisionBox.TOP_LEFT.x;
+
+		// If the overlap is greater than 0 then we need to resolve the collision
+		if (distanceFromTopRightOfTileToPlayerLeft > 0)
+		{
+			m_player.SetPosition({ m_player.GetPosition().x + distanceFromTopRightOfTileToPlayerLeft, m_player.GetPosition().y });
+		}
 	}
 
 	if (playerCollisionData.m_rightCollision)
@@ -694,6 +771,23 @@ void Game::HandlePlayerCollisions()
 		default:
 			m_player.SetMoveDirectionLimit(eDirection::e_Right);
 		}
+
+
+		if (!m_levelFinished)
+		{
+			// Resolve the overlap to the right
+			// Work out the overlap
+			Tile* tile = playerCollisionData.m_rightCollision;
+			const Vector2 topLeftOfTile = tile->m_tileCollisionBox.TOP_LEFT;
+
+			const float distanceFromTopLeftOfTileToPlayerRight = m_player.GetCurrentCollisionBoxes().m_rightCollisionBox.BOTTOM_RIGHT.x - topLeftOfTile.x;
+
+			// If the overlap is greater than 0 then we need to resolve the collision
+			if (distanceFromTopLeftOfTileToPlayerRight > 0)
+			{
+				m_player.SetPosition({ m_player.GetPosition().x - distanceFromTopLeftOfTileToPlayerRight, m_player.GetPosition().y });
+			}
+		}
 	}
 
 	if (playerCollisionData.m_bottomCollision)
@@ -710,12 +804,27 @@ void Game::HandlePlayerCollisions()
 					m_player.SetAlienState(eAlienState::e_Walking);
 				}
 			}
+
+			// Resolve the overlap on the bottom
+			// Work out the overlap
+			Tile* tile = playerCollisionData.m_bottomCollision;
+			const Vector2 topLeftOfTile = tile->m_tileCollisionBox.TOP_LEFT;
+
+			const float distanceFromTopLeftOfTileToPlayerBottom = m_player.GetCurrentCollisionBoxes().m_bottomCollisionBox.BOTTOM_RIGHT.y - topLeftOfTile.y;
+
+			// If the overlap is greater than 0 then we need to resolve the collision
+			if (distanceFromTopLeftOfTileToPlayerBottom > static_cast<float>(constants::k_spriteSheetCellSize) / 4.f)
+			{
+				m_player.SetPosition({ m_player.GetPosition().x, m_player.GetPosition().y - distanceFromTopLeftOfTileToPlayerBottom });
+			}
+
+			m_player.SetAlienState(eAlienState::e_Walking);
 		}
 	} else
 	{
 		if (m_player.GetCurrentAlienState() != eAlienState::e_Dead)
 		{
-			// If there is no bottom collision, make the player jump
+			// If there is no bottom collision, make the player fall
 			m_player.SetAlienState(eAlienState::e_Jumping);
 		}
 	}

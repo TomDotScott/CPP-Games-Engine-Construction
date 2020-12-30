@@ -80,6 +80,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 				case eTileType::e_Bridge:
 				case eTileType::e_OpenDoorMid:
 				case eTileType::e_OpenDoorTop:
+				case eTileType::e_Spikes:
 					row.emplace_back(tileType, tilePosition, true);
 					break;
 					
@@ -90,7 +91,6 @@ bool TileManager::LoadLevel(const std::string& filename)
 				case eTileType::e_Mushroom1:
 				case eTileType::e_Mushroom2:
 				case eTileType::e_Rock:
-				case eTileType::e_Spikes:
 					row.emplace_back(tileType, tilePosition, false);
 					break;
 

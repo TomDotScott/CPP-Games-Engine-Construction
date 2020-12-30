@@ -15,7 +15,7 @@ Player::Player(const Vector2 startingPosition) :
 	m_moveDirectionLimit(eDirection::e_None),
 	m_score(0),
 	m_coinCount(0),
-	m_livesRemaining(3),
+	m_livesRemaining(5),
 	m_immuneTime(0.f),
 	m_immune(false),
 	m_isDead(false)
@@ -182,8 +182,7 @@ void Player::PowerDown()
 	switch (m_currentPowerUpState)
 	{
 	case ePowerUpState::e_Small:
-		m_livesRemaining -= 1;
-		m_currentAlienState = eAlienState::e_Dead;
+		Kill();
 		break;
 	case ePowerUpState::e_Normal:
 		m_currentPowerUpState = ePowerUpState::e_Small;
@@ -211,6 +210,11 @@ int Player::GetScore() const
 void Player::AddCoin()
 {
 	m_coinCount++;
+	if (m_coinCount == 100)
+	{
+		m_livesRemaining++;
+		m_coinCount = 0;
+	}
 }
 
 int Player::GetCoinCount() const
@@ -240,12 +244,7 @@ void Player::Kill()
 		m_currentAlienState = eAlienState::e_Dead;
 		m_livesRemaining--;
 		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState));
-
-		if(m_livesRemaining == 0)
-		{
-			// TODO: GAME OVER MENU
-			//STATE_MANAGER.ChangeState(eState::e_GameOver);
-		}
+		m_animations[m_animationIndex].ResetAnimation();
 	}
 }
 
@@ -260,9 +259,10 @@ void Player::Reset(const bool passLevel)
 		m_currentPowerUpState = ePowerUpState::e_Normal;
 	}
 
-	m_currentAlienState = eAlienState::e_Jumping;
 	m_immune = false;
 	m_isDead = false;
+
+	m_currentAlienState = eAlienState::e_Jumping;
 	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState));
 }
 
@@ -322,7 +322,6 @@ void Player::CheckEntityCollisions(Entity& other)
 			}
 			break;
 		case eEntityType::e_Slime:
-		case eEntityType::e_Snail:
 			if (other.GetCurrentEntityState() == eEntityState::e_Alive)
 			{
 				// If touching the bottom...
@@ -334,7 +333,6 @@ void Player::CheckEntityCollisions(Entity& other)
 					m_score += 200;
 					return;
 				}
-
 				// If touching the left or right...
 				if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
 					currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
@@ -349,6 +347,43 @@ void Player::CheckEntityCollisions(Entity& other)
 							PlaySFX("Player_Power_Down");
 						}
 						PowerDown();
+					}
+				}
+			}
+			break;
+		case eEntityType::e_Snail:
+			if (other.GetCurrentEntityState() == eEntityState::e_Alive)
+			{
+				// If touching the bottom...
+				if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+				{
+					// Jump
+					Jump(m_jumpForce / 2);
+					PlaySFX("Entity_Squash");
+					m_score += 200;
+					return;
+				}
+
+				auto* snail = dynamic_cast<Snail*>(&other);
+
+				// Only deal damage to the player if the snail is moving or sliding in its shell
+				if (snail->GetSnailState() == eSnailState::e_Sliding || snail->GetSnailState() == eSnailState::e_Walking)
+				{
+					// If touching the left or right...
+					if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+						currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+					{
+						if (!m_immune && !m_isDead)
+						{
+							if (m_currentPowerUpState == ePowerUpState::e_Small)
+							{
+								PlaySFX("Player_Dead");
+							} else
+							{
+								PlaySFX("Player_Power_Down");
+							}
+							PowerDown();
+						}
 					}
 				}
 			}

@@ -17,5 +17,6 @@ private:
 	Text m_highScoreText;
 	Text m_timeElapsedText;
 	Text m_mainMenuText;
+	bool m_playerWon;
 };
 

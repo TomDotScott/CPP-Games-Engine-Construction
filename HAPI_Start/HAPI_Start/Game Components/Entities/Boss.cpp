@@ -29,41 +29,47 @@ Boss::Boss(const int entityID, const Vector2 startingPosition, const Player& pla
 
 void Boss::Update(const float deltaTime)
 {
-	const float distanceFromPlayer = m_position.x - m_player.GetPosition().x;
-	m_currentDirection = distanceFromPlayer < 0 ? eDirection::e_Right : eDirection::e_Left;
-
-	// Start the battle if the player is close enough to the boss
-	if (distanceFromPlayer < 6 * constants::k_spriteSheetCellSize)
+	if (m_position.y < constants::k_screenHeight + constants::k_spriteSheetCellSize)
 	{
-		m_battleStarted = true;
-	}
+		const float distanceFromPlayer = m_position.x - m_player.GetPosition().x;
+		m_currentDirection = distanceFromPlayer < 0 ? eDirection::e_Right : eDirection::e_Left;
 
-	if (m_battleStarted)
-	{
-		m_shotCoolDown += deltaTime;
-
-		Move(deltaTime);
-
-		if (m_currentAlienState == eAlienState::e_Walking || m_currentAlienState == eAlienState::e_Idle)
+		// Start the battle if the player is close enough to the boss
+		if (distanceFromPlayer < 6 * constants::k_spriteSheetCellSize)
 		{
-			m_velocity.y = 0;
-			if (constants::rand_range(0, 1000) <= 10)
-			{
-				Jump(m_jumpForce);
-			} else
-			{
-				m_currentAlienState = eAlienState::e_Walking;
-			}
-		} else if (m_currentAlienState == eAlienState::e_Jumping)
-		{
-			m_velocity.y += constants::k_gravity * deltaTime;
-			if (constants::rand_range(0, 1000) <= 25)
-			{
-				Shoot();
-			}
+			m_battleStarted = true;
 		}
 
-		m_position = m_position + m_velocity;
+		if (m_battleStarted)
+		{
+			m_shotCoolDown += deltaTime;
+
+			Move(deltaTime);
+
+			if (m_currentAlienState == eAlienState::e_Walking || m_currentAlienState == eAlienState::e_Idle)
+			{
+				m_velocity.y = 0;
+				if (constants::rand_range(0, 1000) <= 10)
+				{
+					Jump(m_jumpForce);
+				} else
+				{
+					m_currentAlienState = eAlienState::e_Walking;
+				}
+			} else if (m_currentAlienState == eAlienState::e_Jumping)
+			{
+				m_velocity.y += constants::k_gravity * deltaTime;
+				if (constants::rand_range(0, 1000) <= 25)
+				{
+					Shoot();
+				}
+			}
+
+			m_position = m_position + m_velocity;
+		}
+
+		SetAnimationIndex(static_cast<int>(m_currentAlienState));
+		PlayAnimation(deltaTime);
 	}
 
 	// Update the fireballs
@@ -71,9 +77,6 @@ void Boss::Update(const float deltaTime)
 	{
 		ball.Update(deltaTime);
 	}
-
-	SetAnimationIndex(static_cast<int>(m_currentAlienState));
-	PlayAnimation(deltaTime);
 }
 
 void Boss::CheckEntityCollisions(Entity& other)

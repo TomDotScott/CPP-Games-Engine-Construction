@@ -26,5 +26,5 @@ protected:
 
 enum class eKeyCode
 {
-	NONE = -1, SHIFT = 16, ESCAPE = 27, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89
+	NONE = -1, SHIFT = 16, ESCAPE = 27, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, A = 65, B = 66, C = 67, D = 68, G = 71, P = 80, R = 82, S = 83, W = 87, Y = 89, F1 = 112, F2 = 113, F3=114
 };
