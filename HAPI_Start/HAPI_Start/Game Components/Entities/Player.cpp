@@ -157,6 +157,7 @@ void Player::PowerUp(const ePowerUpType pType)
 		{
 			m_currentPowerUpState = ePowerUpState::e_Normal;
 			m_score += 2000;
+			PlaySFX("Player_Power_Up");
 		} else
 		{
 			m_score += 1000;
@@ -186,9 +187,11 @@ void Player::PowerDown()
 		break;
 	case ePowerUpState::e_Normal:
 		m_currentPowerUpState = ePowerUpState::e_Small;
+		PlaySFX("Player_Power_Down");
 		break;
 	case ePowerUpState::e_FireThrower:
 		m_currentPowerUpState = ePowerUpState::e_Normal;
+		PlaySFX("Player_Power_Down");
 		break;
 	default:;
 	}
@@ -242,7 +245,10 @@ void Player::Kill()
 	if (m_currentAlienState != eAlienState::e_Dead)
 	{
 		m_currentAlienState = eAlienState::e_Dead;
+
 		m_livesRemaining--;
+		PlaySFX("Player_Dead");
+
 		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState));
 		m_animations[m_animationIndex].ResetAnimation();
 	}
@@ -318,7 +324,6 @@ void Player::CheckEntityCollisions(Entity& other)
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 			{
 				PowerUp(other.GetEntityType() == eEntityType::e_FireGem ? ePowerUpType::e_FireThrower : ePowerUpType::e_Grower);
-				PlaySFX("Player_Power_Up");
 			}
 			break;
 		case eEntityType::e_Slime:
@@ -339,13 +344,6 @@ void Player::CheckEntityCollisions(Entity& other)
 				{
 					if (!m_immune && !m_isDead)
 					{
-						if (m_currentPowerUpState == ePowerUpState::e_Small)
-						{
-							PlaySFX("Player_Dead");
-						} else
-						{
-							PlaySFX("Player_Power_Down");
-						}
 						PowerDown();
 					}
 				}
@@ -375,19 +373,24 @@ void Player::CheckEntityCollisions(Entity& other)
 					{
 						if (!m_immune && !m_isDead)
 						{
-							if (m_currentPowerUpState == ePowerUpState::e_Small)
-							{
-								PlaySFX("Player_Dead");
-							} else
-							{
-								PlaySFX("Player_Power_Down");
-							}
 							PowerDown();
 						}
 					}
 				}
 			}
 			break;
+		case eEntityType::e_Fireball:
+		case eEntityType::e_Boss:
+			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+			{
+				if (!m_immune && !m_isDead)
+				{
+					PowerDown();
+				}
+			}
 		default:
 			break;
 		}

@@ -452,6 +452,7 @@ bool Game::LoadLevel(const eLevel level, const bool playerWon)
 	m_slimes.clear();
 	m_snails.clear();
 	m_coins.clear();
+	m_gems.clear();
 
 	// Load the level
 	std::string name;
@@ -610,12 +611,15 @@ void Game::CheckCollisions()
 				m_boss.SetAlienState(eAlienState::e_Jumping);
 			}
 
+			m_player.CheckEntityCollisions(m_boss);
+			
 			// Check the collisions of the boss' active fireballs
 			for (auto& fireball : m_boss.GetFireBallPool())
 			{
 				if (fireball.GetActiveState())
 				{
 					m_tileManager.CheckFireballLevelCollisions(fireball);
+					m_player.CheckEntityCollisions(fireball);
 				}
 			}
 
