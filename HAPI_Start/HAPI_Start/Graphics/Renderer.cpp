@@ -158,7 +158,6 @@ namespace renderer
 				}
 			}
 		}
-
 	}
 
 	namespace sprite_sheet
@@ -196,8 +195,12 @@ namespace renderer
 			}
 		}
 
-		void alpha_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, short alpha = 255)
+		void alpha_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* spriteData, Vector2 position, short alpha = 255)
 		{
+			HAPISPACE::BYTE* screenStart{
+				screen + (static_cast<int>(position.x) + static_cast<int>(position.y) * constants::k_screenWidth) * 4
+			};
+
 			const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellSize * 4 };
 
 			// const int spriteInc{ static_cast<int>(m_size.x) * 4 - constants::k_spriteSheetCellSize * 4 };
@@ -236,11 +239,12 @@ namespace renderer
 			}
 		}
 
-		void clip_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, int spriteSheetIndex, Vector2 position, const short alpha = 255)
+		void clip_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* spriteData, int spriteSheetIndex, Vector2 position, const short alpha = 255)
 		{
 			// BoundsRectangle takes in coordinates for the top left and bottom right
 			// My Vector2 class defaults to zeros
 			const Vector2 temp = position;
+
 			const CollisionBox spriteBounds({}, { static_cast<float>(constants::k_spriteSheetCellSize), static_cast<float>(constants::k_spriteSheetCellSize) });
 
 			const CollisionBox screenBounds({}, { constants::k_screenWidth, constants::k_screenHeight });
@@ -257,7 +261,7 @@ namespace renderer
 				// If the object is completely onscreen then alpha-blit...
 				if (clippedRect.IsCompletelyInside(screenBounds))
 				{
-					sprite_sheet::alpha_blit(screenStart, spriteData, alpha);
+					sprite_sheet::alpha_blit(screen, spriteData, position, alpha);
 				} else
 				{
 					// we must be offscreen...
@@ -270,13 +274,14 @@ namespace renderer
 					position.x = std::max(0.f, temp.x);
 					position.y = std::max(0.f, temp.y);
 
+					HAPISPACE::BYTE* screenStart{
+						screen + (static_cast<int>(position.x) + static_cast<int>(position.y) * constants::k_screenWidth) * 4
+					};
+
 					// Calculate the increment up here rather than in the loop since it doesn't change...
-					//const int screenInc{ static_cast<int>(screenBounds.GetSize().x) * 4 - static_cast<int>(clippedRect.GetSize().x) * 4 };
 					const int screenInc{ (static_cast<int>(screenBounds.GetSize().x) - static_cast<int>(clippedRect.GetSize().x)) * 4 };
 
-
 					const int spriteOffset{
-						/*(static_cast<int>(clippedRect.TOP_LEFT.y) + static_cast<int>(clippedRect.TOP_LEFT.x) * constants::k_spriteSheetCellSize) * 4*/
 						(static_cast<int>(clippedRect.TOP_LEFT.y) * constants::k_spriteSheetCellSize + static_cast<int>(clippedRect.TOP_LEFT.x)) * 4
 					};
 
@@ -345,15 +350,11 @@ namespace renderer
 			sprite_sheet::sprite(spriteSheetData, spriteSheetIndex);
 		}
 
-		HAPISPACE::BYTE* screenStart{
-			screen + (static_cast<int>(spritePosition.x) + static_cast<int>(spritePosition.y) * constants::k_screenWidth) * 4
-		};
-
 		HAPISPACE::BYTE* spriteStart{
 			spriteSheetData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetIndex
 		};
-
-		sprite_sheet::clip_blit(screenStart, spriteStart, spriteSheetIndex, spritePosition, alpha);
+		
+		sprite_sheet::clip_blit(screen, spriteStart, spriteSheetIndex, spritePosition, alpha);
 
 		// works on the entire spritesheet so we need to flip back
 		if (flipped)
