@@ -7,7 +7,7 @@ namespace renderer
 {
 	namespace texture
 	{
-		void flip_texture(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, const Vector2 textureSize)
+		void flip(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, const Vector2 textureSize)
 		{
 			const int width = static_cast<int>(textureSize.x);
 			const int height = static_cast<int>(textureSize.y);
@@ -163,7 +163,7 @@ namespace renderer
 
 	namespace sprite_sheet
 	{
-		void flip_sprite(HAPISPACE::BYTE* spriteSheetData, const int spriteSheetLocation)
+		void sprite(HAPISPACE::BYTE* spriteSheetData, const int spriteSheetLocation)
 		{
 			HAPISPACE::BYTE* spriteData{
 				spriteSheetData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetLocation
@@ -196,7 +196,7 @@ namespace renderer
 			}
 		}
 
-		void sprite_alpha_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, short alpha = 255)
+		void alpha_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, short alpha = 255)
 		{
 			const int screenInc{ constants::k_screenWidth * 4 - constants::k_spriteSheetCellSize * 4 };
 
@@ -236,7 +236,7 @@ namespace renderer
 			}
 		}
 
-		void sprite_clip_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, int spriteSheetIndex, Vector2 position, const short alpha = 255)
+		void clip_blit(HAPISPACE::BYTE* screenStart, HAPISPACE::BYTE* spriteData, int spriteSheetIndex, Vector2 position, const short alpha = 255)
 		{
 			// BoundsRectangle takes in coordinates for the top left and bottom right
 			// My Vector2 class defaults to zeros
@@ -257,7 +257,7 @@ namespace renderer
 				// If the object is completely onscreen then alpha-blit...
 				if (clippedRect.IsCompletelyInside(screenBounds))
 				{
-					sprite_sheet::sprite_alpha_blit(screenStart, spriteData, alpha);
+					sprite_sheet::alpha_blit(screenStart, spriteData, alpha);
 				} else
 				{
 					// we must be offscreen...
@@ -327,14 +327,14 @@ namespace renderer
 	{
 		if (flipped)
 		{
-			texture::flip_texture(screen, textureData, textureSize);
+			texture::flip(screen, textureData, textureSize);
 		}
 
 		texture::clip_blit(screen, textureData, textureSize, texturePosition);
 
 		if (flipped)
 		{
-			texture::flip_texture(screen, textureData, textureSize);
+			texture::flip(screen, textureData, textureSize);
 		}
 	}
 
@@ -342,7 +342,7 @@ namespace renderer
 	{
 		if (flipped)
 		{
-			sprite_sheet::flip_sprite(spriteSheetData, spriteSheetIndex);
+			sprite_sheet::sprite(spriteSheetData, spriteSheetIndex);
 		}
 
 		HAPISPACE::BYTE* screenStart{
@@ -353,12 +353,12 @@ namespace renderer
 			spriteSheetData + (constants::k_spriteSheetCellSize * constants::k_spriteSheetCellSize * 4) * spriteSheetIndex
 		};
 
-		sprite_sheet::sprite_clip_blit(screenStart, spriteStart, spriteSheetIndex, spritePosition, alpha);
+		sprite_sheet::clip_blit(screenStart, spriteStart, spriteSheetIndex, spritePosition, alpha);
 
 		// works on the entire spritesheet so we need to flip back
 		if (flipped)
 		{
-			sprite_sheet::flip_sprite(spriteSheetData, spriteSheetIndex);
+			sprite_sheet::sprite(spriteSheetData, spriteSheetIndex);
 		}
 	}
 }

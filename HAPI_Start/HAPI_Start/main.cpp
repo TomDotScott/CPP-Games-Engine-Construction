@@ -25,7 +25,7 @@ void HAPI_Main() {
 	
 	HAPI.SetIcon(appIcon.textureData, 128, 128);
 
-	STATE_MANAGER.OnCreate(eState::e_MainMenu);
+	STATE_MANAGER.OnCreate(eState::e_SandBox);
 	
 	while (HAPI.Update()) {
 		STATE_MANAGER.Update();

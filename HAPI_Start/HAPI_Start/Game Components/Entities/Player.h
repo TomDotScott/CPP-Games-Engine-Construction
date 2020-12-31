@@ -46,6 +46,7 @@ public:
 	CollisionBoxes GenerateCollisionBoxes() override;
 
 	void CheckEntityCollisions(Entity& other) override;
+	
 private:
 	int m_numStates;
 	bool m_shouldJumpNextFrame;

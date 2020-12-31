@@ -37,7 +37,6 @@ void PickUpGem::CheckEntityCollisions(Entity& other)
 				currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_leftCollisionBox) ||
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
 			{
-				std::cout << "The gem with ID: " << m_entityID << " hit the player" << std::endl;
 				SetActiveState(false);
 			}
 		}

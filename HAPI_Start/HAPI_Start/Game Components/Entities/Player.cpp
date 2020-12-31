@@ -94,6 +94,12 @@ void Player::Update(const float deltaTime)
 			m_position.y = constants::k_spriteSheetCellSize;
 		}
 
+		// Can't go past the barrier
+		if(m_position.x < constants::k_levelMinX)
+		{
+			m_position.x = constants::k_levelMinX;
+		}
+
 		if (m_currentDirection == eDirection::e_None && m_currentAlienState != eAlienState::e_Jumping && !m_shouldJumpNextFrame)
 		{
 			m_currentAlienState = eAlienState::e_Idle;

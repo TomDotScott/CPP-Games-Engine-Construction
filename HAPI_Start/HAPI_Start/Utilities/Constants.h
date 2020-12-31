@@ -29,7 +29,10 @@ namespace constants
 	constexpr float k_bossMinX = 23552.f;
 	constexpr float k_bossMaxX = 24128.f;
 
-	// Limit the farthest that the player can travel so he doesn't jump over the flag
+	// So the player doesn't fall out of the world
+	constexpr float k_levelMinX = 256.f;
+	
+	// So the player doesn't jump over the flag
 	constexpr float k_levelOneMaxX = 13376.f;
 	constexpr float k_levelTwoMaxX = 12736.f;
 	constexpr float k_levelThreeMaxX = 25792.f;
