@@ -34,10 +34,11 @@ void PickUpGem::CheckEntityCollisions(Entity& other)
 		{
 			if (currentCollisionBoxes.m_topCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
 				currentCollisionBoxes.m_leftCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_rightCollisionBox) ||
-				currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
+				currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_leftCollisionBox) ||
 				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
 			{
-				m_activeState = false;
+				std::cout << "The gem with ID: " << m_entityID << " hit the player" << std::endl;
+				SetActiveState(false);
 			}
 		}
 	}

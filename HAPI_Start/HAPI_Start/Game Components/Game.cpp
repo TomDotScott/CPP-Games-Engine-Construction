@@ -553,13 +553,10 @@ void Game::GameOver(const bool playerWon) const
 	std::string elapsedTime;
 
 	std::getline(read, score);
-	std::cout << score << std::endl;
 
 	std::getline(read, highScore);
-	std::cout << highScore << std::endl;
 
 	std::getline(read, elapsedTime);
-	std::cout << elapsedTime << std::endl;
 
 	score = std::to_string(m_player.GetScore());
 
@@ -586,10 +583,6 @@ void Game::GameOver(const bool playerWon) const
 	write << (playerWon ? "WIN" : "LOSE") << std::endl;
 
 	write.close();
-
-	std::cout << score << std::endl;
-	std::cout << highScore << std::endl;
-	std::cout << elapsedTime << std::endl;
 
 	STATE_MANAGER.ChangeState(eState::e_GameOver);
 }
@@ -646,8 +639,8 @@ void Game::CheckCollisions()
 			{
 				if (pickup.GetActiveState())
 				{
-					pickup.CheckEntityCollisions(m_player);
 					m_player.CheckEntityCollisions(pickup);
+					pickup.CheckEntityCollisions(m_player);
 				}
 			}
 
@@ -665,7 +658,7 @@ void Game::HandlePlayerCollisions()
 
 	// HEAD COLLISIONS
 	if (playerCollisionData.m_headCollision)
-	{
+	{		
 		// Stop the jump
 		m_player.SetVelocity({ m_player.GetVelocity().x });
 
@@ -675,9 +668,12 @@ void Game::HandlePlayerCollisions()
 		case eTileType::e_CrateBlock:
 			if (playerCollisionData.m_headCollision->m_canBeDestroyed)
 			{
-				playerCollisionData.m_headCollision->m_type = eTileType::e_Air;
-				playerCollisionData.m_headCollision->m_canCollide = false;
-				SoundManager::GetInstance().PlaySoundEffect("Block_Break");
+				if (m_player.GetPowerUpState() != ePowerUpState::e_Small)
+				{
+					playerCollisionData.m_headCollision->m_type = eTileType::e_Air;
+					playerCollisionData.m_headCollision->m_canCollide = false;
+					SoundManager::GetInstance().PlaySoundEffect("Block_Break");
+				}
 			}
 			break;
 
@@ -700,8 +696,10 @@ void Game::HandlePlayerCollisions()
 			break;
 
 		case eTileType::e_ItemBlock:
+		
 			playerCollisionData.m_headCollision->m_type = eTileType::e_BrickBlock;
 			SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
+			
 			m_gems.emplace_back(
 				GenerateNextEntityID(),
 				Vector2(playerCollisionData.m_headCollision->m_position.x, playerCollisionData.m_headCollision->m_position.y - constants::k_spriteSheetCellSize),
