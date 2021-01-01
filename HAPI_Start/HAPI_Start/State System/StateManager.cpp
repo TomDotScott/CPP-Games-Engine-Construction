@@ -17,20 +17,20 @@ void StateManager::ChangeState(const eState state)
 
 	switch (state)
 	{
-	case eState::e_MainMenu:
-		SetState(new MainMenu(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
-		break;
-	case eState::e_ControlsMenu:
-		SetState(new ControlsMenu(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
-		break;
-	case eState::e_Game:
-		SetState(new Game(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
-		break;
-	case eState::e_GameOver:
-		SetState(new GameOver(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
-		break;
-	default:
-		break;
+		case eState::e_MainMenu:
+			SetState(new MainMenu(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			break;
+		case eState::e_ControlsMenu:
+			SetState(new ControlsMenu(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			break;
+		case eState::e_Game:
+			SetState(new Game(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			break;
+		case eState::e_GameOver:
+			SetState(new GameOver(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			break;
+		default:
+			break;
 	}
 }
 
@@ -41,7 +41,7 @@ void StateManager::SetState(State* state)
 	{
 		m_state->Unload(m_textureManager);
 	}
-	
+
 	delete m_state;
 	m_state = state;
 	if (m_state)
@@ -59,13 +59,15 @@ void StateManager::Update()
 		{
 			m_state->Input();
 			m_state->Update();
-		}else
+		}
+		else
 		{
-			if(m_inputCoolDown >= 0.5f)
+			if (m_inputCoolDown >= 0.5f)
 			{
 				m_state->Input();
 				m_state->Update();
-			}else
+			}
+			else
 			{
 				m_inputCoolDown += State::DeltaTime(m_clock);
 			}
@@ -89,9 +91,9 @@ eState StateManager::GetCurrentState() const
 
 StateManager::StateManager() :
 	m_currentState(eState::e_MainMenu),
-	m_state(nullptr)
-{
-}
+	m_state(nullptr),
+	m_inputCoolDown(0.f),
+	m_clock() {}
 
 StateManager::~StateManager()
 {

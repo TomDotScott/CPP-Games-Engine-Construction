@@ -4,7 +4,8 @@
 
 enum class eSelected
 {
-	e_Play, e_Controls
+	e_Play,
+	e_Controls
 };
 
 class MainMenu final : public State
@@ -16,12 +17,11 @@ public:
 	void Input() override;
 	void Update() override;
 	void Render(TextureManager& textureManager) override;
-	
-private:
-	Text m_highScoreText;
-	Text m_playText;
-	Text m_controlsText;
-	eSelected m_selected;
-	Vector2 m_selectorPosition;
-};
 
+private:
+	Text      m_highScoreText;
+	Text      m_playText;
+	Text      m_controlsText;
+	eSelected m_selected;
+	Vector2   m_selectorPosition;
+};

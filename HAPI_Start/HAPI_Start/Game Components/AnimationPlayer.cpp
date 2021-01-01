@@ -7,9 +7,7 @@ AnimationPlayer::AnimationPlayer(std::vector<std::string> frames, const bool loo
 	m_duration(duration),
 	m_playTime(0.f),
 	m_looping(looping),
-	m_state(eAnimationState::e_Started)
-{
-}
+	m_state(eAnimationState::e_Started) {}
 
 void AnimationPlayer::Play(const float deltaTime)
 {
@@ -23,12 +21,14 @@ void AnimationPlayer::Play(const float deltaTime)
 			if (m_currentFrame < m_frames.size() - 1)
 			{
 				++m_currentFrame;
-			} else
+			}
+			else
 			{
 				if (m_looping)
 				{
 					m_currentFrame = 0;
-				} else
+				}
+				else
 				{
 					m_state = eAnimationState::e_Ended;
 				}
@@ -54,6 +54,6 @@ eAnimationState AnimationPlayer::GetCurrentAnimationState() const
 
 void AnimationPlayer::ResetAnimation()
 {
-	m_state = eAnimationState::e_Started;
+	m_state        = eAnimationState::e_Started;
 	m_currentFrame = 0;
 }

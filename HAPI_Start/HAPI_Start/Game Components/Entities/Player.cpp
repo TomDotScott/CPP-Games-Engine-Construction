@@ -2,13 +2,13 @@
 #include "../Game.h"
 #include "../Graphics/TextureManager.h"
 
-Player::Player(const Vector2 startingPosition) :
+Player::Player(const Vector2& startingPosition) :
 	Alien(Game::GenerateNextEntityID(),
-		eEntityType::e_Player,
-		startingPosition,
-		Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize + 13),
-		eDirection::e_None
-	),
+	      eEntityType::e_Player,
+	      startingPosition,
+	      Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize + 13),
+	      eDirection::e_None
+	     ),
 	m_numStates(5),
 	m_shouldJumpNextFrame(false),
 	m_currentPowerUpState(ePowerUpState::e_Normal),
@@ -67,7 +67,7 @@ void Player::Update(const float deltaTime)
 			m_immuneTime += deltaTime;
 			if (m_immuneTime >= 2.f)
 			{
-				m_immune = false;
+				m_immune     = false;
 				m_immuneTime = 0.f;
 			}
 		}
@@ -81,7 +81,8 @@ void Player::Update(const float deltaTime)
 				PlaySFX("Player_Jump");
 				m_shouldJumpNextFrame = false;
 			}
-		} else if (m_currentAlienState == eAlienState::e_Jumping)
+		}
+		else if (m_currentAlienState == eAlienState::e_Jumping)
 		{
 			m_velocity.y += constants::k_gravity * deltaTime;
 		}
@@ -95,12 +96,13 @@ void Player::Update(const float deltaTime)
 		}
 
 		// Can't go past the barrier
-		if(m_position.x < constants::k_levelMinX)
+		if (m_position.x < constants::k_levelMinX)
 		{
 			m_position.x = constants::k_levelMinX;
 		}
 
-		if (m_currentDirection == eDirection::e_None && m_currentAlienState != eAlienState::e_Jumping && !m_shouldJumpNextFrame)
+		if (m_currentDirection == eDirection::e_None && m_currentAlienState != eAlienState::e_Jumping && !
+		    m_shouldJumpNextFrame)
 		{
 			m_currentAlienState = eAlienState::e_Idle;
 		}
@@ -117,7 +119,8 @@ void Player::Update(const float deltaTime)
 
 	PlayAnimation(deltaTime);
 
-	if (m_currentAlienState == eAlienState::e_Dead && m_animations[m_animationIndex].GetCurrentAnimationState() == eAnimationState::e_Ended)
+	if (m_currentAlienState == eAlienState::e_Dead && m_animations[m_animationIndex].GetCurrentAnimationState() ==
+	    eAnimationState::e_Ended)
 	{
 		m_isDead = true;
 	}
@@ -130,17 +133,21 @@ void Player::Render(TextureManager& textureManager)
 	if (m_currentPowerUpState != ePowerUpState::e_Small)
 	{
 		textureManager.DrawSprite(
-			GetTopIdentifier(),
-			{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, dir == eDirection::e_Left,
-			m_immune && m_currentAlienState != eAlienState::e_Dead ? 100 : 255
-		);
+		                          GetTopIdentifier(),
+		                          {
+			                          static_cast<float>(constants::k_screenWidth) / 2.f,
+			                          m_position.y - constants::k_spriteSheetCellSize
+		                          }, dir == eDirection::e_Left,
+		                          m_immune && m_currentAlienState != eAlienState::e_Dead ? 100 : 255
+		                         );
 	}
 
 	textureManager.DrawSprite(
-		GetCurrentAnimationFrameIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, dir == eDirection::e_Left,
-		m_immune && m_currentAlienState != eAlienState::e_Dead ? 100 : 255
-	);
+	                          GetCurrentAnimationFrameIdentifier(),
+	                          {static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y},
+	                          dir == eDirection::e_Left,
+	                          m_immune && m_currentAlienState != eAlienState::e_Dead ? 100 : 255
+	                         );
 }
 
 void Player::PlayAnimation(const float deltaTime)
@@ -158,28 +165,29 @@ void Player::PowerUp(const ePowerUpType pType)
 {
 	switch (pType)
 	{
-	case ePowerUpType::e_Grower:
-		if (m_currentPowerUpState == ePowerUpState::e_Small)
-		{
-			m_currentPowerUpState = ePowerUpState::e_Normal;
-			m_score += 2000;
-			PlaySFX("Player_Power_Up");
-		} else
-		{
-			m_score += 1000;
-		}
-		break;
-	case ePowerUpType::e_FireThrower:
-		if (m_currentPowerUpState != ePowerUpState::e_FireThrower)
-		{
-			m_currentPowerUpState = ePowerUpState::e_FireThrower;
-			m_score += 2000;
-		} else
-		{
-			m_score += 1000;
-		}
-		break;
-	default:;
+		case ePowerUpType::e_Grower:
+			if (m_currentPowerUpState == ePowerUpState::e_Small)
+			{
+				m_currentPowerUpState = ePowerUpState::e_Normal;
+				m_score += 2000;
+				PlaySFX("Player_Power_Up");
+			}
+			else
+			{
+				m_score += 1000;
+			}
+			break;
+		case ePowerUpType::e_FireThrower:
+			if (m_currentPowerUpState != ePowerUpState::e_FireThrower)
+			{
+				m_currentPowerUpState = ePowerUpState::e_FireThrower;
+				m_score += 2000;
+			}
+			else
+			{
+				m_score += 1000;
+			}
+			break;
 	}
 	SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState));
 }
@@ -188,18 +196,17 @@ void Player::PowerDown()
 {
 	switch (m_currentPowerUpState)
 	{
-	case ePowerUpState::e_Small:
-		Kill();
-		break;
-	case ePowerUpState::e_Normal:
-		m_currentPowerUpState = ePowerUpState::e_Small;
-		PlaySFX("Player_Power_Down");
-		break;
-	case ePowerUpState::e_FireThrower:
-		m_currentPowerUpState = ePowerUpState::e_Normal;
-		PlaySFX("Player_Power_Down");
-		break;
-	default:;
+		case ePowerUpState::e_Small:
+			Kill();
+			break;
+		case ePowerUpState::e_Normal:
+			m_currentPowerUpState = ePowerUpState::e_Small;
+			PlaySFX("Player_Power_Down");
+			break;
+		case ePowerUpState::e_FireThrower:
+			m_currentPowerUpState = ePowerUpState::e_Normal;
+			PlaySFX("Player_Power_Down");
+			break;
 	}
 
 	m_immune = true;
@@ -255,15 +262,16 @@ void Player::Kill()
 		m_livesRemaining--;
 		PlaySFX("Player_Dead");
 
-		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState));
+		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState
+		                  ));
 		m_animations[m_animationIndex].ResetAnimation();
 	}
 }
 
 void Player::Reset(const bool passLevel)
 {
-	m_position = Vector2::CENTRE;
-	m_velocity = Vector2::ZERO;
+	m_position         = Vector2::CENTRE;
+	m_velocity         = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
 
 	if (!passLevel)
@@ -295,16 +303,17 @@ void Player::SetMoveDirectionLimit(const eDirection direction)
 
 CollisionBoxes Player::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({0, 0}, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = CollisionBox({ 16, 0 }, { 46, 8 });
+	auto topBottomCollisionBox = CollisionBox({16, 0}, {46, 8});
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = CollisionBox({ 5, 8 }, { 31, 68 });
+	auto leftRightCollisionBox = CollisionBox({5, 8}, {31, 68});
 	leftRightCollisionBox.Translate(m_position);
 
-	return{ entityCollisionBox,
+	return {
+		entityCollisionBox,
 		topBottomCollisionBox,
 		leftRightCollisionBox,
 		leftRightCollisionBox.Translate({26, 0}),
@@ -315,67 +324,40 @@ CollisionBoxes Player::GenerateCollisionBoxes()
 void Player::CheckEntityCollisions(Entity& other)
 {
 	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-	const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+	const auto& otherEntColBox        = other.GetCurrentCollisionBoxes();
 	// Check the global boxes
 	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 	{
 		switch (other.GetEntityType())
 		{
-		case eEntityType::e_GrowGem:
-		case eEntityType::e_FireGem:
-			// collide from any angle
-			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-				currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
-				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
-				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
-			{
-				PowerUp(other.GetEntityType() == eEntityType::e_FireGem ? ePowerUpType::e_FireThrower : ePowerUpType::e_Grower);
-			}
-			break;
-		case eEntityType::e_Slime:
-			if (other.GetCurrentEntityState() == eEntityState::e_Alive)
-			{
-				// If touching the bottom...
-				if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
-				{
-					// Jump
-					Jump(m_jumpForce / 2);
-					PlaySFX("Entity_Squash");
-					m_score += 200;
-					return;
-				}
-				// If touching the left or right...
+			case eEntityType::e_GrowGem:
+			case eEntityType::e_FireGem:
+				// collide from any angle
 				if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-					currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+				    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+				    currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+				    currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 				{
-					if (!m_immune && !m_isDead)
+					PowerUp(other.GetEntityType() == eEntityType::e_FireGem
+						        ? ePowerUpType::e_FireThrower
+						        : ePowerUpType::e_Grower);
+				}
+				break;
+			case eEntityType::e_Slime:
+				if (other.GetCurrentEntityState() == eEntityState::e_Alive)
+				{
+					// If touching the bottom...
+					if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 					{
-						PowerDown();
+						// Jump
+						Jump(m_jumpForce / 2);
+						PlaySFX("Entity_Squash");
+						m_score += 200;
+						return;
 					}
-				}
-			}
-			break;
-		case eEntityType::e_Snail:
-			if (other.GetCurrentEntityState() == eEntityState::e_Alive)
-			{
-				// If touching the bottom...
-				if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
-				{
-					// Jump
-					Jump(m_jumpForce / 2);
-					PlaySFX("Entity_Squash");
-					m_score += 200;
-					return;
-				}
-
-				auto* snail = dynamic_cast<Snail*>(&other);
-
-				// Only deal damage to the player if the snail is moving or sliding in its shell
-				if (snail->GetSnailState() == eSnailState::e_Sliding || snail->GetSnailState() == eSnailState::e_Walking)
-				{
 					// If touching the left or right...
 					if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-						currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+					    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
 					{
 						if (!m_immune && !m_isDead)
 						{
@@ -383,22 +365,52 @@ void Player::CheckEntityCollisions(Entity& other)
 						}
 					}
 				}
-			}
-			break;
-		case eEntityType::e_Fireball:
-		case eEntityType::e_Boss:
-			if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-				currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
-				currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
-				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
-			{
-				if (!m_immune && !m_isDead)
+				break;
+			case eEntityType::e_Snail:
+				if (other.GetCurrentEntityState() == eEntityState::e_Alive)
 				{
-					PowerDown();
+					// If touching the bottom...
+					if (currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+					{
+						// Jump
+						Jump(m_jumpForce / 2);
+						PlaySFX("Entity_Squash");
+						m_score += 200;
+						return;
+					}
+
+					auto* snail = dynamic_cast<Snail*>(&other);
+
+					// Only deal damage to the player if the snail is moving or sliding in its shell
+					if (snail->GetSnailState() == eSnailState::e_Sliding || snail->GetSnailState() ==
+					    eSnailState::e_Walking)
+					{
+						// If touching the left or right...
+						if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+						    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+						{
+							if (!m_immune && !m_isDead)
+							{
+								PowerDown();
+							}
+						}
+					}
 				}
-			}
-		default:
-			break;
+				break;
+			case eEntityType::e_Fireball:
+			case eEntityType::e_Boss:
+				if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
+				    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+				    currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+				    currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+				{
+					if (!m_immune && !m_isDead)
+					{
+						PowerDown();
+					}
+				}
+			default:
+				break;
 		}
 	}
 }
@@ -407,9 +419,16 @@ void Player::Move(const float deltaTime)
 {
 	if (m_currentDirection == eDirection::e_Right && m_moveDirectionLimit != eDirection::e_Right)
 	{
-		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) * m_movementSpeed : m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
-	} else if (m_currentDirection == eDirection::e_Left && m_moveDirectionLimit != eDirection::e_Left)
+		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping
+			                                   ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) *
+			                                     m_movementSpeed
+			                                   : m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
+	}
+	else if (m_currentDirection == eDirection::e_Left && m_moveDirectionLimit != eDirection::e_Left)
 	{
-		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) * -m_movementSpeed : -m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
+		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping
+			                                   ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) * -
+			                                     m_movementSpeed
+			                                   : -m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
 	}
 }

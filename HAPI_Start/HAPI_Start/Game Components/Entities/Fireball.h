@@ -1,30 +1,27 @@
 #pragma once
 #include "Entity.h"
+
 enum class eFireBallState
 {
 	e_Bouncing,
 	e_Exploding
 };
 
-class Fireball : public Entity
+class Fireball final : public Entity
 {
 public:
-	Fireball(int entityID);
-	void Update(float deltaTime) override;
-	void CheckEntityCollisions(Entity& other) override;
+	explicit       Fireball(int entityID);
+	void           Update(float deltaTime) override;
+	void           CheckEntityCollisions(Entity& other) override;
 	CollisionBoxes GenerateCollisionBoxes() override;
-	void Render(TextureManager& textureManager, float playerOffset) override;
-	
+	void           Render(TextureManager& textureManager, float playerOffset) override;
+
 	void Initialise(Vector2 startPosition, eDirection startingDirection);
 	void Bounce();
 	void Explode();
 
-	bool GetActiveState() const;
-
 private:
-	bool m_activeState;
-	float m_jumpForce;
+	float          m_jumpForce;
 	eFireBallState m_fireBallState;
-	void Move(float deltaTime) override;
+	void           Move(float deltaTime) override;
 };
-

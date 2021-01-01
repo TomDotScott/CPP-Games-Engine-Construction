@@ -3,11 +3,11 @@
 
 class Player;
 
-class Boss : public Alien 
+class Boss final : public Alien
 {
 public:
-	Boss(int entityID, Vector2 startingPosition, const Player& player);
-	
+	Boss(int entityID, const Vector2& startingPosition, const Player& player);
+
 	void Update(float deltaTime) override;
 	void CheckEntityCollisions(Entity& other) override;
 	void Render(TextureManager& textureManager, float playerOffset) override;
@@ -16,14 +16,13 @@ public:
 	bool GetIsActive() const;
 
 	bool GetBattleStarted() const;
-	
+
 private:
 	const Player& m_player;
-	bool m_active;
-	bool m_battleStarted;
-	
-	CollisionBoxes GenerateCollisionBoxes() override;
-	void Move(float deltaTime) override;
-	void Shoot() override;
-};
+	bool          m_active;
+	bool          m_battleStarted;
 
+	CollisionBoxes GenerateCollisionBoxes() override;
+	void           Move(float deltaTime) override;
+	void           Shoot() override;
+};

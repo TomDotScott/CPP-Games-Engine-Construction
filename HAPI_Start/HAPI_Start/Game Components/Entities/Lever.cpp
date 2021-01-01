@@ -1,10 +1,12 @@
 #include "Lever.h"
-Lever::Lever(const int entityID, const Vector2 startPosition) :
+
+Lever::Lever(const int      entityID,
+             const Vector2& startPosition) :
 	Entity(eEntityType::e_Lever,
-		entityID,
-		{ constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize },
-		eDirection::e_None,
-		startPosition),
+	       entityID,
+	       {constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize},
+	       eDirection::e_None,
+	       startPosition),
 	m_active(false),
 	m_leverState(eLeverState::e_Static)
 {
@@ -24,7 +26,8 @@ void Lever::CheckEntityCollisions(Entity& other)
 	{
 		const auto leverCollisionBoxes = GenerateCollisionBoxes();
 		const auto otherCollisionBoxes = other.GetCurrentCollisionBoxes();
-		if (leverCollisionBoxes.m_globalBounds.Overlapping(otherCollisionBoxes.m_globalBounds) && other.GetEntityType() == eEntityType::e_Player)
+		if (leverCollisionBoxes.m_globalBounds.Overlapping(otherCollisionBoxes.m_globalBounds) && 
+			other.GetEntityType() == eEntityType::e_Player)
 		{
 			if (leverCollisionBoxes.m_leftCollisionBox.Overlapping(otherCollisionBoxes.m_rightCollisionBox) ||
 			    leverCollisionBoxes.m_rightCollisionBox.Overlapping(otherCollisionBoxes.m_leftCollisionBox) ||
@@ -53,16 +56,17 @@ void Lever::SetActive(const bool active)
 
 CollisionBoxes Lever::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({0, 0}, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = CollisionBox({ 16, 36 }, { 48, 43 });
+	auto topBottomCollisionBox = CollisionBox({16, 36}, {48, 43});
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = CollisionBox({ 16, 43 }, { 32, 57 });
+	auto leftRightCollisionBox = CollisionBox({16, 43}, {32, 57});
 	leftRightCollisionBox.Translate(m_position);
 
-	return{ entityCollisionBox,
+	return {
+		entityCollisionBox,
 		topBottomCollisionBox,
 		leftRightCollisionBox,
 		leftRightCollisionBox.Translate({16, 0}),
@@ -70,7 +74,4 @@ CollisionBoxes Lever::GenerateCollisionBoxes()
 	};
 }
 
-void Lever::Move(float deltaTime)
-{
-	return;
-}
+void Lever::Move(float deltaTime) {}

@@ -4,15 +4,29 @@
 #include "../Graphics/TextureManager.h"
 #include "../State System/StateManager.h"
 
-GameOver::GameOver(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
+GameOver::GameOver(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
+                   const HAPISPACE::HAPI_TControllerData& controllerData) :
 	State(keyboardData, controllerData),
-	m_scoreText("123456", { Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 3, constants::k_spriteSheetCellSize * 4 }),
-	m_highScoreText("HI SCORE", { Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 3.5f, m_scoreText.GetPosition().y + constants::k_spriteSheetCellSize * 2 }),
-	m_timeElapsedText("199", { Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 2, m_highScoreText.GetPosition().y + constants::k_spriteSheetCellSize * 2 }),
-	m_mainMenuText("MAIN MENU", { Vector2::CENTRE.x - 2 * constants::k_spriteSheetCellSize, constants::k_screenHeight - 2 * constants::k_spriteSheetCellSize }),
-	m_playerWon(false)
-{
-}
+	m_scoreText("123456",
+	            {
+		            Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 3, constants::k_spriteSheetCellSize * 4
+	            }),
+	m_highScoreText("HI SCORE",
+	                {
+		                Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 3.5f,
+		                m_scoreText.GetPosition().y + constants::k_spriteSheetCellSize * 2
+	                }),
+	m_timeElapsedText("199",
+	                  {
+		                  Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 2,
+		                  m_highScoreText.GetPosition().y + constants::k_spriteSheetCellSize * 2
+	                  }),
+	m_mainMenuText("MAIN MENU",
+	               {
+		               Vector2::CENTRE.x - 2 * constants::k_spriteSheetCellSize,
+		               constants::k_screenHeight - 2 * constants::k_spriteSheetCellSize
+	               }),
+	m_playerWon(false) {}
 
 bool GameOver::Initialise(TextureManager& textureManager)
 {
@@ -35,7 +49,9 @@ bool GameOver::Initialise(TextureManager& textureManager)
 
 	m_playerWon = playerWon == "WIN" ? true : false;
 
-	return textureManager.CreateTexture(m_playerWon ? "Res/Graphics/GameOver_Background_Win.tga" : "Res/Graphics/GameOver_Background_Lose.tga", "Background");
+	return textureManager.CreateTexture(m_playerWon
+		                                    ? "Res/Graphics/GameOver_Background_Win.tga"
+		                                    : "Res/Graphics/GameOver_Background_Lose.tga", "Background");
 }
 
 bool GameOver::Unload(TextureManager& textureManager)
@@ -63,5 +79,8 @@ void GameOver::Render(TextureManager& textureManager)
 	m_highScoreText.Render(textureManager);
 	m_timeElapsedText.Render(textureManager);
 	m_mainMenuText.Render(textureManager);
-	textureManager.DrawSprite("UI_Pointer", { m_mainMenuText.GetPosition().x + 5 * constants::k_spriteSheetCellSize, m_mainMenuText.GetPosition().y });
+	textureManager.DrawSprite("UI_Pointer", {
+		                          m_mainMenuText.GetPosition().x + 5 * constants::k_spriteSheetCellSize,
+		                          m_mainMenuText.GetPosition().y
+	                          });
 }

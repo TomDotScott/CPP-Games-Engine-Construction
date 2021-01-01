@@ -1,11 +1,12 @@
 #include "Flag.h"
 
-Flag::Flag(const int entityID, Vector2 startingPosition) :
+Flag::Flag(const int      entityID,
+           const Vector2& startingPosition) :
 	Entity(eEntityType::e_Flag,
-		entityID,
-		{ constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize },
-		eDirection::e_None,
-		startingPosition)
+	       entityID,
+	       {constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize},
+	       eDirection::e_None,
+	       startingPosition)
 {
 	AddAnimation(animations::FLAG_WAVE, true, 500.f);
 }
@@ -18,27 +19,24 @@ void Flag::Update(const float deltaTime)
 
 CollisionBoxes Flag::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({0, 0}, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto topBottomCollisionBox = CollisionBox({0, 0}, m_size);
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto leftRightCollisionBox = CollisionBox({0, 0}, m_size);
 	leftRightCollisionBox.Translate(m_position);
 
-	return{ entityCollisionBox,
+	return {
+		entityCollisionBox,
 		topBottomCollisionBox,
 		leftRightCollisionBox,
 		leftRightCollisionBox,
-		topBottomCollisionBox		
+		topBottomCollisionBox
 	};
 }
 
-void Flag::CheckEntityCollisions(Entity& other)
-{
-	return;
-}
+void Flag::CheckEntityCollisions(Entity& other) {}
 
-void Flag::Move(float deltaTime)
-{}
+void Flag::Move(float deltaTime) {}

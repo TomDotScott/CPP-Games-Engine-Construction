@@ -6,8 +6,7 @@ TextureManager::TextureManager() :
 	m_screen(),
 	m_spriteSheetLocations(),
 	m_spriteSheet(),
-	m_nextSpritesheetLocation(0)
-{}
+	m_nextSpritesheetLocation(0) {}
 
 TextureManager::~TextureManager()
 {
@@ -20,7 +19,7 @@ TextureManager::~TextureManager()
 void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 {
 	m_screen = screenPtr;
-	
+
 	// ----------------------SPRITESHEET-----------------------
 	CreateSpriteSheet("Res/Graphics/GameSpriteSheet.tga");
 	CreateSprite("Player_Small_Dead");
@@ -191,24 +190,24 @@ void TextureManager::ClearScreen(HAPISPACE::HAPI_TColour col) const
 {
 	for (int i = 0; i < constants::k_screenWidth * constants::k_screenHeight; i++)
 	{
-		memcpy(m_screen + 4 * i, &col, 4);
+		memcpy(m_screen + static_cast<uint64_t>(4) * i, &col, 4);
 	}
 }
 
 void TextureManager::ClearScreen() const
 {
-	memset(m_screen, 0, static_cast<size_t>(constants::k_screenWidth * constants::k_screenHeight * 4));
+	memset(m_screen, 0, constants::k_screenWidth * constants::k_screenHeight * 4);
 }
 
 void TextureManager::SetPixel(const int x, const int y, const HAPISPACE::HAPI_TColour colour) const
 {
-	m_screen[constants::k_screenWidth * x + y] = colour.red;
+	m_screen[constants::k_screenWidth * x + y]     = colour.red;
 	m_screen[constants::k_screenWidth * x + y + 1] = colour.green;
 	m_screen[constants::k_screenWidth * x + y + 2] = colour.blue;
 	m_screen[constants::k_screenWidth * x + y + 3] = colour.alpha;
 }
 
-void TextureManager::SetPixel(const int x, const int y, const int value) const
+void TextureManager::SetPixel(const int x, const int y, const unsigned char value) const
 {
 	m_screen[constants::k_screenWidth * x + y] = value;
 }
@@ -216,7 +215,7 @@ void TextureManager::SetPixel(const int x, const int y, const int value) const
 bool TextureManager::CreateTexture(const std::string& filename, const std::string& name)
 {
 	auto* newTexture = new Texture(filename);
-	if(!newTexture)
+	if (!newTexture)
 	{
 		return false;
 	}
@@ -228,18 +227,17 @@ bool TextureManager::RemoveTexture(const std::string& name)
 {
 	if (m_textureBuffer.find(name) == m_textureBuffer.end())
 	{
-		HAPI.UserMessage("The texture: " + name + " doesn't exist. It may have already been removed.", "Error Occured");
+		HAPI.UserMessage("The texture: " + name + " doesn't exist. It may have already been removed.",
+		                 "Error Occurred");
 		return false;
-	}else
-	{
-		// Clear the data stored
-		delete m_textureBuffer[name];
-
-		// Remove the entry in the map
-		m_textureBuffer.erase(name);
-
-		return true;
 	}
+	// Clear the data stored
+	delete m_textureBuffer[name];
+
+	// Remove the entry in the map
+	m_textureBuffer.erase(name);
+
+	return true;
 }
 
 bool TextureManager::CreateSpriteSheet(const std::string& filename)
@@ -248,11 +246,9 @@ bool TextureManager::CreateSpriteSheet(const std::string& filename)
 	if (!newTexture)
 	{
 		return false;
-	} else
-	{
-		m_spriteSheet = newTexture;
-		return true;
 	}
+	m_spriteSheet = newTexture;
+	return true;
 }
 
 bool TextureManager::CreateSprite(const std::string& spriteName, const int spriteLocation)
@@ -261,10 +257,8 @@ bool TextureManager::CreateSprite(const std::string& spriteName, const int sprit
 	{
 		HAPI.UserMessage("A sprite with the name " + spriteName + " already exists.", "Error Occured");
 		return false;
-	} else
-	{
-		m_spriteSheetLocations[spriteName] = spriteLocation;
 	}
+	m_spriteSheetLocations[spriteName] = spriteLocation;
 	return true;
 }
 
@@ -274,10 +268,8 @@ bool TextureManager::CreateSprite(const std::string& spriteName)
 	{
 		HAPI.UserMessage("A sprite with the name " + spriteName + " already exists.", "Error Occured");
 		return false;
-	} else
-	{
-		m_spriteSheetLocations[spriteName] = m_nextSpritesheetLocation++;
 	}
+	m_spriteSheetLocations[spriteName] = m_nextSpritesheetLocation++;
 	return true;
 }
 
@@ -289,16 +281,19 @@ void TextureManager::DrawTexture(const std::string& name, const Vector2 position
 		return;
 	}
 	auto* texture = m_textureBuffer.at(name);
-	renderer::render_texture(m_screen, texture->textureData, texture->size, position, flipped);
+	renderer::render_texture(m_screen, texture->m_textureData, texture->m_size, position, flipped);
 }
 
 void TextureManager::DrawSprite(const std::string& name, const Vector2 position, const bool flipped, const short alpha)
 {
 	if (m_spriteSheetLocations.find(name) == m_spriteSheetLocations.end())
 	{
-		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.", "Error Occured");
-	} else
+		HAPI.UserMessage("Error: Can't draw the sprite: " + name + "\nCheck the Spelling and try again.",
+		                 "Error Occurred");
+	}
+	else
 	{
-		renderer::render_sprite(m_screen, m_spriteSheet->textureData, m_spriteSheetLocations[name], position, flipped, alpha);
+		renderer::render_sprite(m_screen, m_spriteSheet->m_textureData, m_spriteSheetLocations[name], position, flipped,
+		                        alpha);
 	}
 }

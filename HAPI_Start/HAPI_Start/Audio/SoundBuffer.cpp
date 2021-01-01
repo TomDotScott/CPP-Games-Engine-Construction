@@ -1,9 +1,9 @@
 #include "SoundBuffer.h"
-#include <sndfile.h>
-#include <cinttypes>
-#include <AL/alext.h>
 
-#include "HAPI_lib.h"
+#include <cassert>
+#include <HAPI_lib.h>
+#include <sndfile.h>
+#include <AL/alext.h>
 
 // Loads the named audio file into an OpenAL buffer object,
 // and returns the new buffer ID
@@ -14,16 +14,13 @@ ALuint SoundBuffer::AddSoundEffect(const char* filename)
 	// Open the audio file and check that it's usable
 	SNDFILE* soundFile = sf_open(filename, SFM_READ, &sfInfo);
 
-	if (!soundFile)
-	{
-		HAPI.UserMessage("Could not open audio at: " + static_cast<std::string>(filename), "An error occured");
-		return 0;
-	}
+	assert(soundFile);
 
 	if (sfInfo.frames < 1 || sfInfo.frames > static_cast<sf_count_t>((INT_MAX / sizeof(short))) / sfInfo.channels)
 	{
-		HAPI.UserMessage("Bad sample count in: " + static_cast<std::string>(filename), "An error occured");
+		HAPI.UserMessage("Bad sample count in: " + static_cast<std::string>(filename), "An error occurred");
 		sf_close(soundFile);
+		assert(false);
 		return 0;
 	}
 
@@ -31,39 +28,40 @@ ALuint SoundBuffer::AddSoundEffect(const char* filename)
 	ALenum format = AL_NONE;
 	switch (sfInfo.channels)
 	{
-	case 1:
-		format = AL_FORMAT_MONO16;
-		break;
-	case 2:
-		format = AL_FORMAT_STEREO16;
-		break;
-	case 3:
-		if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
-		{
-			format = AL_FORMAT_BFORMAT2D_16;
-		}
-		break;
-	case 4:
-		if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)
-		{
-			format = AL_FORMAT_BFORMAT3D_16;
-		}
-		break;
-	default:
-		HAPI.UserMessage("Unsupported channel count in: " + static_cast<std::string>(filename), "An error occured");
-		sf_close(soundFile);
-		return 0;
+		case 1:
+			format = AL_FORMAT_MONO16;
+			break;
+		case 2:
+			format = AL_FORMAT_STEREO16;
+			break;
+		case 3:
+			if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT)
+			{
+				format = AL_FORMAT_BFORMAT2D_16;
+			}
+			break;
+		case 4:
+			if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT)
+			{
+				format = AL_FORMAT_BFORMAT3D_16;
+			}
+			break;
+		default:
+			HAPI.UserMessage("Unsupported channel count in: " + static_cast<std::string>(filename), "An error occured");
+			sf_close(soundFile);
+			return 0;
 	}
 
 	// Decode the audio file and add to the buffer
 	auto* membuff = static_cast<short*>(malloc(static_cast<size_t>(sfInfo.frames * sfInfo.channels) * sizeof(short)));
 
 	const sf_count_t frames = sf_readf_short(soundFile, membuff, sfInfo.frames);
-	if(frames < 1)
+	if (frames < 1)
 	{
 		free(membuff);
 		sf_close(soundFile);
-		HAPI.UserMessage("Failed to read samples in: " + static_cast<std::string>(filename), "An error occured");
+		HAPI.UserMessage("Failed to read samples in: " + static_cast<std::string>(filename), "An error occurred");
+		assert(false);
 		return 0;
 	}
 
@@ -78,12 +76,13 @@ ALuint SoundBuffer::AddSoundEffect(const char* filename)
 	free(membuff);
 	sf_close(soundFile);
 
-	// Check if an error occured and clean up if so
+	// Check if an error occurred and clean up if so
 	const ALenum err = alGetError();
-	if(err != ALC_NO_ERROR)
+	if (err != ALC_NO_ERROR)
 	{
-		HAPI.UserMessage("OpenAL Error: " + static_cast<std::string>(const_cast<char*>(alGetString(err))), "An error occured");
-		if(buffer && alIsBuffer(buffer))
+		HAPI.UserMessage("OpenAL Error: " + static_cast<std::string>(const_cast<char*>(alGetString(err))),
+		                 "An error occurred");
+		if (buffer && alIsBuffer(buffer))
 		{
 			alDeleteBuffers(1, &buffer);
 		}
@@ -92,16 +91,16 @@ ALuint SoundBuffer::AddSoundEffect(const char* filename)
 
 	// Finally, add to the list of known buffers
 	m_soundEffectBuffers.emplace_back(buffer);
-	
-	return buffer;	
+
+	return buffer;
 }
 
 bool SoundBuffer::RemoveSoundEffect(const ALuint& buffer)
 {
 	auto it = m_soundEffectBuffers.begin();
-	while(it != m_soundEffectBuffers.end())
+	while (it != m_soundEffectBuffers.end())
 	{
-		if(*it == buffer)
+		if (*it == buffer)
 		{
 			// We have found the buffer so free it, and remove
 			// from the list of known buffers
@@ -110,10 +109,8 @@ bool SoundBuffer::RemoveSoundEffect(const ALuint& buffer)
 			it = m_soundEffectBuffers.erase(it);
 
 			return true;
-		}else
-		{
-			++it;
 		}
+		++it;
 	}
 	// Buffer not found
 	return false;
@@ -122,9 +119,9 @@ bool SoundBuffer::RemoveSoundEffect(const ALuint& buffer)
 SoundBuffer::~SoundBuffer()
 {
 	// Clear all the buffers
-	alDeleteBuffers(m_soundEffectBuffers.size(), static_cast<const ALuint*>(m_soundEffectBuffers.data()));
-	
+	alDeleteBuffers(static_cast<ALsizei>(m_soundEffectBuffers.size()),
+	                static_cast<const ALuint*>(m_soundEffectBuffers.data()));
+
 	// Erase the vector
 	m_soundEffectBuffers.clear();
 }
-

@@ -10,13 +10,14 @@ enum class eAnimationState
 class AnimationPlayer
 {
 public:
-	AnimationPlayer(std::vector<std::string> frames, bool looping = true, float duration = 100.f);
-	void Play(float deltaTime);
-	unsigned GetCurrentFrame() const;
-	std::string GetCurrentFrameIdentifier() const;
-	eAnimationState GetCurrentAnimationState() const;
-	void ResetAnimation();
+	explicit        AnimationPlayer(std::vector<std::string> frames, bool looping = true, float duration = 100.f);
+	void            Play(float deltaTime);
+	void            ResetAnimation();
 	
+	unsigned        GetCurrentFrame() const;
+	std::string     GetCurrentFrameIdentifier() const;
+	eAnimationState GetCurrentAnimationState() const;
+
 private:
 	std::vector<std::string> m_frames;
 	unsigned m_currentFrame;
@@ -24,5 +25,5 @@ private:
 	float m_playTime;
 	bool m_looping;
 	eAnimationState m_state;
-
+	
 };

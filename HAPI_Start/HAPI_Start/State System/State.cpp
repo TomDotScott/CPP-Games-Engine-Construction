@@ -2,10 +2,7 @@
 
 State::State(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
 	m_keyboardData(keyboardData),
-	m_controllerData(controllerData)
-{
-
-}
+	m_controllerData(controllerData) {}
 
 float State::DeltaTime(clock_t& gameClock)
 {
@@ -13,7 +10,7 @@ float State::DeltaTime(clock_t& gameClock)
 
 	const float ticksToMilliseconds = 1000.f / CLOCKS_PER_SEC;
 
-	return (programTickCount * ticksToMilliseconds) / 1000.f;
+	return (static_cast<float>(programTickCount) * ticksToMilliseconds) / 1000.f;
 }
 
 bool State::GetKey(const eKeyCode keyCode) const

@@ -1,20 +1,22 @@
 #include "Alien.h"
 #include "../Graphics/TextureManager.h"
 
-Alien::Alien(const int entityID, const eEntityType type, const Vector2 startingPosition, const Vector2 size, const eDirection startDir) :
+Alien::Alien(const int         entityID,
+             const eEntityType type,
+             const Vector2&    startingPosition,
+             const Vector2     size,
+             const eDirection  startDir) :
 	Entity(type,
-		entityID,
-		size,
-		startDir,
-		startingPosition
-	),
+	       entityID,
+	       size,
+	       startDir,
+	       startingPosition
+	      ),
 	m_movementSpeed(10.f),
 	m_jumpForce(9.f),
 	m_canShoot(false),
 	m_shotCoolDown(constants::k_fireBallCoolDownTimer),
-	m_currentAlienState(eAlienState::e_Jumping)
-{
-}
+	m_currentAlienState(eAlienState::e_Jumping) {}
 
 eAlienState Alien::GetCurrentAlienState() const
 {
@@ -29,37 +31,40 @@ void Alien::SetAlienState(const eAlienState state)
 void Alien::Render(TextureManager& textureManager)
 {
 	textureManager.DrawSprite(
-		GetTopIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y - constants::k_spriteSheetCellSize }, 
-		m_currentDirection == eDirection::e_Left
-	);
+	                          GetTopIdentifier(),
+	                          {
+		                          static_cast<float>(constants::k_screenWidth) / 2.f,
+		                          m_position.y - constants::k_spriteSheetCellSize
+	                          },
+	                          m_currentDirection == eDirection::e_Left
+	                         );
 
 	textureManager.DrawSprite(
-		GetCurrentAnimationFrameIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y }, 
-		m_currentDirection == eDirection::e_Left
-	);
+	                          GetCurrentAnimationFrameIdentifier(),
+	                          {static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y},
+	                          m_currentDirection == eDirection::e_Left
+	                         );
 }
 
 void Alien::Render(TextureManager& textureManager, const float playerOffset)
 {
 	textureManager.DrawSprite(
-		GetTopIdentifier(),
-		{
-			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
-			m_position.y - constants::k_spriteSheetCellSize
-		},
-		m_currentDirection == eDirection::e_Left
-	);
+	                          GetTopIdentifier(),
+	                          {
+		                          m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
+		                          m_position.y - constants::k_spriteSheetCellSize
+	                          },
+	                          m_currentDirection == eDirection::e_Left
+	                         );
 
 	textureManager.DrawSprite(
-		GetCurrentAnimationFrameIdentifier(),
-		{
-			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
-			m_position.y
-		},
-		m_currentDirection == eDirection::e_Left
-	);
+	                          GetCurrentAnimationFrameIdentifier(),
+	                          {
+		                          m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
+		                          m_position.y
+	                          },
+	                          m_currentDirection == eDirection::e_Left
+	                         );
 }
 
 std::vector<Fireball>& Alien::GetFireBallPool()
@@ -70,7 +75,7 @@ std::vector<Fireball>& Alien::GetFireBallPool()
 void Alien::Jump(const float jumpForce)
 {
 	m_currentAlienState = eAlienState::e_Jumping;
-	m_velocity.y = -jumpForce;
+	m_velocity.y        = -jumpForce;
 }
 
 void Alien::Shoot()
@@ -83,7 +88,7 @@ void Alien::Shoot()
 			if (ball.GetActiveState() == false)
 			{
 				ball.Initialise(m_position, m_currentDirection);
-				m_canShoot = false;
+				m_canShoot     = false;
 				m_shotCoolDown = 0.f;
 				PlaySFX("Fireball_Shoot");
 				return;
@@ -102,7 +107,8 @@ std::string Alien::GetTopIdentifier()
 	// Store the frame no to add back to the end
 	const auto frameNo = currentFramePlayerTopIdentifier[currentFramePlayerTopIdentifier.size() - 1];
 	// Remove the "Body_x"
-	currentFramePlayerTopIdentifier.erase(currentFramePlayerTopIdentifier.end() - 6, currentFramePlayerTopIdentifier.end());
+	currentFramePlayerTopIdentifier.erase(currentFramePlayerTopIdentifier.end() - 6,
+	                                      currentFramePlayerTopIdentifier.end());
 	// Add "Top_x"
 	currentFramePlayerTopIdentifier.append("Top_");
 	return currentFramePlayerTopIdentifier += frameNo;

@@ -8,17 +8,17 @@ class TextureManager;
 class Text
 {
 public:
-	explicit Text(std::string text, Vector2 position = Vector2::CENTRE);
+	explicit Text(std::string text, const Vector2& position = Vector2::CENTRE);
 
 	void Render(TextureManager& textureManager) const;
 
 	std::string& GetString();
-	void SetString(const std::string& text);
-	void SetPosition(Vector2 position);
+	Vector2      GetPosition() const;
 
-	Vector2 GetPosition() const;
-	
+	void SetString(const std::string& text);
+	void SetPosition(const Vector2& position);
+
 private:
 	std::string m_text;
-	Vector2 m_position;
+	Vector2     m_position;
 };

@@ -19,4 +19,3 @@ private:
 	Text m_mainMenuText;
 	bool m_playerWon;
 };
-

@@ -2,17 +2,17 @@
 
 #include "Player.h"
 
-Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
+Coin::Coin(const int      entityID,
+           const Vector2& position,
+           const bool     visible) :
 	Entity(eEntityType::e_Coin,
-		entityID,
-		{ constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize },
-		eDirection::e_None,
-		position,
-		{ 0, 1 },
-		Vector2::ZERO
-	),
-	m_lifeTime(0.f),
-	m_isVisible(visible)
+	       entityID,
+	       {constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize},
+	       eDirection::e_None,
+	       position,
+	       {0, 1},
+	       visible
+	      )
 {
 	// Spin Animation
 	AddAnimation(animations::COIN_SPIN);
@@ -20,9 +20,8 @@ Coin::Coin(const int entityID, const Vector2 position, const bool visible) :
 
 void Coin::Update(const float deltaTime)
 {
-	if (m_isVisible)
+	if (m_activeState)
 	{
-		m_lifeTime += deltaTime;
 		PlayAnimation(deltaTime);
 	}
 }
@@ -35,19 +34,23 @@ void Coin::CheckEntityCollisions(Entity& other)
 		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
 		if (currentCollisionBoxes.m_globalBounds.Overlapping(other.GetCurrentCollisionBoxes().m_globalBounds))
 		{
-			if (currentCollisionBoxes.m_topCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
-				currentCollisionBoxes.m_leftCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_rightCollisionBox) ||
-				currentCollisionBoxes.m_rightCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
-				currentCollisionBoxes.m_bottomCollisionBox.Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
+			if (currentCollisionBoxes.m_topCollisionBox.
+			                          Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
+			    currentCollisionBoxes.m_leftCollisionBox.
+			                          Overlapping(other.GetCurrentCollisionBoxes().m_rightCollisionBox)  ||
+			    currentCollisionBoxes.m_rightCollisionBox.
+			                          Overlapping(other.GetCurrentCollisionBoxes().m_bottomCollisionBox) ||
+			    currentCollisionBoxes.m_bottomCollisionBox.
+			                          Overlapping(other.GetCurrentCollisionBoxes().m_topCollisionBox))
 			{
-				if(m_isVisible)
+				if (m_activeState)
 				{
 					PlaySFX("Coin");
 					auto* player = dynamic_cast<Player*>(&other);
 					player->AddCoin();
 					player->AddToScore(200);
 				}
-				m_isVisible = false;
+				m_activeState = false;
 			}
 		}
 	}
@@ -55,16 +58,17 @@ void Coin::CheckEntityCollisions(Entity& other)
 
 CollisionBoxes Coin::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({0, 0}, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = CollisionBox({ 12, 11 }, { 51, 16 });
+	auto topBottomCollisionBox = CollisionBox({12, 11}, {51, 16});
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = CollisionBox({ 12, 16 }, { 32, 46 });
+	auto leftRightCollisionBox = CollisionBox({12, 16}, {32, 46});
 	leftRightCollisionBox.Translate(m_position);
 
-	return{ entityCollisionBox,
+	return {
+		entityCollisionBox,
 		topBottomCollisionBox,
 		leftRightCollisionBox,
 		leftRightCollisionBox.Translate({20, 0}),
@@ -72,22 +76,4 @@ CollisionBoxes Coin::GenerateCollisionBoxes()
 	};
 }
 
-void Coin::SetVisible(const bool visibility)
-{
-	if (visibility)
-	{
-		m_lifeTime = 0.f;
-	}
-	m_isVisible = visibility;
-}
-
-bool Coin::GetIsVisible() const
-{
-	return m_isVisible;
-}
-
-void Coin::Move(float deltaTime)
-{
-	// Slight hover
-	m_position.y += cos(m_lifeTime);
-}
+void Coin::Move(float deltaTime) {}

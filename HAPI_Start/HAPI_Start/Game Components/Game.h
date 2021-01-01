@@ -20,59 +20,63 @@ class Game final : public State
 {
 public:
 	Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
+
 	bool Initialise(TextureManager& textureManager) override;
 	bool Unload(TextureManager& textureManager) override;
 	void Update() override;
 	void Render(TextureManager& textureManager) override;
+
 	static int GenerateNextEntityID();
 
 private:
 	enum class eLevel
 	{
-		e_LevelOne, e_LevelTwo, e_LevelThree
+		e_LevelOne,
+		e_LevelTwo,
+		e_LevelThree
 	};
 
 	TileManager m_tileManager;
-	
-	Player m_player;
-	float m_levelTimer;
-	float m_totalElapsedTime;
-	eLevel m_currentLevel;
+
+	Player  m_player;
+	float   m_levelTimer;
+	float   m_totalElapsedTime;
+	eLevel  m_currentLevel;
 	clock_t m_gameClock;
-	
+
 	bool m_levelStarted;
 	bool m_levelFinished;
 	bool m_leverPulled;
-	
-	Vector2 m_backgroundPosition;
+
+	Vector2    m_backgroundPosition;
 	eDirection m_backgroundMoveDir;
 
-	std::vector<Slime> m_slimes;
-	std::vector<Snail> m_snails;
-	std::vector<Coin> m_coins;
+	std::vector<Slime>     m_slimes;
+	std::vector<Snail>     m_snails;
+	std::vector<Coin>      m_coins;
 	std::vector<PickUpGem> m_gems;
-	Flag m_flag;
-	Lever m_endLever;
-	Boss m_boss;
+	Flag                   m_flag;
+	Lever                  m_endLever;
+	Boss                   m_boss;
 
 	Text m_scoreText;
 	Text m_livesText;
 	Text m_coinsText;
 	Text m_worldText;
 	Text m_timerText;
-	
-	void Input() override;
-	bool LoadLevel(eLevel level, bool playerWon = true);
-	void LoadNextLevel();
-	void GameOver(bool playerWon) const;
-	void CheckCollisions();
-	void HandlePlayerCollisions();
-	void ScrollBackground();
-	void UpdateUI(float deltaTime);
+
+	void               Input() override;
+	bool               LoadLevel(eLevel level, bool playerWon = true);
+	void               LoadNextLevel();
+	void               GameOver(bool playerWon) const;
+	void               CheckCollisions();
+	void               HandlePlayerCollisions();
+	void               ScrollBackground();
+	void               UpdateUI(float deltaTime);
 	static std::string AddLeadingZeroes(const std::string& string, int amountOfZeroes);
-	template<typename T>
+	template <typename T>
 	void UpdateEnemies(std::vector<T>& enemies, float deltaTime);
-	template<typename T>
+	template <typename T>
 	void CheckEnemyCollisions(std::vector<T>& enemies);
 };
 
@@ -83,8 +87,10 @@ void Game::UpdateEnemies(std::vector<T>& enemies, const float deltaTime)
 	for (auto& enemy : enemies)
 	{
 		// Only update enemies if they're onscreen and alive
-		if (enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset < constants::k_screenWidth * 1.5f &&
-			enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset > -constants::k_screenWidth * 1.5f)
+		if (enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset <
+		    constants::k_screenWidth * 1.5f &&
+		    enemy.GetPosition().x + static_cast<float>(constants::k_screenWidth) / 2.f - playerOffset > -
+		    constants::k_screenWidth * 1.5f)
 		{
 			enemy.Update(deltaTime);
 		}

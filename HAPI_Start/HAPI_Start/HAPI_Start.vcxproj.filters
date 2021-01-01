@@ -231,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="HAPI\Reference\index.html" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Data\HelloThere.mp3" />

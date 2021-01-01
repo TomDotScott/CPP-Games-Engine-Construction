@@ -4,11 +4,15 @@
 #include "../Graphics/TextureManager.h"
 #include "../State System/StateManager.h"
 
-ControlsMenu::ControlsMenu(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
+ControlsMenu::ControlsMenu(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
+                           const HAPISPACE::HAPI_TControllerData& controllerData) :
 	State(keyboardData, controllerData),
-	m_backText("MAIN MENU", { Vector2::CENTRE.x - 2 * constants::k_spriteSheetCellSize, constants::k_screenHeight - 2 * constants::k_spriteSheetCellSize })
-{
-}
+	m_backText("MAIN MENU", 
+		{
+		           Vector2::CENTRE.x - 2 * constants::k_spriteSheetCellSize,
+		           constants::k_screenHeight - 2 * constants::k_spriteSheetCellSize
+	           }
+	) {}
 
 bool ControlsMenu::Initialise(TextureManager& textureManager)
 {
@@ -37,5 +41,8 @@ void ControlsMenu::Render(TextureManager& textureManager)
 {
 	textureManager.DrawTexture("Background", {});
 	m_backText.Render(textureManager);
-	textureManager.DrawSprite("UI_Pointer", { m_backText.GetPosition().x + 5 * constants::k_spriteSheetCellSize, m_backText.GetPosition().y });
+	textureManager.DrawSprite("UI_Pointer", {
+		                          m_backText.GetPosition().x + 5 * constants::k_spriteSheetCellSize,
+		                          m_backText.GetPosition().y
+	                          });
 }

@@ -1,13 +1,11 @@
 #include "SoundSource.h"
 
-#include <iostream>
-
 SoundSource::SoundSource() :
 	m_source(),
 	m_pitch(1.f),
 	m_gain(1.f),
-	m_position{ 0, 0, 0 },
-	m_velocity{ 0, 0, 0 },
+	m_position{0, 0, 0},
+	m_velocity{0, 0, 0},
 	m_loopSound(false),
 	m_buffer(0)
 {
@@ -29,7 +27,7 @@ void SoundSource::Play(const ALuint buffer)
 {
 	// Stop the current source...
 	alSourceStop(m_source);
-	
+
 	if (buffer != m_buffer)
 	{
 		m_buffer = buffer;

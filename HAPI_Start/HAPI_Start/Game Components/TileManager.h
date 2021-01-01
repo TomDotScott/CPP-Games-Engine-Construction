@@ -12,11 +12,12 @@ struct CollisionData
 {
 	void Reset()
 	{
-		m_headCollision = nullptr;
-		m_leftCollision = nullptr;
-		m_rightCollision = nullptr;
+		m_headCollision   = nullptr;
+		m_leftCollision   = nullptr;
+		m_rightCollision  = nullptr;
 		m_bottomCollision = nullptr;
 	}
+
 	Tile* m_headCollision;
 	Tile* m_leftCollision;
 	Tile* m_rightCollision;
@@ -27,23 +28,23 @@ class TileManager
 {
 public:
 	TileManager();
-	bool LoadLevel(const std::string& filename);
-	void RenderTiles(TextureManager& textureManager, float playerOffset);
-	CollisionData& CheckAlienLevelCollisions(Alien& alien);
-	bool IsBossOnFloor(Alien& boss);
-	void OnLeverPulled();
-	void CheckEnemyLevelCollisions(Enemy& enemy);
-	void CheckFireballLevelCollisions(Fireball& fireball);
+	bool                                          LoadLevel(const std::string& filename);
+	void                                          RenderTiles(TextureManager& textureManager, float playerOffset);
+	CollisionData&                                CheckAlienLevelCollisions(Alien& alien);
+	bool                                          IsBossOnFloor(Alien& boss);
+	void                                          OnLeverPulled();
+	void                                          CheckEnemyLevelCollisions(Enemy& enemy);
+	void                                          CheckFireballLevelCollisions(Fireball& fireball);
 	std::vector<std::pair<eEntityType, Vector2>>& GetEntityLocations();
 
 private:
-	std::vector<std::vector<Tile>> m_levelData;
+	std::vector<std::vector<Tile>>               m_levelData;
 	std::vector<std::pair<eEntityType, Vector2>> m_entityLocations;
-	CollisionData m_alienCollisionData;
+	CollisionData                                m_alienCollisionData;
 
-	Tile* CheckAlienHeadCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
-	Tile* CheckAlienLeftCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
-	Tile* CheckAlienRightCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
+	Tile* CheckAlienHeadCollisions  (Alien& alien, const CollisionBoxes& alienCollisionBoxes);
+	Tile* CheckAlienLeftCollisions  (Alien& alien, const CollisionBoxes& alienCollisionBoxes);
+	Tile* CheckAlienRightCollisions (Alien& alien, const CollisionBoxes& alienCollisionBoxes);
 	Tile* CheckAlienBottomCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
 };
 
@@ -128,8 +129,9 @@ inline const char* to_string(const eTileType e)
 		case eTileType::e_Bridge: return "e_Bridge";
 		case eTileType::e_Lever: return "e_Lever";
 		case eTileType::e_StoneCentre: return "e_StoneCentre";
-		default: return "unknown";
+		case eTileType::e_DestructibleStone: return "e_DestructibleStone";
 	}
+	return "Unknown";
 }
 
 struct Tile
@@ -146,7 +148,8 @@ struct Tile
 				m_position,
 				{m_position.x + constants::k_spriteSheetCellSize, m_position.y + constants::k_spriteSheetCellSize}
 			};
-		}else
+		}
+		else
 		{
 			// Make spikes half sized
 			m_tileCollisionBox = {
@@ -159,9 +162,9 @@ struct Tile
 	friend bool operator==(Tile& lhs, Tile& rhs)
 	{
 		return lhs.m_type == rhs.m_type
-			&& lhs.m_position == rhs.m_position
-			&& lhs.m_canCollide == rhs.m_canCollide
-			&& lhs.m_canBeDestroyed == rhs.m_canBeDestroyed;
+		       && lhs.m_position == rhs.m_position
+		       && lhs.m_canCollide == rhs.m_canCollide
+		       && lhs.m_canBeDestroyed == rhs.m_canBeDestroyed;
 	}
 
 	friend bool operator!=(Tile& lhs, Tile& rhs)
@@ -169,9 +172,9 @@ struct Tile
 		return !(lhs == rhs);
 	}
 
-	eTileType m_type;
-	Vector2 m_position;
+	eTileType    m_type;
+	Vector2      m_position;
 	CollisionBox m_tileCollisionBox;
-	bool m_canCollide;
-	bool m_canBeDestroyed;
+	bool         m_canCollide;
+	bool         m_canBeDestroyed;
 };

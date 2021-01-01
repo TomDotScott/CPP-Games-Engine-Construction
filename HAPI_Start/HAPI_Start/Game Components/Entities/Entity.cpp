@@ -4,25 +4,22 @@
 #include "../Graphics/TextureManager.h"
 
 Entity::Entity(
-	const eEntityType type, 
-	const int ID, 
-	const Vector2 size, 
-	const eDirection direction, 
-	const Vector2 position,
-	const Vector2 velocity, 
-	const Vector2 acceleration
+	const eEntityType type,
+	const int         ID,
+	const Vector2&    size,
+	const eDirection  direction,
+	const Vector2&    position,
+	const Vector2&    velocity,
+	const bool        activeState
 ) :
 	m_entityID(ID),
 	m_size(size),
 	m_position(position),
 	m_velocity(velocity),
-	m_acceleration(acceleration),
 	m_currentDirection(direction),
 	m_currentEntityState(eEntityState::e_Alive),
-	m_entityType(type)
-{
-
-}
+	m_entityType(type),
+	m_activeState(activeState) {}
 
 CollisionBoxes Entity::GetCurrentCollisionBoxes()
 {
@@ -34,7 +31,7 @@ Vector2 Entity::GetPosition() const
 	return m_position;
 }
 
-void Entity::SetPosition(const Vector2 newPos)
+void Entity::SetPosition(const Vector2& newPos)
 {
 	m_position = newPos;
 }
@@ -44,9 +41,14 @@ Vector2 Entity::GetVelocity() const
 	return m_velocity;
 }
 
-void Entity::SetVelocity(const Vector2 newVel)
+void Entity::SetVelocity(const Vector2& newVel)
 {
 	m_velocity = newVel;
+}
+
+void Entity::SetActiveState(const bool activeState)
+{
+	m_activeState = activeState;
 }
 
 eDirection Entity::GetCurrentDirection() const
@@ -60,7 +62,8 @@ void Entity::SetDirection(const eDirection direction)
 	if (direction == eDirection::e_Right)
 	{
 		m_velocity.x = abs(m_velocity.x);
-	} else
+	}
+	else
 	{
 		m_velocity.x = -abs(m_velocity.x);
 	}
@@ -70,6 +73,7 @@ eEntityState Entity::GetCurrentEntityState() const
 {
 	return m_currentEntityState;
 }
+
 void Entity::SetEntityState(const eEntityState state)
 {
 	m_currentEntityState = state;
@@ -85,7 +89,13 @@ int Entity::GetEntityID() const
 	return m_entityID;
 }
 
-void Entity::AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, const bool looping, const float frameLength)
+bool Entity::GetActiveState() const
+{
+	return m_activeState;
+}
+
+void Entity::AddAnimation(const std::vector<std::string>& animationFrameIdentifiers, const bool looping,
+                          const float                     frameLength)
 {
 	auto anim = AnimationPlayer(animationFrameIdentifiers, looping, frameLength);
 	m_animations.emplace_back(anim);
@@ -119,19 +129,20 @@ eAnimationState Entity::GetCurrentAnimationState() const
 void Entity::Render(TextureManager& textureManager)
 {
 	textureManager.DrawSprite(
-		GetCurrentAnimationFrameIdentifier(),
-		{ static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
-		}
-	);
+	                          GetCurrentAnimationFrameIdentifier(),
+	                          {
+		                          static_cast<float>(constants::k_screenWidth) / 2.f, m_position.y
+	                          }
+	                         );
 }
 
 void Entity::Render(TextureManager& textureManager, const float playerOffset)
 {
 	textureManager.DrawSprite(
-		GetCurrentAnimationFrameIdentifier(),
-		{
-			m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
-			m_position.y
-		}
-	);
+	                          GetCurrentAnimationFrameIdentifier(),
+	                          {
+		                          m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
+		                          m_position.y
+	                          }
+	                         );
 }

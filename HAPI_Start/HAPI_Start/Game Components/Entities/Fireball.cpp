@@ -1,14 +1,15 @@
 #include "Fireball.h"
+
 Fireball::Fireball(const int entityID) :
 	Entity(
-		eEntityType::e_Fireball,
-		entityID,
-		Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize)
-	),
-	m_activeState(false),
+	       eEntityType::e_Fireball,
+	       entityID,
+	       Vector2(constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize)
+	      ),
 	m_jumpForce(3.f),
 	m_fireBallState(eFireBallState::e_Bouncing)
 {
+	m_activeState = false;
 	AddAnimation(animations::FIREBALL_SPIN, true, 150.f);
 	AddAnimation(animations::FIREBALL_EXPLOSION, false, 25.f);
 }
@@ -41,11 +42,6 @@ void Fireball::Explode()
 	}
 }
 
-bool Fireball::GetActiveState() const
-{
-	return m_activeState;
-}
-
 void Fireball::Update(const float deltaTime)
 {
 	if (m_fireBallState == eFireBallState::e_Bouncing)
@@ -53,11 +49,12 @@ void Fireball::Update(const float deltaTime)
 		Move(deltaTime);
 
 		// Deactivate if fallen off the bottom of the screen
-		if(m_position.y >= constants::k_spriteSheetCellSize  * (constants::k_maxTilesVertical + 1))
+		if (m_position.y >= constants::k_spriteSheetCellSize * (constants::k_maxTilesVertical + 1))
 		{
 			m_activeState = false;
 		}
-	} else
+	}
+	else
 	{
 		if (GetCurrentAnimationState() == eAnimationState::e_Ended)
 		{
@@ -67,23 +64,21 @@ void Fireball::Update(const float deltaTime)
 	PlayAnimation(deltaTime);
 }
 
-void Fireball::CheckEntityCollisions(Entity& other)
-{
-
-}
+void Fireball::CheckEntityCollisions(Entity& other) {}
 
 CollisionBoxes Fireball::GenerateCollisionBoxes()
 {
-	auto entityCollisionBox = CollisionBox({ 0, 0 }, m_size);
+	auto entityCollisionBox = CollisionBox({0, 0}, m_size);
 	entityCollisionBox.Translate(m_position);
 
-	auto topBottomCollisionBox = CollisionBox({ 21, 20 }, { 43, 24 });
+	auto topBottomCollisionBox = CollisionBox({21, 20}, {43, 24});
 	topBottomCollisionBox.Translate(m_position);
 
-	auto leftRightCollisionBox = CollisionBox({ 21, 24 }, { 32, 40 });
+	auto leftRightCollisionBox = CollisionBox({21, 24}, {32, 40});
 	leftRightCollisionBox.Translate(m_position);
 
-	return{ entityCollisionBox,
+	return {
+		entityCollisionBox,
 		topBottomCollisionBox,
 		leftRightCollisionBox,
 		leftRightCollisionBox.Translate({21, 0}),
@@ -93,7 +88,7 @@ CollisionBoxes Fireball::GenerateCollisionBoxes()
 
 void Fireball::Render(TextureManager& textureManager, const float playerOffset)
 {
-	if(m_activeState)
+	if (m_activeState)
 	{
 		Entity::Render(textureManager, playerOffset);
 	}
