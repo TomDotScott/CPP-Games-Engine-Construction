@@ -26,7 +26,7 @@ const std::vector<std::string> animations::PLAYER_SMALL_CLIMB
 
 // NORMAL SIZED PLAYER
 const std::vector<std::string> animations::PLAYER_DEAD{
-	"Player_Dead_Body_1" 
+	"Player_Dead_Body_1"
 };
 
 const std::vector<std::string> animations::PLAYER_IDLE
@@ -81,24 +81,25 @@ const std::vector<std::string> animations::FIREBALL_SPIN
 
 const std::vector<std::string> animations::FIREBALL_EXPLOSION
 {
-	"Explosion_1", "Explosion_2", "Explosion_3", "Explosion_4", "Explosion_5", "Explosion_6", "Explosion_7", "Explosion_8",
+	"Explosion_1", "Explosion_2", "Explosion_3", "Explosion_4", "Explosion_5", "Explosion_6", "Explosion_7",
+	"Explosion_8",
 };
 
 /* COIN BEGIN */
 const std::vector<std::string> animations::COIN_SPIN
 {
-	"Coin_1", "Coin_2" , "Coin_3" , "Coin_4", "Coin_5" , "Coin_6" , "Coin_7" , "Coin_8"
+	"Coin_1", "Coin_2", "Coin_3", "Coin_4", "Coin_5", "Coin_6", "Coin_7", "Coin_8"
 };
 
 /* GEM BEGIN */
 const std::vector<std::string> animations::FIRE_GEM_SPIN
 {
-	"Gem_Fire_1", "Gem_Fire_2" , "Gem_Fire_3" , "Gem_Fire_4" , "Gem_Fire_5" , "Gem_Fire_6"
+	"Gem_Fire_1", "Gem_Fire_2", "Gem_Fire_3", "Gem_Fire_4", "Gem_Fire_5", "Gem_Fire_6"
 };
 
 const std::vector<std::string> animations::GROW_GEM_SPIN
 {
-	"Gem_Grow_1", "Gem_Grow_2" , "Gem_Grow_3" , "Gem_Grow_4" , "Gem_Grow_5" , "Gem_Grow_6"
+	"Gem_Grow_1", "Gem_Grow_2", "Gem_Grow_3", "Gem_Grow_4", "Gem_Grow_5", "Gem_Grow_6"
 };
 
 /* SNAIL BEGIN */
@@ -119,7 +120,7 @@ const std::vector<std::string> animations::SNAIL_SHELL_HIT
 
 const std::vector<std::string> animations::SNAIL_SHELL_CRACK
 {
-	"Snail_Shell", "Snail_Shell_Crack_1", "Snail_Shell_Crack_2" , "Snail_Shell_Crack_3"
+	"Snail_Shell", "Snail_Shell_Crack_1", "Snail_Shell_Crack_2", "Snail_Shell_Crack_3"
 };
 
 /* SLIME BEGIN */

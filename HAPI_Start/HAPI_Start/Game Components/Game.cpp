@@ -73,25 +73,28 @@ void Game::Update()
 			LoadLevel(m_currentLevel, false);
 		}
 
-		if (m_boss.GetIsActive())
+		if (m_player.GetCurrentAlienState() != eAlienState::e_Dead)
 		{
-			m_boss.Update(deltaTime);
-		}
-
-		UpdateEnemies(m_slimes, deltaTime);
-		UpdateEnemies(m_snails, deltaTime);
-		UpdateEnemies(m_coins, deltaTime);
-
-		// UPDATE ANY ACTIVE PICKUPS
-		for (auto& pickup : m_gems)
-		{
-			if (pickup.GetActiveState())
+			if (m_boss.GetIsActive())
 			{
-				pickup.Update(deltaTime);
+				m_boss.Update(deltaTime);
 			}
-		}
 
-		ScrollBackground();
+			UpdateEnemies(m_slimes, deltaTime);
+			UpdateEnemies(m_snails, deltaTime);
+			UpdateEnemies(m_coins, deltaTime);
+
+			// UPDATE ANY ACTIVE PICKUPS
+			for (auto& pickup : m_gems)
+			{
+				if (pickup.GetActiveState())
+				{
+					pickup.Update(deltaTime);
+				}
+			}
+
+			ScrollBackground();
+		}
 	}
 	else
 	{
@@ -304,52 +307,55 @@ int Game::GenerateNextEntityID()
 
 void Game::Input()
 {
-	if (GetKey(eKeyCode::F1))
+	if (m_levelStarted && !m_levelFinished)
 	{
-		LoadLevel(eLevel::e_LevelOne);
-	}
-
-	if (GetKey(eKeyCode::F2))
-	{
-		LoadLevel(eLevel::e_LevelTwo);
-	}
-
-	if (GetKey(eKeyCode::F3))
-	{
-		LoadLevel(eLevel::e_LevelThree);
-	}
-
-	if (GetKey(eKeyCode::SPACE))
-	{
-		if (m_player.GetCurrentAlienState() != eAlienState::e_Jumping)
+		if (GetKey(eKeyCode::F1))
 		{
-			m_player.SetShouldJump(true);
+			LoadLevel(eLevel::e_LevelOne);
 		}
-	}
 
-	if (GetKey(eKeyCode::W))
-	{
-		if (m_player.GetPowerUpState() == ePowerUpState::e_FireThrower)
+		if (GetKey(eKeyCode::F2))
 		{
-			m_player.SetCanShoot(true);
+			LoadLevel(eLevel::e_LevelTwo);
 		}
-	}
-	else
-	{
-		m_player.SetCanShoot(false);
-	}
 
-	eDirection playerMoveDir = eDirection::e_None;
-	if (GetKey(eKeyCode::A) || GetKey(eKeyCode::LEFT))
-	{
-		playerMoveDir = eDirection::e_Left;
-	}
-	else if (GetKey(eKeyCode::D) || GetKey(eKeyCode::RIGHT))
-	{
-		playerMoveDir = eDirection::e_Right;
-	}
+		if (GetKey(eKeyCode::F3))
+		{
+			LoadLevel(eLevel::e_LevelThree);
+		}
 
-	m_player.SetDirection(playerMoveDir);
+		if (GetKey(eKeyCode::W))
+		{
+			if (m_player.GetCurrentAlienState() != eAlienState::e_Jumping)
+			{
+				m_player.SetShouldJump(true);
+			}
+		}
+
+		if (GetKey(eKeyCode::SPACE))
+		{
+			if (m_player.GetPowerUpState() == ePowerUpState::e_FireThrower)
+			{
+				m_player.SetCanShoot(true);
+			}
+		}
+		else
+		{
+			m_player.SetCanShoot(false);
+		}
+
+		eDirection playerMoveDir = eDirection::e_None;
+		if (GetKey(eKeyCode::A) || GetKey(eKeyCode::LEFT))
+		{
+			playerMoveDir = eDirection::e_Left;
+		}
+		else if (GetKey(eKeyCode::D) || GetKey(eKeyCode::RIGHT))
+		{
+			playerMoveDir = eDirection::e_Right;
+		}
+
+		m_player.SetDirection(playerMoveDir);
+	}
 }
 
 bool Game::Initialise(TextureManager& textureManager)
@@ -595,65 +601,65 @@ void Game::CheckCollisions()
 	if (m_player.GetCurrentAlienState() != eAlienState::e_Dead)
 	{
 		HandlePlayerCollisions();
-
-		if (!m_levelFinished)
+	}
+	if (!m_levelFinished)
+	{
+		if (m_tileManager.IsBossOnFloor(m_boss))
 		{
-			if (m_tileManager.IsBossOnFloor(m_boss))
-			{
-				m_boss.SetAlienState(m_boss.GetBattleStarted() ? eAlienState::e_Walking : eAlienState::e_Idle);
-			}
-			else
-			{
-				m_boss.SetAlienState(eAlienState::e_Jumping);
-			}
+			m_boss.SetAlienState(m_boss.GetBattleStarted() ? eAlienState::e_Walking : eAlienState::e_Idle);
+		}
+		else
+		{
+			m_boss.SetAlienState(eAlienState::e_Jumping);
+		}
 
-			m_player.CheckEntityCollisions(m_boss);
+		m_player.CheckEntityCollisions(m_boss);
 
-			// Check the collisions of the boss' active fireballs
-			for (auto& fireball : m_boss.GetFireBallPool())
+		// Check the collisions of the boss' active fireballs
+		for (auto& fireball : m_boss.GetFireBallPool())
+		{
+			if (fireball.GetActiveState())
 			{
-				if (fireball.GetActiveState())
-				{
-					m_tileManager.CheckFireballLevelCollisions(fireball);
-					m_player.CheckEntityCollisions(fireball);
-				}
+				m_tileManager.CheckFireballLevelCollisions(fireball);
+				m_player.CheckEntityCollisions(fireball);
 			}
+		}
 
-			for (auto& slime : m_slimes)
+		for (auto& slime : m_slimes)
+		{
+			m_tileManager.CheckEnemyLevelCollisions(slime);
+		}
+
+		for (auto& snail : m_snails)
+		{
+			m_tileManager.CheckEnemyLevelCollisions(snail);
+		}
+
+		// CHECK ENTITY-ENTITY COLLISIONS
+		CheckEnemyCollisions(m_slimes);
+		CheckEnemyCollisions(m_snails);
+
+		for (auto& c : m_coins)
+		{
+			c.CheckEntityCollisions(m_player);
+		}
+
+		for (auto& pickup : m_gems)
+		{
+			if (pickup.GetActiveState())
 			{
-				m_tileManager.CheckEnemyLevelCollisions(slime);
+				m_player.CheckEntityCollisions(pickup);
+				pickup.CheckEntityCollisions(m_player);
 			}
+		}
 
-			for (auto& snail : m_snails)
-			{
-				m_tileManager.CheckEnemyLevelCollisions(snail);
-			}
-
-			// CHECK ENTITY-ENTITY COLLISIONS
-			CheckEnemyCollisions(m_slimes);
-			CheckEnemyCollisions(m_snails);
-
-			for (auto& c : m_coins)
-			{
-				c.CheckEntityCollisions(m_player);
-			}
-
-			for (auto& pickup : m_gems)
-			{
-				if (pickup.GetActiveState())
-				{
-					m_player.CheckEntityCollisions(pickup);
-					pickup.CheckEntityCollisions(m_player);
-				}
-			}
-
-			if (m_endLever.GetIsActive())
-			{
-				m_endLever.CheckEntityCollisions(m_player);
-			}
+		if (m_endLever.GetIsActive())
+		{
+			m_endLever.CheckEntityCollisions(m_player);
 		}
 	}
 }
+
 
 void Game::HandlePlayerCollisions()
 {

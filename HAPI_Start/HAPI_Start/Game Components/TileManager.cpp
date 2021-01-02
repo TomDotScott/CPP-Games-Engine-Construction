@@ -289,13 +289,16 @@ void TileManager::CheckEnemyLevelCollisions(Enemy& enemy)
 {
 	const auto enemyPos = enemy.GetPosition();
 
-	const uint64_t enemyXTile = static_cast<uint64_t>(enemyPos.x) / constants::k_spriteSheetCellSize +
+	const int enemyX = static_cast<int>(enemyPos.x) / constants::k_spriteSheetCellSize +
 	                            constants::k_maxTilesHorizontal / 2;
 
-	const uint64_t enemyYTile = static_cast<int>(enemyPos.y) / constants::k_spriteSheetCellSize;
-
-	if (enemyYTile > 0 && enemyYTile + 1 < constants::k_maxTilesVertical)
+	const int enemyY = static_cast<int>(enemyPos.y) / constants::k_spriteSheetCellSize;
+	
+	if (enemyY > 0 && enemyY + 1 < constants::k_maxTilesVertical && enemyX > 0)
 	{
+		const auto enemyXTile = static_cast<uint64_t>(enemyX);
+		const auto enemyYTile = static_cast<uint64_t>(enemyY);
+		
 		// Stop falling if there is a walkable block below
 		if (m_levelData[enemyYTile + 1][enemyXTile].m_canCollide)
 		{

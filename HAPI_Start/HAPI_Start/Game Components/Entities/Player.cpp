@@ -226,7 +226,7 @@ int Player::GetScore() const
 void Player::AddCoin()
 {
 	m_coinCount++;
-	if (m_coinCount == 100)
+	if (m_coinCount >= 100)
 	{
 		m_livesRemaining++;
 		m_coinCount = 0;
@@ -323,24 +323,26 @@ CollisionBoxes Player::GenerateCollisionBoxes()
 
 void Player::CheckEntityCollisions(Entity& other)
 {
-	const auto& currentCollisionBoxes = GenerateCollisionBoxes();
-	const auto& otherEntColBox        = other.GetCurrentCollisionBoxes();
-	// Check the global boxes
-	if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
+	if (m_currentAlienState != eAlienState::e_Dead)
 	{
-		switch (other.GetEntityType())
+		const auto& currentCollisionBoxes = GenerateCollisionBoxes();
+		const auto& otherEntColBox = other.GetCurrentCollisionBoxes();
+		// Check the global boxes
+		if (currentCollisionBoxes.m_globalBounds.Overlapping(otherEntColBox.m_globalBounds))
 		{
+			switch (other.GetEntityType())
+			{
 			case eEntityType::e_GrowGem:
 			case eEntityType::e_FireGem:
 				// collide from any angle
 				if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-				    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
-				    currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
-				    currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+					currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+					currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+					currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 				{
 					PowerUp(other.GetEntityType() == eEntityType::e_FireGem
-						        ? ePowerUpType::e_FireThrower
-						        : ePowerUpType::e_Grower);
+						? ePowerUpType::e_FireThrower
+						: ePowerUpType::e_Grower);
 				}
 				break;
 			case eEntityType::e_Slime:
@@ -357,7 +359,7 @@ void Player::CheckEntityCollisions(Entity& other)
 					}
 					// If touching the left or right...
 					if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-					    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+						currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
 					{
 						if (!m_immune && !m_isDead)
 						{
@@ -383,11 +385,11 @@ void Player::CheckEntityCollisions(Entity& other)
 
 					// Only deal damage to the player if the snail is moving or sliding in its shell
 					if (snail->GetSnailState() == eSnailState::e_Sliding || snail->GetSnailState() ==
-					    eSnailState::e_Walking)
+						eSnailState::e_Walking)
 					{
 						// If touching the left or right...
 						if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-						    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
+							currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox))
 						{
 							if (!m_immune && !m_isDead)
 							{
@@ -400,9 +402,9 @@ void Player::CheckEntityCollisions(Entity& other)
 			case eEntityType::e_Fireball:
 			case eEntityType::e_Boss:
 				if (currentCollisionBoxes.m_leftCollisionBox.Overlapping(otherEntColBox.m_rightCollisionBox) ||
-				    currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
-				    currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
-				    currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
+					currentCollisionBoxes.m_rightCollisionBox.Overlapping(otherEntColBox.m_leftCollisionBox) ||
+					currentCollisionBoxes.m_topCollisionBox.Overlapping(otherEntColBox.m_bottomCollisionBox) ||
+					currentCollisionBoxes.m_bottomCollisionBox.Overlapping(otherEntColBox.m_topCollisionBox))
 				{
 					if (!m_immune && !m_isDead)
 					{
@@ -411,6 +413,7 @@ void Player::CheckEntityCollisions(Entity& other)
 				}
 			default:
 				break;
+			}
 		}
 	}
 }
@@ -419,16 +422,10 @@ void Player::Move(const float deltaTime)
 {
 	if (m_currentDirection == eDirection::e_Right && m_moveDirectionLimit != eDirection::e_Right)
 	{
-		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping
-			                                   ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) *
-			                                     m_movementSpeed
-			                                   : m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
+		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping ? 0.8f * m_movementSpeed : m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
 	}
 	else if (m_currentDirection == eDirection::e_Left && m_moveDirectionLimit != eDirection::e_Left)
 	{
-		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping
-			                                   ? (m_currentPowerUpState == ePowerUpState::e_Small ? 0.5f : 0.8f) * -
-			                                     m_movementSpeed
-			                                   : -m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
+		m_position = m_position + Vector2((m_currentAlienState == eAlienState::e_Jumping ? 0.8f * -m_movementSpeed : -m_movementSpeed) * 100.f, m_velocity.y) * deltaTime;
 	}
 }

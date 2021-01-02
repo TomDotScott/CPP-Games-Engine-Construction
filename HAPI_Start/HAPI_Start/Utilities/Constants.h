@@ -27,7 +27,7 @@ namespace constants
 	constexpr float k_levelMinX             = 256.f;
 	constexpr float k_levelOneMaxX          = 13376.f;
 	constexpr float k_levelTwoMaxX          = 12736.f;
-	constexpr float k_levelThreeMaxX        = 25792.f;
+	constexpr float k_levelThreeMaxX        = 26048.f;
 
 	inline int rand_range(const int min, const int max)
 	{
