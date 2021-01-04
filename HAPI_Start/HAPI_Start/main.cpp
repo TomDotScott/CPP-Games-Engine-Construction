@@ -26,7 +26,7 @@ void HAPI_Main()
 
 	HAPI.SetIcon(appIcon.m_textureData, 128, 128);
 
-	STATE_MANAGER.OnCreate(eState::e_MainMenu);
+	STATE_MANAGER.OnCreate(eState::e_Game);
 
 	while (HAPI.Update())
 	{

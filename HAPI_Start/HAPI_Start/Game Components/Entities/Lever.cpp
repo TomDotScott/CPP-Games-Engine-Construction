@@ -7,7 +7,6 @@ Lever::Lever(const int      entityID,
 	       {constants::k_spriteSheetCellSize, constants::k_spriteSheetCellSize},
 	       eDirection::e_None,
 	       startPosition),
-	m_active(false),
 	m_leverState(eLeverState::e_Static)
 {
 	AddAnimation(animations::LEVER);
@@ -39,19 +38,9 @@ void Lever::CheckEntityCollisions(Entity& other)
 	}
 }
 
-bool Lever::GetIsActive() const
-{
-	return m_active;
-}
-
 eLeverState Lever::GetLeverState() const
 {
 	return m_leverState;
-}
-
-void Lever::SetActive(const bool active)
-{
-	m_active = active;
 }
 
 CollisionBoxes Lever::GenerateCollisionBoxes()

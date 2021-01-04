@@ -16,6 +16,7 @@ public:
 	Music& operator=(Music&& other) noexcept = default;
 
 	void Play();
+	void Stop() const;
 	void UpdateBufferStream() const;
 
 private:

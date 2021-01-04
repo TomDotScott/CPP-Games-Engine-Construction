@@ -15,6 +15,7 @@
 #include "Entities/Player.h"
 #include "Text.h"
 #include "TileManager.h"
+#include "Entities/Portal.h"
 
 class Game final : public State
 {
@@ -33,7 +34,8 @@ private:
 	{
 		e_LevelOne,
 		e_LevelTwo,
-		e_LevelThree
+		e_LevelThree,
+		e_WarpZone
 	};
 
 	TileManager m_tileManager;
@@ -49,7 +51,6 @@ private:
 	bool m_leverPulled;
 
 	Vector2    m_backgroundPosition;
-	eDirection m_backgroundMoveDir;
 
 	std::vector<Slime>     m_slimes;
 	std::vector<Snail>     m_snails;
@@ -58,6 +59,7 @@ private:
 	Flag                   m_flag;
 	Lever                  m_endLever;
 	Boss                   m_boss;
+	Portal m_portal;
 
 	Text m_scoreText;
 	Text m_livesText;
@@ -66,7 +68,7 @@ private:
 	Text m_timerText;
 
 	void               Input() override;
-	bool               LoadLevel(eLevel level, bool playerWon = true);
+	bool               LoadLevel(eLevel level, bool playerWon = true, const Vector2& playerPosition = Vector2::CENTRE);
 	void               LoadNextLevel();
 	void               GameOver(bool playerWon) const;
 	void               CheckCollisions();

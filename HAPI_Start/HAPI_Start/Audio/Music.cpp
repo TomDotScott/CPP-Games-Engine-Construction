@@ -104,8 +104,18 @@ void Music::Play()
 	// Queue and start playback
 	alSourceQueueBuffers(m_source, i, m_buffers);
 	alSourcePlay(m_source);
-
+	
 	assert(alGetError() != AL_NO_ERROR);
+}
+
+void Music::Stop() const
+{
+	// Clear any errors
+	alGetError();
+
+	alSourceStop(m_source);
+
+	alGetError();
 }
 
 void Music::UpdateBufferStream() const

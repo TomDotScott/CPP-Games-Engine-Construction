@@ -171,3 +171,8 @@ const std::vector<std::string> animations::BOSS_WALK
 const std::vector<std::string> animations::BOSS_JUMP{
 	"Boss_Jump_Body_1"
 };
+
+/* PORTAL BEGIN */
+const std::vector<std::string> animations::PORTAL{
+	"Portal_1", "Portal_2", "Portal_3", "Portal_4", "Portal_5"
+};

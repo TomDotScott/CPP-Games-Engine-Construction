@@ -90,6 +90,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					case eTileType::e_Mushroom1:
 					case eTileType::e_Mushroom2:
 					case eTileType::e_Rock:
+					case eTileType::e_SecretSign:
 						row.emplace_back(tileType, tilePosition, false);
 						break;
 
@@ -99,6 +100,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 					case eTileType::e_Slime:
 					case eTileType::e_Coin:
 					case eTileType::e_Snail:
+					case eTileType::e_Portal:
 						m_entityLocations.emplace_back(static_cast<const eEntityType>(tileIntFromCSV), tilePosition);
 						row.emplace_back(eTileType::e_Air, tilePosition, false);
 						break;
@@ -109,6 +111,7 @@ bool TileManager::LoadLevel(const std::string& filename)
 	}
 	file.close();
 
+	
 	return true;
 }
 
@@ -224,11 +227,15 @@ void TileManager::RenderTiles(TextureManager& textureManager, const float player
 						case eTileType::e_StoneCentre:
 							spriteIdentifier = "Stone_Centre";
 							break;
+						case eTileType::e_SecretSign:
+							spriteIdentifier = "Fireflap";
+							break;
 						case eTileType::e_Slime:
 						case eTileType::e_Coin:
 						case eTileType::e_Snail:
 						case eTileType::e_Boss:
 						case eTileType::e_Lever:
+						case eTileType::e_Portal:
 							break;
 					}
 					textureManager.DrawSprite(spriteIdentifier, tilePos);

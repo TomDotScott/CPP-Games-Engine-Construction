@@ -76,7 +76,14 @@ bool SoundManager::RemoveMusic(const std::string& musicName)
 
 void SoundManager::PlayMusic(const std::string& musicName)
 {
-	m_musicBuffer[musicName]->Play();
+	// Stop playing the current track
+	m_musicBuffer[musicName]->Stop();
+
+	// Play the new track if it exists
+	if (m_musicBuffer[musicName])
+	{
+		m_musicBuffer[musicName]->Play();
+	}
 	m_currentMusicTrackIdentifier = musicName;
 }
 
@@ -86,6 +93,11 @@ void SoundManager::UpdateMusicBufferStream()
 	{
 		m_musicBuffer[m_currentMusicTrackIdentifier]->UpdateBufferStream();
 	}
+}
+
+const std::string& SoundManager::GetCurrentMusicIdentifier() const
+{
+	return m_currentMusicTrackIdentifier;
 }
 
 SoundManager::SoundManager() : m_soundDevice(SoundDevice::GetInstance()) {}

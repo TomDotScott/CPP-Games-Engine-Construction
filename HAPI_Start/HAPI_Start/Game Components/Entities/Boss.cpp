@@ -11,7 +11,6 @@ Boss::Boss(const int      entityID,
 	      eDirection::e_Left
 	     ),
 	m_player(player),
-	m_active(false),
 	m_battleStarted(false)
 {
 	AddAnimation(animations::BOSS_IDLE, true, 1000.f);
@@ -97,7 +96,7 @@ void Boss::CheckEntityCollisions(Entity& other)
 void Boss::Render(TextureManager& textureManager, const float playerOffset)
 {
 	// To save code duplication, call the parent function
-	if (m_active)
+	if (m_activeState)
 	{
 		Alien::Render(textureManager, playerOffset);
 
@@ -108,19 +107,14 @@ void Boss::Render(TextureManager& textureManager, const float playerOffset)
 	}
 }
 
-void Boss::SetActive(const bool active)
-{
-	m_active = active;
-}
-
-bool Boss::GetIsActive() const
-{
-	return m_active;
-}
-
 bool Boss::GetBattleStarted() const
 {
 	return m_battleStarted;
+}
+
+void Boss::SetBattleStarted(const bool battleStarted)
+{
+	m_battleStarted = battleStarted;
 }
 
 CollisionBoxes Boss::GenerateCollisionBoxes()

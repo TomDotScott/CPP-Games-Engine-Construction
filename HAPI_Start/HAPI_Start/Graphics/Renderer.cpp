@@ -39,8 +39,7 @@ namespace renderer
 		                const Vector2&   texturePosition)
 		{
 			HAPISPACE::BYTE* screenStart{
-				screen + (static_cast<uint64_t>(texturePosition.y) * constants::k_screenWidth + static_cast<uint64_t>(
-					          texturePosition.x)) * 4
+				screen + (static_cast<uint64_t>(texturePosition.y) * constants::k_screenWidth + static_cast<uint64_t>(texturePosition.x)) * 4
 			};
 
 			HAPISPACE::BYTE* textureStart{textureData};

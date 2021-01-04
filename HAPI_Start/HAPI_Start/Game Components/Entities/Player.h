@@ -27,7 +27,7 @@ public:
 	void AddToScore(int points);
 	void AddCoin();
 	void Kill();
-	void Reset(bool passLevel = false);
+	void Reset(bool passLevel = false, const Vector2& startPosition = Vector2::CENTRE);
 
 	ePowerUpState GetPowerUpState() const;
 	int           GetScore() const;

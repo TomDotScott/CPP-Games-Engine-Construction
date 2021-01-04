@@ -184,6 +184,12 @@ void TextureManager::Initialise(HAPISPACE::BYTE* screenPtr)
 	CreateSprite("Lever_1");
 	CreateSprite("Lever_2");
 	CreateSprite("Lever_3");
+	CreateSprite("Portal_1");
+	CreateSprite("Portal_2");
+	CreateSprite("Portal_3");
+	CreateSprite("Portal_4");
+	CreateSprite("Portal_5");
+	CreateSprite("Fireflap");
 }
 
 void TextureManager::ClearScreen(HAPISPACE::HAPI_TColour col) const

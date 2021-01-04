@@ -34,7 +34,8 @@ enum class eEntityType
 	e_Coin = 66,
 	e_Snail = 68,
 	e_Boss = 73,
-	e_Lever = 75
+	e_Lever = 75,
+	e_Portal = 78
 };
 
 // Every entity will have 4 collision areas as well as

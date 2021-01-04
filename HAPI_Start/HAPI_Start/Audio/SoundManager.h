@@ -20,6 +20,8 @@ public:
 	// avoid under-running
 	void UpdateMusicBufferStream();
 
+	const std::string& GetCurrentMusicIdentifier() const;
+	
 	// Singleton, so non-copyable and non-movable
 	SoundManager(const SoundManager& other)                = delete;
 	SoundManager(SoundManager&& other) noexcept            = delete;

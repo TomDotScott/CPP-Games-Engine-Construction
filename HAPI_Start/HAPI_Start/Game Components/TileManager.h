@@ -86,7 +86,9 @@ enum class eTileType
 	e_Bridge = 74,
 	e_Lever = 75,
 	e_StoneCentre = 76,
-	e_DestructibleStone
+	e_DestructibleStone = 77,
+	e_Portal = 78,
+	e_SecretSign = 79
 };
 
 inline const char* to_string(const eTileType e)
@@ -130,6 +132,8 @@ inline const char* to_string(const eTileType e)
 		case eTileType::e_Lever: return "e_Lever";
 		case eTileType::e_StoneCentre: return "e_StoneCentre";
 		case eTileType::e_DestructibleStone: return "e_DestructibleStone";
+		case eTileType::e_Portal: return "e_Portal";
+		case eTileType::e_SecretSign: return "e_SecretSign";
 	}
 	return "Unknown";
 }

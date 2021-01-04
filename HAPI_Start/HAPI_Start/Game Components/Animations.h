@@ -60,4 +60,7 @@ namespace animations
 	extern const std::vector<std::string> BOSS_IDLE;
 	extern const std::vector<std::string> BOSS_WALK;
 	extern const std::vector<std::string> BOSS_JUMP;
+
+	// PORTAL
+	extern const std::vector<std::string> PORTAL;
 }

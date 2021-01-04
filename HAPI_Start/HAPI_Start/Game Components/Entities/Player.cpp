@@ -268,9 +268,9 @@ void Player::Kill()
 	}
 }
 
-void Player::Reset(const bool passLevel)
+void Player::Reset(const bool passLevel, const Vector2& startPosition)
 {
-	m_position         = Vector2::CENTRE;
+	m_position         = startPosition;
 	m_velocity         = Vector2::ZERO;
 	m_currentDirection = eDirection::e_None;
 
