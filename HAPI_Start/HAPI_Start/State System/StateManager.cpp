@@ -18,16 +18,16 @@ void StateManager::ChangeState(const eState state)
 	switch (state)
 	{
 		case eState::e_MainMenu:
-			SetState(new MainMenu(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			SetState(new MainMenu());
 			break;
 		case eState::e_ControlsMenu:
-			SetState(new ControlsMenu(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			SetState(new ControlsMenu());
 			break;
 		case eState::e_Game:
-			SetState(new Game(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			SetState(new Game());
 			break;
 		case eState::e_GameOver:
-			SetState(new GameOver(HAPI.GetKeyboardData(), HAPI.GetControllerData(0)));
+			SetState(new GameOver());
 			break;
 		default:
 			break;

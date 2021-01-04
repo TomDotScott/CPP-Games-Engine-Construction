@@ -5,7 +5,7 @@
 class GameOver final : public State
 {
 public:
-	GameOver(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
+	GameOver();
 	bool Initialise(TextureManager& textureManager) override;
 	bool Unload(TextureManager& textureManager) override;
 	void Input() override;

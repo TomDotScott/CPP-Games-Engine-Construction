@@ -1,8 +1,10 @@
 #include "State.h"
 
-State::State(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
-	m_keyboardData(keyboardData),
-	m_controllerData(controllerData) {}
+#include "HAPI_lib.h"
+
+State::State() :
+	m_keyboardData(HAPI.GetKeyboardData())
+{}
 
 float State::DeltaTime(clock_t& gameClock)
 {

@@ -4,9 +4,8 @@
 #include "../Graphics/TextureManager.h"
 #include "../State System/StateManager.h"
 
-ControlsMenu::ControlsMenu(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
-                           const HAPISPACE::HAPI_TControllerData& controllerData) :
-	State(keyboardData, controllerData),
+ControlsMenu::ControlsMenu() :
+	State(),
 	m_backText("MAIN MENU", 
 		{
 		           Vector2::CENTRE.x - 2 * constants::k_spriteSheetCellSize,
@@ -26,7 +25,8 @@ bool ControlsMenu::Unload(TextureManager& textureManager)
 
 void ControlsMenu::Input()
 {
-	if (GetKey(eKeyCode::SPACE))
+	const HAPISPACE::HAPI_TControllerData& controllerData = HAPI.GetControllerData(0);
+	if (GetKey(eKeyCode::SPACE) || GetKey(eKeyCode::ENTER) || controllerData.digitalButtons[HK_DIGITAL_A])
 	{
 		STATE_MANAGER.ChangeState(eState::e_MainMenu);
 	}

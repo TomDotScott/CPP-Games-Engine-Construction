@@ -4,9 +4,8 @@
 #include "../Graphics/TextureManager.h"
 #include "../State System/StateManager.h"
 
-GameOver::GameOver(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
-                   const HAPISPACE::HAPI_TControllerData& controllerData) :
-	State(keyboardData, controllerData),
+GameOver::GameOver() :
+	State(),
 	m_scoreText("123456",
 	            {
 		            Vector2::CENTRE.x - constants::k_spriteSheetCellSize * 3, constants::k_spriteSheetCellSize * 4
@@ -61,7 +60,9 @@ bool GameOver::Unload(TextureManager& textureManager)
 
 void GameOver::Input()
 {
-	if (GetKey(eKeyCode::SPACE))
+	const HAPISPACE::HAPI_TControllerData& controllerData = HAPI.GetControllerData(0);
+
+	if (GetKey(eKeyCode::SPACE) || GetKey(eKeyCode::ENTER) || controllerData.digitalButtons[HK_DIGITAL_A])
 	{
 		STATE_MANAGER.ChangeState(eState::e_MainMenu);
 	}

@@ -20,7 +20,7 @@
 class Game final : public State
 {
 public:
-	Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
+	Game();
 
 	bool Initialise(TextureManager& textureManager) override;
 	bool Unload(TextureManager& textureManager) override;

@@ -5,9 +5,8 @@
 class ControlsMenu final : public State
 {
 public:
-	ControlsMenu(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
-	             const HAPISPACE::HAPI_TControllerData& controllerData);
-	
+	ControlsMenu();
+
 	bool Initialise(TextureManager& textureManager) override;
 	bool Unload(TextureManager& textureManager) override;
 	void Input() override;

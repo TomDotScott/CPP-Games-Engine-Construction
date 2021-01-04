@@ -8,8 +8,7 @@ class TextureManager;
 class State
 {
 public:
-	explicit State(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
-	               const HAPISPACE::HAPI_TControllerData& controllerData);
+	explicit State();
 
 	virtual ~State()                         = default;
 	State(const State& other)                = delete;
@@ -26,7 +25,6 @@ public:
 
 protected:
 	const HAPISPACE::HAPI_TKeyboardData&   m_keyboardData;
-	const HAPISPACE::HAPI_TControllerData& m_controllerData;
 
 	bool GetKey(eKeyCode keyCode) const;
 };

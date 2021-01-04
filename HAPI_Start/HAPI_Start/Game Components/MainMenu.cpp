@@ -5,9 +5,8 @@
 #include "../State System/StateManager.h"
 #include <fstream>
 
-MainMenu::MainMenu(const HAPISPACE::HAPI_TKeyboardData&   keyboardData,
-                   const HAPISPACE::HAPI_TControllerData& controllerData) :
-	State(keyboardData, controllerData),
+MainMenu::MainMenu() :
+	State(),
 	m_highScoreText("HISCORE 123456", {Vector2::CENTRE.x - 224, 64}),
 	m_playText("PLAY", {
 		           Vector2::CENTRE.x - constants::k_spriteSheetCellSize,
@@ -49,17 +48,19 @@ bool MainMenu::Unload(TextureManager& textureManager)
 
 void MainMenu::Input()
 {
-	if (GetKey(eKeyCode::W))
+	const HAPISPACE::HAPI_TControllerData& controllerData = HAPI.GetControllerData(0);
+	
+	if (GetKey(eKeyCode::W) || controllerData.digitalButtons[HK_DIGITAL_DPAD_UP])
 	{
 		m_selected = eSelected::e_Play;
 	}
 
-	if (GetKey(eKeyCode::S))
+	if (GetKey(eKeyCode::S) || controllerData.digitalButtons[HK_DIGITAL_DPAD_DOWN])
 	{
 		m_selected = eSelected::e_Controls;
 	}
 
-	if (GetKey(eKeyCode::SPACE) || GetKey(eKeyCode::ENTER))
+	if (GetKey(eKeyCode::SPACE) || GetKey(eKeyCode::ENTER) || controllerData.digitalButtons[HK_DIGITAL_A])
 	{
 		switch (m_selected)
 		{

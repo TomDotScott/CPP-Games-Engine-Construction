@@ -11,7 +11,7 @@ enum class eSelected
 class MainMenu final : public State
 {
 public:
-	MainMenu(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData);
+	MainMenu();
 	bool Initialise(TextureManager& textureManager) override;
 	bool Unload(TextureManager& textureManager) override;
 	void Input() override;

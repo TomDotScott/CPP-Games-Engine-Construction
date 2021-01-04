@@ -4,8 +4,8 @@
 #include "../Audio/SoundManager.h"
 #include "../State System/StateManager.h"
 
-Game::Game(const HAPISPACE::HAPI_TKeyboardData& keyboardData, const HAPISPACE::HAPI_TControllerData& controllerData) :
-	State(keyboardData, controllerData),
+Game::Game() :
+	State(),
 	m_player({ Vector2::CENTRE }),
 	m_levelTimer(200.f),
 	m_totalElapsedTime(0.f),
@@ -63,7 +63,7 @@ void Game::Update()
 		{
 			m_levelStarted = true;
 		}
-		
+
 		// Kill the player if they are off screen
 		if (m_player.GetPosition().y > constants::k_screenHeight)
 		{
@@ -93,7 +93,7 @@ void Game::Update()
 			if (m_portal.GetActiveState())
 			{
 				m_portal.Update(deltaTime);
-				if(m_portal.GetShouldTeleportPlayer())
+				if (m_portal.GetShouldTeleportPlayer())
 				{
 					LoadLevel(eLevel::e_LevelOne, true, { 6656.f, Vector2::CENTRE.y });
 				}
@@ -345,7 +345,9 @@ void Game::Input()
 			LoadLevel(eLevel::e_LevelThree);
 		}
 
-		if (GetKey(eKeyCode::W))
+		const HAPISPACE::HAPI_TControllerData& controllerData = HAPI.GetControllerData(0);
+		
+		if (GetKey(eKeyCode::W) || controllerData.digitalButtons[HK_DIGITAL_A])
 		{
 			if (m_player.GetCurrentAlienState() != eAlienState::e_Jumping)
 			{
@@ -353,7 +355,7 @@ void Game::Input()
 			}
 		}
 
-		if (GetKey(eKeyCode::SPACE))
+		if (GetKey(eKeyCode::SPACE) || controllerData.digitalButtons[HK_DIGITAL_B])
 		{
 			if (m_player.GetPowerUpState() == ePowerUpState::e_FireThrower)
 			{
@@ -365,10 +367,10 @@ void Game::Input()
 		}
 
 		eDirection playerMoveDir = eDirection::e_None;
-		if (GetKey(eKeyCode::A) || GetKey(eKeyCode::LEFT))
+		if (GetKey(eKeyCode::A) || GetKey(eKeyCode::LEFT) || controllerData.digitalButtons[HK_DIGITAL_DPAD_LEFT])
 		{
 			playerMoveDir = eDirection::e_Left;
-		} else if (GetKey(eKeyCode::D) || GetKey(eKeyCode::RIGHT))
+		} else if (GetKey(eKeyCode::D) || GetKey(eKeyCode::RIGHT) || controllerData.digitalButtons[HK_DIGITAL_DPAD_RIGHT])
 		{
 			playerMoveDir = eDirection::e_Right;
 		}
@@ -465,6 +467,8 @@ void Game::LoadNextLevel()
 		break;
 	case eLevel::e_LevelThree:
 		GameOver(true);
+		break;
+	default:
 		break;
 	}
 }
