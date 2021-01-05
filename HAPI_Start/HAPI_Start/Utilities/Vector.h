@@ -1,15 +1,34 @@
 ﻿#pragma once
 #include <iostream>
 
+/**
+ * \brief A mathematical vector class of 2 dimensions
+ */
 class Vector2
 {
 public:
+	/**
+	 * \brief Constructs a Vector2 object
+	 * \param x the initial x value
+	 * \param y the initial y value
+	 */
 	Vector2(float x = 0.f, float y = 0.f);
 
+	/**
+	 * \brief Limits the x and y components to a maximum
+	 * \param max the x and y maximum for the components
+	 */
 	void Limit(Vector2 max);
 
+	/**
+	 * \brief Calculates the magnitude of the vector
+	 * \return The magnitude of the vector
+	 */
 	float Magnitude() const;
 
+	/**
+	 * \brief Normalises the vector so that the magnitude is between 0 and 1
+	 */
 	void Normalised();
 
 	friend std::ostream& operator<<(std::ostream& os, const Vector2& dt);

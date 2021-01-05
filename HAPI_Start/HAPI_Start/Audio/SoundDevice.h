@@ -14,9 +14,9 @@ public:
 	SoundDevice& operator=(const SoundDevice& other)     = delete;
 	SoundDevice& operator=(SoundDevice&& other) noexcept = delete;
 private:
-	SoundDevice();
-	~SoundDevice();
-
 	ALCdevice*  m_alcDevice;
 	ALCcontext* m_alcContext;
+
+	SoundDevice();
+	~SoundDevice();
 };

@@ -9,6 +9,7 @@ SoundSource::SoundSource() :
 	m_loopSound(false),
 	m_buffer(0)
 {
+	// Generate and set the source and the values
 	alGenSources(1, &m_source);
 	alSourcef(m_source, AL_PITCH, m_pitch);
 	alSourcef(m_source, AL_GAIN, m_gain);

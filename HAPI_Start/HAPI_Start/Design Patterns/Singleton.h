@@ -6,7 +6,7 @@ class Singleton
 public:
 	static T& GetInstance()
 	{
-		static T instance;
+		static T instance{};
 		return instance;
 	}
 

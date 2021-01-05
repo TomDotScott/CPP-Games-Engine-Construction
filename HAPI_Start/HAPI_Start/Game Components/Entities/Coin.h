@@ -1,6 +1,11 @@
 #pragma once
 #include "Entity.h"
 
+/**
+ * \brief Coins are entities that are placed around the world.
+ * They disappear when touched by the player, giving him a coin
+ * as well as a points bonus for collecting them
+ */
 class Coin final : public Entity
 {
 public:

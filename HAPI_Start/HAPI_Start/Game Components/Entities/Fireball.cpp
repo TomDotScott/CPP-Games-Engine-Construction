@@ -18,7 +18,7 @@ void Fireball::Initialise(const Vector2 startPosition, const eDirection starting
 {
 	m_fireBallState = eFireBallState::e_Bouncing;
 	SetAnimationIndex(static_cast<int>(m_fireBallState));
-	m_animations[m_animationIndex].ResetAnimation();
+	m_animations[m_animationIndex].Reset();
 	m_position = startPosition;
 	m_velocity = (startingDirection == eDirection::e_Right ? Vector2::LEFT : Vector2::RIGHT) + Vector2::DOWN;
 	m_velocity.x *= 3.f;
@@ -37,7 +37,7 @@ void Fireball::Explode()
 	{
 		m_fireBallState = eFireBallState::e_Exploding;
 		SetAnimationIndex(static_cast<int>(m_fireBallState));
-		m_animations[m_animationIndex].ResetAnimation();
+		m_animations[m_animationIndex].Reset();
 		PlaySFX("Fireball_Explosion");
 	}
 }

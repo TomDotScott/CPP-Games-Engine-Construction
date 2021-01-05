@@ -44,7 +44,7 @@ void Enemy::SetIsFalling(const bool isFalling)
 	m_isFalling = isFalling;
 }
 
-void Enemy::CheckSnailShellCollisions(CollisionBoxes& snailShellCollisionBoxes)
+void Enemy::CheckSnailShellCollisions(const CollisionBoxes& snailShellCollisionBoxes)
 {
 	if (m_currentEntityState == eEntityState::e_Alive)
 	{

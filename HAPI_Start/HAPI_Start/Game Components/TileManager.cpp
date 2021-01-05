@@ -251,7 +251,7 @@ CollisionData& TileManager::CheckAlienLevelCollisions(Alien& alien)
 
 	const CollisionBoxes playerCollisionBoxes = alien.GetCurrentCollisionBoxes();
 
-	m_alienCollisionData.m_headCollision = CheckAlienHeadCollisions(alien, playerCollisionBoxes);
+	m_alienCollisionData.m_topCollision = CheckAlienHeadCollisions(alien, playerCollisionBoxes);
 
 	m_alienCollisionData.m_leftCollision = CheckAlienLeftCollisions(alien, playerCollisionBoxes);
 

@@ -3,6 +3,11 @@
 
 class Player;
 
+/**
+ * \brief The boss is an alien that appears on the final level of the demo
+ * It has basic AI behaviour, waiting for the player to approach, and jumping
+ * and shooting when the player is within range to try and kill him
+ */
 class Boss final : public Alien
 {
 public:
@@ -12,7 +17,12 @@ public:
 	void CheckEntityCollisions(Entity& other) override;
 	void Render(TextureManager& textureManager, float playerOffset) override;
 
+	/**
+	 * \brief Gets whether the player is close enough to start the "battle"
+	 * \return True if the player is close enough for the boss to start moving
+	 */
 	bool GetBattleStarted() const;
+	
 	void SetBattleStarted(bool battleStarted);
 
 private:

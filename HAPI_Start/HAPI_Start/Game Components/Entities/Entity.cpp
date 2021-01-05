@@ -136,12 +136,12 @@ void Entity::Render(TextureManager& textureManager)
 	                         );
 }
 
-void Entity::Render(TextureManager& textureManager, const float playerOffset)
+void Entity::Render(TextureManager& textureManager, const float xOffset)
 {
 	textureManager.DrawSprite(
 	                          GetCurrentAnimationFrameIdentifier(),
 	                          {
-		                          m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - playerOffset,
+		                          m_position.x + (static_cast<float>(constants::k_screenWidth) / 2.f) - xOffset,
 		                          m_position.y
 	                          }
 	                         );

@@ -3,10 +3,24 @@
 #include "../Utilities/Constants.h"
 #include "../Utilities/Vector.h"
 
+/**
+ * \brief The renderer namespace details the rendering of both
+ * textures and sprites to the screen
+ */
 namespace renderer
 {
+	/**
+	 * \brief The texture namespace details the functions that can be used
+	 * render textures to the screen
+	 */
 	namespace texture
 	{
+		/**
+		 * \brief Flips the texture along the vertical axis
+		 * \param screen A pointer to the screen data
+		 * \param textureData The data of the texture to be flipped
+		 * \param textureSize The size of the texture to be flipped
+		 */
 		void flip(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, const Vector2& textureSize)
 		{
 			const int width  = static_cast<int>(textureSize.x);
@@ -35,6 +49,15 @@ namespace renderer
 			}
 		}
 
+		/**
+		 * \brief Performs a fast blit to the screen accounting for potential alpha channels
+		 * in the texture
+		 * \param screen A pointer to the screen data
+		 * \param textureData The data of the texture to be blitted
+		 * \param textureSize The size of the texture to be blitted
+		 * \param texturePosition The position in screen-space of the
+		 * texture to be blitted
+		 */
 		void alpha_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, const Vector2& textureSize,
 		                const Vector2&   texturePosition)
 		{
@@ -74,6 +97,14 @@ namespace renderer
 			}
 		}
 
+		/**
+		 * \brief Performs a clip-blit (where the texture is partially offscreen)
+		 * to the texture data
+		 * \param screen A pointer to the screen data
+		 * \param textureData The data of the texture
+		 * \param textureSize The size of the texture
+		 * \param texturePosition The position of the texture in screen-space
+		 */
 		void clip_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* textureData, const Vector2& textureSize,
 		               Vector2          texturePosition)
 		{
@@ -168,9 +199,18 @@ namespace renderer
 		}
 	}
 
+	/**
+	 * \brief The sprite_sheet namespace deals with the rendering
+	 * of spritesheet data 
+	 */
 	namespace sprite_sheet
 	{
-		void sprite(HAPISPACE::BYTE* spriteSheetData, const int spriteSheetLocation)
+		/**
+		 * \brief Flips the sprite at a specific index along the vertical axis
+		 * \param spriteSheetData The spritesheet data
+		 * \param spriteSheetLocation The index of the sprite to be flipped
+		 */
+		void flip(HAPISPACE::BYTE* spriteSheetData, const int spriteSheetLocation)
 		{
 			HAPISPACE::BYTE* spriteData{
 				spriteSheetData + static_cast<uint64_t>(
@@ -204,8 +244,16 @@ namespace renderer
 				}
 			}
 		}
-
-		void alpha_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* spriteData, Vector2 position, short alpha = 255)
+		
+		/**
+		 * \brief Performs a fast blit to the screen accounting for potential alpha channels
+		 * in the sprite
+		 * \param screen a pointer to the screen data 
+		 * \param spriteData The data of the sprite
+		 * \param position The position in screen-space of the sprite
+		 * \param alpha The alpha value to overload
+		 */
+		void alpha_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* spriteData, const Vector2 position, const short alpha = 255)
 		{
 			HAPISPACE::BYTE* screenStart{
 				screen + (static_cast<uint64_t>(position.x) + static_cast<uint64_t>(position.y) *
@@ -247,10 +295,19 @@ namespace renderer
 					spriteData += 4;
 				}
 				screenStart += screenInc;
-				// spriteData += spriteInc;
 			}
 		}
 
+		/**
+		 * \brief Performs a clip-blit (where the sprite is partially offscreen)
+		 * to the sprite data
+		 * \param screen A pointer to the screen data
+		 * \param spriteData The spritesheet data to be clip-blitted
+		 * \param spriteSheetIndex The index of the spritesheet of the desired
+		 * sprite
+		 * \param position The position in screen-space of the sprite
+		 * \param alpha The overloaded alpha channel
+		 */
 		void clip_blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* spriteData, int spriteSheetIndex, Vector2 position,
 		               const short      alpha = 255)
 		{
@@ -350,6 +407,17 @@ namespace renderer
 		}
 	}
 
+	/**
+	 * \brief Renders a texture to the screen using the appropriate blitting
+	 * method
+	 * \param screen A pointer to the screen data
+	 * \param textureData The texture data to be rendered
+	 * \param textureSize The size of the texture to be rendered
+	 * \param texturePosition The position of the texture in screen-space of the
+	 * texture
+	 * \param flipped True if the texture should be flipped along the vertical
+	 * axis
+	 */
 	void render_texture(HAPISPACE::BYTE* screen, HAPISPACE::BYTE*    textureData, const Vector2& textureSize,
 	                    const Vector2    texturePosition, const bool flipped)
 	{
@@ -366,12 +434,22 @@ namespace renderer
 		}
 	}
 
+	/**
+	 * \brief Renders a sprite to the screen using the appropriate blitting
+	 * method
+	 * \param screen A pointer to the screen data
+	 * \param spriteSheetData The spritesheet data
+	 * \param spriteSheetIndex The index of the desired sprite in the spritesheet
+	 * \param spritePosition The position in screen-space of the sprite
+	 * \param flipped True if the sprite should be flipped along the vertical axis
+	 * \param alpha The overloaded alpha channel
+	 */
 	void render_sprite(HAPISPACE::BYTE* screen, HAPISPACE::BYTE*   spriteSheetData, const int spriteSheetIndex,
 	                   const Vector2    spritePosition, const bool flipped, const short       alpha)
 	{
 		if (flipped)
 		{
-			sprite_sheet::sprite(spriteSheetData, spriteSheetIndex);
+			sprite_sheet::flip(spriteSheetData, spriteSheetIndex);
 		}
 
 		HAPISPACE::BYTE* spriteStart{
@@ -384,7 +462,7 @@ namespace renderer
 		// works on the entire spritesheet so we need to flip back
 		if (flipped)
 		{
-			sprite_sheet::sprite(spriteSheetData, spriteSheetIndex);
+			sprite_sheet::flip(spriteSheetData, spriteSheetIndex);
 		}
 	}
 }

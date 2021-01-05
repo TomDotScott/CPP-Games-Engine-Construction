@@ -2,6 +2,10 @@
 #include "../State System/State.h"
 #include "Text.h"
 
+/**
+ * \brief The state that gets displayed when the player has finished
+ * playing the game demo
+ */
 class GameOver final : public State
 {
 public:
@@ -17,5 +21,8 @@ private:
 	Text m_highScoreText;
 	Text m_timeElapsedText;
 	Text m_mainMenuText;
+	// The texture that gets displayed differs depending on
+	// whether the player passed the final level or lost all
+	// of their lives
 	bool m_playerWon;
 };

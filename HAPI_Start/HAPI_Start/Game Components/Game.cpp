@@ -68,9 +68,9 @@ void Game::Update()
 		if (m_player.GetPosition().y > constants::k_screenHeight)
 		{
 			// If level 1 and they fall off by the warp zone, take them there
-			if (m_currentLevel == eLevel::e_LevelOne && (m_player.GetPosition().x > 4416.f && m_player.GetPosition().x <= 4544.f))
+			if (m_currentLevel == eLevel::e_LevelOne && (m_player.GetPosition().x > 4416.f && m_player.GetPosition().x <= 4608.f))
 			{
-				LoadLevel(eLevel::e_WarpZone, true);
+				LoadLevel(eLevel::e_WarpZone, true, {Vector2::CENTRE.x, -constants::k_spriteSheetCellSize });
 			} else
 			{
 				m_player.Kill();
@@ -95,7 +95,7 @@ void Game::Update()
 				m_portal.Update(deltaTime);
 				if (m_portal.GetShouldTeleportPlayer())
 				{
-					LoadLevel(eLevel::e_LevelOne, true, { 6656.f, Vector2::CENTRE.y });
+					LoadLevel(eLevel::e_LevelOne, true, { 6656.f, -constants::k_spriteSheetCellSize });
 				}
 			}
 
@@ -700,34 +700,34 @@ void Game::HandlePlayerCollisions()
 	CollisionData& playerCollisionData = m_tileManager.CheckAlienLevelCollisions(m_player);
 
 	// HEAD COLLISIONS
-	if (playerCollisionData.m_headCollision)
+	if (playerCollisionData.m_topCollision)
 	{
 		// Stop the jump
 		m_player.SetVelocity({ m_player.GetVelocity().x });
 
 		// Work out which tile it was
-		switch (playerCollisionData.m_headCollision->m_type)
+		switch (playerCollisionData.m_topCollision->m_type)
 		{
 		case eTileType::e_CrateBlock:
-			if (playerCollisionData.m_headCollision->m_canBeDestroyed)
+			if (playerCollisionData.m_topCollision->m_canBeDestroyed)
 			{
 				if (m_player.GetPowerUpState() != ePowerUpState::e_Small)
 				{
-					playerCollisionData.m_headCollision->m_type = eTileType::e_Air;
-					playerCollisionData.m_headCollision->m_canCollide = false;
+					playerCollisionData.m_topCollision->m_type = eTileType::e_Air;
+					playerCollisionData.m_topCollision->m_canCollide = false;
 					SoundManager::GetInstance().PlaySoundEffect("Block_Break");
 				}
 			}
 			break;
 
 		case eTileType::e_CoinBlock:
-			playerCollisionData.m_headCollision->m_type = eTileType::e_CrateBlock;
-			playerCollisionData.m_headCollision->m_canBeDestroyed = false;
+			playerCollisionData.m_topCollision->m_type = eTileType::e_CrateBlock;
+			playerCollisionData.m_topCollision->m_canBeDestroyed = false;
 
 			m_coins.emplace_back(
 				GenerateNextEntityID(),
-				Vector2(playerCollisionData.m_headCollision->m_position.x,
-					playerCollisionData.m_headCollision->m_position.y -
+				Vector2(playerCollisionData.m_topCollision->m_position.x,
+					playerCollisionData.m_topCollision->m_position.y -
 					constants::k_spriteSheetCellSize),
 				true
 			);
@@ -736,19 +736,19 @@ void Game::HandlePlayerCollisions()
 			break;
 
 		case eTileType::e_BoxedCoinBlock:
-			playerCollisionData.m_headCollision->m_type = eTileType::e_CoinBlock;
+			playerCollisionData.m_topCollision->m_type = eTileType::e_CoinBlock;
 			SoundManager::GetInstance().PlaySoundEffect("Brick_Break");
 			break;
 
 		case eTileType::e_ItemBlock:
 
-			playerCollisionData.m_headCollision->m_type = eTileType::e_BrickBlock;
+			playerCollisionData.m_topCollision->m_type = eTileType::e_BrickBlock;
 			SoundManager::GetInstance().PlaySoundEffect("Power_Up_Reveal");
 
 			m_gems.emplace_back(
 				GenerateNextEntityID(),
-				Vector2(playerCollisionData.m_headCollision->m_position.x,
-					playerCollisionData.m_headCollision->m_position.y -
+				Vector2(playerCollisionData.m_topCollision->m_position.x,
+					playerCollisionData.m_topCollision->m_position.y -
 					constants::k_spriteSheetCellSize),
 				constants::rand_range(0, 100) <= 50
 				? ePowerUpType::e_FireThrower
@@ -762,7 +762,7 @@ void Game::HandlePlayerCollisions()
 
 		// Resolve the overlap
 		// Work out the overlap
-		Tile* tile = playerCollisionData.m_headCollision;
+		Tile* tile = playerCollisionData.m_topCollision;
 		const Vector2 bottomOfTile = tile->m_tileCollisionBox.BOTTOM_RIGHT;
 
 		const float distanceFromBottomOfTileToPlayerHead =

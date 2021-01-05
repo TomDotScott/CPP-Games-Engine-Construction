@@ -264,7 +264,7 @@ void Player::Kill()
 
 		SetAnimationIndex(m_numStates * static_cast<int>(m_currentPowerUpState) + static_cast<int>(m_currentAlienState
 		                  ));
-		m_animations[m_animationIndex].ResetAnimation();
+		m_animations[m_animationIndex].Reset();
 	}
 }
 

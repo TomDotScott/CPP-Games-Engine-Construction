@@ -5,8 +5,6 @@
 #include <sndfile.h>
 #include <AL/alext.h>
 
-// Loads the named audio file into an OpenAL buffer object,
-// and returns the new buffer ID
 ALuint SoundBuffer::AddSoundEffect(const char* filename)
 {
 	SF_INFO sfInfo;

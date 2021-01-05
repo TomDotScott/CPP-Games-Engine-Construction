@@ -8,33 +8,79 @@
 class TextureManager;
 struct Tile;
 
+/**
+ * \brief The Tiles that a given entity has collided with
+ */
 struct CollisionData
 {
 	void Reset()
 	{
-		m_headCollision   = nullptr;
+		m_topCollision   = nullptr;
 		m_leftCollision   = nullptr;
 		m_rightCollision  = nullptr;
 		m_bottomCollision = nullptr;
 	}
 
-	Tile* m_headCollision;
+	Tile* m_topCollision;
 	Tile* m_leftCollision;
 	Tile* m_rightCollision;
 	Tile* m_bottomCollision;
 };
 
+/**
+ * \brief The TileManager is in charge of loading level data as well as
+ * detecting collisions between the entities and the game world
+ */
 class TileManager
 {
 public:
 	TileManager();
+	/**
+	 * \brief Loads level data from a .csv
+	 * \param filename The file location of the .csv level data file relative to the working directory
+	 * \return True if the level data was loaded successfully
+	 */
 	bool                                          LoadLevel(const std::string& filename);
+	/**
+	 * \brief Draws the tiles from the level data onscreen
+	 * \param textureManager The texturemanager holds the sprite data
+	 * needed to draw
+	 * \param playerOffset The X (Horizontal) offset of the player
+	 */
 	void                                          RenderTiles(TextureManager& textureManager, float playerOffset);
+	/**
+	 * \brief Checks an alien's collisions with the world
+	 * \param alien The desired alien
+	 * \return The correct collision data
+	 */
 	CollisionData&                                CheckAlienLevelCollisions(Alien& alien);
+	/**
+	 * \brief Detects whether the player is on the bridge
+	 * \param boss The boss entity
+	 * \return True if the boss is on the floor
+	 */
 	bool                                          IsBossOnFloor(Alien& boss);
+	/**
+	 * \brief Trigger event that gets called when the player touches the trigger
+	 */
 	void                                          OnLeverPulled();
+	/**
+	 * \brief Checks the enemy collisions within the game world
+	 * \param enemy The enemy to be checked
+	 */
 	void                                          CheckEnemyLevelCollisions(Enemy& enemy);
+	/**
+	 * \brief Checks the fireball collisions within the game world
+	 * and determines whether it should explode if it hits on the
+	 * left or right
+	 * \param fireball The fireball entity to be checked 
+	 */
 	void                                          CheckFireballLevelCollisions(Fireball& fireball);
+	/**
+	 * \brief Gets the std::vector of entity locations from the level
+	 * data
+	 * \return The vector of entity locations
+	 */
 	std::vector<std::pair<eEntityType, Vector2>>& GetEntityLocations();
 
 private:
@@ -48,6 +94,11 @@ private:
 	Tile* CheckAlienBottomCollisions(Alien& alien, const CollisionBoxes& alienCollisionBoxes);
 };
 
+/**
+ * \brief The types of tile present in the level data
+ * loaded from the .csv. The values of each entry are
+ * how they are represented in the files
+ */
 enum class eTileType
 {
 	e_Air = -1,
@@ -138,8 +189,19 @@ inline const char* to_string(const eTileType e)
 	return "Unknown";
 }
 
+/**
+ * \brief The Tile struct is the outline of each of the tiles
+ * within the game world
+ */
 struct Tile
 {
+	/**
+	 * \brief Constructs a tile object
+	 * \param type The type of tile to be initialised
+	 * \param position The position of the tile in the game world
+	 * \param canCollide Whether entities are able to collide with
+	 * the tile
+	 */
 	Tile(const eTileType type, const Vector2 position, const bool canCollide) :
 		m_type(type),
 		m_position(position),

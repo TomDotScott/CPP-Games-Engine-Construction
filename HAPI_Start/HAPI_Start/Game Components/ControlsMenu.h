@@ -2,6 +2,10 @@
 #include "../State System/State.h"
 #include "Text.h"
 
+/**
+ * \brief The state that is displayed when the user chooses the 'Controls'
+ * option from the Main Menu
+ */
 class ControlsMenu final : public State
 {
 public:

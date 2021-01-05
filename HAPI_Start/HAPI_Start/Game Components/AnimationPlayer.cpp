@@ -37,7 +37,7 @@ void AnimationPlayer::Play(const float deltaTime)
 	}
 }
 
-unsigned AnimationPlayer::GetCurrentFrame() const
+unsigned short AnimationPlayer::GetCurrentFrame() const
 {
 	return m_currentFrame;
 }
@@ -52,7 +52,7 @@ eAnimationState AnimationPlayer::GetCurrentAnimationState() const
 	return m_state;
 }
 
-void AnimationPlayer::ResetAnimation()
+void AnimationPlayer::Reset()
 {
 	m_state        = eAnimationState::e_Started;
 	m_currentFrame = 0;

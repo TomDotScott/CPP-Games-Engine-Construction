@@ -15,8 +15,21 @@ public:
 	Music& operator=(const Music& other)     = default;
 	Music& operator=(Music&& other) noexcept = default;
 
+	
+	/**
+	 * \brief Plays the current music source
+	 */
 	void Play();
+	
+	/**
+	 * \brief Stops the current music source
+	 */
 	void Stop() const;
+
+	
+	/**
+	 * \brief Prevents the music source from under-running and keeps the file streaming from the music's file location
+	 */
 	void UpdateBufferStream() const;
 
 private:
