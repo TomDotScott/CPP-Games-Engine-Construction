@@ -8,13 +8,13 @@ SoundDevice::SoundDevice()
 	// Open the default device 
 	m_alcDevice = alcOpenDevice(nullptr);
 
-	assert(m_ALCDevice);
+	assert(m_alcDevice);
 
 	// Set up the OpenAL Context
 	m_alcContext = alcCreateContext(m_alcDevice, nullptr);
 
-	assert(p_ALCContext);
-	assert(alcMakeContextCurrent(p_ALCContext));
+	assert(m_alcContext);
+	assert(alcMakeContextCurrent(m_alcContext));
 }
 
 SoundDevice::~SoundDevice()

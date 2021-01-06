@@ -230,6 +230,9 @@
     <ClInclude Include="Game Components\Entities\Portal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="HAPI\HAPI_Debug64.lib" />
@@ -241,5 +244,21 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Data\HelloThere.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HAPI_Start.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\AppIcon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\tomsc\Downloads\AppIcon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

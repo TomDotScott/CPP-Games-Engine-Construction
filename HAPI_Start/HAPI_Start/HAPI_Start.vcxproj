@@ -85,6 +85,7 @@
     <ClInclude Include="Game Components\MainMenu.h" />
     <ClInclude Include="Game Components\Entities\Lever.h" />
     <ClInclude Include="Game Components\Entities\Portal.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="State System\StateManager.h" />
     <ClInclude Include="State System\State.h" />
     <ClInclude Include="Utilities\CollisionBox.h" />
@@ -108,6 +109,14 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Data\HelloThere.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HAPI_Start.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\tomsc\Downloads\AppIcon.ico" />
+    <Image Include="icon1.ico" />
+    <Image Include="Res\AppIcon.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
