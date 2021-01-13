@@ -330,6 +330,8 @@ void Game::Input()
 {
 	if (m_levelStarted && !m_levelFinished)
 	{
+		// For ease of testing, press F1, F2 or F3 to go to
+		// each level
 		if (GetKey(eKeyCode::F1))
 		{
 			LoadLevel(eLevel::e_LevelOne);

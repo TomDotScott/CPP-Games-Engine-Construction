@@ -94,7 +94,9 @@ private:
 	 * placed in the level
 	 * \return True if the level was loaded correctly
 	 */
-	bool               LoadLevel(eLevel level, bool playerWon = true, const Vector2& playerPosition = Vector2::CENTRE);
+	bool               LoadLevel(eLevel level, 
+								 bool playerWon = true, 
+								 const Vector2& playerPosition = Vector2(Vector2::CENTRE.x, -constants::k_spriteSheetCellSize));
 	/**
 	 * \brief Loads the next level of the game
 	 */
